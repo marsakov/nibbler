@@ -34,10 +34,10 @@ SDLGraph::~SDLGraph() {
 
 void	SDLGraph::init() {
 
-	pieceRECT.x = 0;
-	pieceRECT.y = 0;
-	pieceRECT.w = 110;
-	pieceRECT.h = 110;
+	pieceRECT.x = 50;
+	pieceRECT.y = 50;
+	pieceRECT.w = 50;
+	pieceRECT.h = 50;
 	snakeRECT.push_back(pieceRECT);
 
 	appleRECT.x = 0;
@@ -61,7 +61,7 @@ void	SDLGraph::init() {
 	SDL_SetRenderDrawColor( gRenderer, 144, 193, 171, 255 );
 
 	snake = IMG_LoadTexture(gRenderer, "resources/square.png");
-	apple = IMG_LoadTexture(gRenderer, "resources/circle.png");
+	apple = IMG_LoadTexture(gRenderer, "resources/apple.png");
 	if (!snake || !apple)
 		close("snake or apple image could not load");
 }
@@ -103,28 +103,28 @@ void	SDLGraph::moveSnake() {
 	{
 		case 'U':
 		{
-			if (snakeRECT[0].y < 50)
+			if (snakeRECT[0].y <= 50)
 				close("snake outside the box");
 			snakeRECT[0].y -= 50;
 			break ;
 		}
 		case 'D':
 		{
-			if (snakeRECT[0].y >= SCREEN_HEIGHT - 110)
+			if (snakeRECT[0].y >= SCREEN_HEIGHT - 100)
 				close("snake outside the box");
 			snakeRECT[0].y += 50;
 			break ;
 		}
 		case 'L':
 		{
-			if (snakeRECT[0].x < 50)
+			if (snakeRECT[0].x <= 50)
 				close("snake outside the box");
 			snakeRECT[0].x -= 50;
 			break ;
 		}
 		case 'R':
 		{
-			if (snakeRECT[0].x >= SCREEN_WIDTH - 110)
+			if (snakeRECT[0].x >= SCREEN_WIDTH - 100)
 				close("snake outside the box");
 			snakeRECT[0].x += 50;
 			break ;
@@ -173,20 +173,22 @@ void	SDLGraph::draw() {
 
 	SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 
-	SDL_RenderDrawLine(gRenderer, 20, 20, 20, SCREEN_HEIGHT - 20);
-	SDL_RenderDrawLine(gRenderer, 20, 20, SCREEN_WIDTH - 20, 20);
-	SDL_RenderDrawLine(gRenderer, SCREEN_WIDTH - 20, 20, SCREEN_WIDTH - 20, SCREEN_HEIGHT - 20);
-	SDL_RenderDrawLine(gRenderer, 20, SCREEN_HEIGHT - 20, SCREEN_WIDTH - 20, SCREEN_HEIGHT - 20);
+	SDL_RenderDrawLine(gRenderer, 50, 50, 50, SCREEN_HEIGHT - 50);
+	SDL_RenderDrawLine(gRenderer, 50, 50, SCREEN_WIDTH - 50, 50);
+	SDL_RenderDrawLine(gRenderer, SCREEN_WIDTH - 50, 50, SCREEN_WIDTH - 50, SCREEN_HEIGHT - 50);
+	SDL_RenderDrawLine(gRenderer, 50, SCREEN_HEIGHT - 50, SCREEN_WIDTH - 50, SCREEN_HEIGHT - 50);
 	
 	for (int i = 0; i < snakeRECT.size(); i++) {
 		SDL_RenderCopy(gRenderer, snake, NULL, &snakeRECT[i]);
 	}
 	SDL_RenderCopy(gRenderer, apple, NULL, &appleRECT);
 	SDL_RenderPresent(gRenderer);
+
 }
 
 void	SDLGraph::mainCycle() {
 	int i = 0;
+	startTime = std::clock();
 
 	generateApple();
 	while (!quit)

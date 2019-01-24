@@ -1,7 +1,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+// #include <SDL_ttf.h>
 #include <iostream>
 #include <vector>
+#include <ctime>
+
 
 class SDLGraph
 {
@@ -18,6 +21,8 @@ class SDLGraph
 	SDL_Event				event;
 	char					direction;
 	int						snakeSize;
+	std::clock_t			startTime;
+	double					durationTime;
 
 public:
 
