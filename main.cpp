@@ -1,9 +1,10 @@
-#include "SDLGraph.hpp"
+#include "SFMLGraph.hpp"
 
 int main(int argc, char *argv[])
 {
-	SDLGraph sdl;
+	SFMLGraph sdl;
 	
 	sdl.mainCycle();
+	// system("leaks a.out");
 	return (0);
 }

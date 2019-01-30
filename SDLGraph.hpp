@@ -44,4 +44,5 @@ public:
 	void	moveSnake();
 	void	generateApple();
 	void	checkCollision();
+	void	renderText(const char *text);
 };

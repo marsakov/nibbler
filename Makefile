@@ -20,4 +20,7 @@ clean:
 
 	rm *.o && rm $(EXE)
 
-# clang++ -I ~/.brew/include -L ~/.brew/lib -lSDL2 -L ~/.brew/lib -lSDL2_image  main.cpp
+
+# clang++ -I ~/.brew/include -L ~/.brew/lib -lSDL2 -lSDL2_image -lSDL2_ttf main.cpp SDLGraph.cpp
+# clang++ -I ~/.brew/include -L ~/.brew/lib -lsfml-graphics -lsfml-window -lsfml-system -rpath ~/.brew/lib main_test.cpp
+

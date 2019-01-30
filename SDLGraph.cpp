@@ -36,6 +36,7 @@ SDLGraph::~SDLGraph() {
 	TTF_CloseFont(textFont);
 	TTF_Quit();
 	SDL_Quit();
+	system("leaks a.out");
 }
 
 void	SDLGraph::init() {
@@ -53,7 +54,7 @@ void	SDLGraph::init() {
 
 	msgRECT.x = 25;
 	msgRECT.y = 10;
-	msgRECT.w = 200;
+	msgRECT.w = 300;
 	msgRECT.h = 25;
 
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -108,11 +109,18 @@ void	SDLGraph::moveSnake() {
 	
 	if (snakeRECT.size() != snakeSize) {
 		moveLastPiece = false;
-		pieceRECT = snakeRECT[snakeRECT.size() - 1];
+		pieceRECT.x = snakeRECT[snakeRECT.size() - 1].x;
+		pieceRECT.y = snakeRECT[snakeRECT.size() - 1].y;
+		pieceRECT.w = snakeRECT[snakeRECT.size() - 1].w;
+		pieceRECT.h = snakeRECT[snakeRECT.size() - 1].h;
 	}
 
-	for (int i = snakeRECT.size() - 1; i > 0; i--)
-		snakeRECT[i] = snakeRECT[i - 1];
+	for (int i = snakeRECT.size() - 1; i > 0; i--) {
+		snakeRECT[i].x = snakeRECT[i - 1].x;
+		snakeRECT[i].y = snakeRECT[i - 1].y;
+		snakeRECT[i].w = snakeRECT[i - 1].w;
+		snakeRECT[i].h = snakeRECT[i - 1].h;
+	}
 
 	switch (direction)
 	{
@@ -181,6 +189,20 @@ void	SDLGraph::checkCollision() {
 
 }
 
+void	SDLGraph::renderText(const char *text) {
+
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+
+	SDL_Color color = { 0, 0, 0, 255 };
+    surface = TTF_RenderText_Solid(textFont, text, color);
+    texture = SDL_CreateTextureFromSurface(gRenderer, surface);
+
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy(gRenderer, texture, NULL, &msgRECT);
+    SDL_DestroyTexture(texture);
+}
+
 void	SDLGraph::draw() {
 
 	SDL_SetRenderDrawColor( gRenderer, 144, 193, 171, 255 );
@@ -198,10 +220,7 @@ void	SDLGraph::draw() {
 	}
 	SDL_RenderCopy(gRenderer, apple, NULL, &appleRECT);
 
-	SDL_Color textColor = { 0, 0, 0, 255 };
-	surfaceMsg = TTF_RenderText_Solid(textFont, ("SCORE : " + std::to_string(snakeSize)).c_str(), textColor);
-	msg = SDL_CreateTextureFromSurface(gRenderer, surfaceMsg);
-	SDL_RenderCopy(gRenderer, msg, NULL, &msgRECT);
+	renderText(("SCORE = " + std::to_string(snakeSize)).c_str());
 
 	SDL_RenderPresent(gRenderer);
 }
@@ -215,7 +234,7 @@ void	SDLGraph::mainCycle() {
 	{
 		if (i % 15 == 0)
 			moveSnake();
-		if (i % 500 == 0 || appleRECT.x == -1000)
+		if (i % 750 == 0 || appleRECT.x == -1000)
 			generateApple();
 		while (SDL_PollEvent(&event)) 
 		{
