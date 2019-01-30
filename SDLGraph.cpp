@@ -27,8 +27,14 @@ SDLGraph::SDLGraph(SDLGraph &obj) {
 }
 
 SDLGraph::~SDLGraph() {
+	SDL_DestroyTexture(apple);
+	SDL_DestroyTexture(snake);
+	SDL_DestroyTexture(msg);
+	SDL_FreeSurface(surfaceMsg);
 	SDL_DestroyRenderer(gRenderer);
-	SDL_DestroyWindow(window); 
+	SDL_DestroyWindow(window);
+	TTF_CloseFont(textFont);
+	TTF_Quit();
 	SDL_Quit();
 }
 
@@ -45,10 +51,16 @@ void	SDLGraph::init() {
 	appleRECT.w = 50;
 	appleRECT.h = 50;
 
-	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
+	msgRECT.x = 25;
+	msgRECT.y = 10;
+	msgRECT.w = 200;
+	msgRECT.h = 25;
 
-	window = SDL_CreateWindow("SDLwindow", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+	SDL_Init(SDL_INIT_EVERYTHING);
+	TTF_Init();
+	SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
+	
+	window = SDL_CreateWindow("Nibbler", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	
 	if ( !gRenderer )
@@ -63,7 +75,14 @@ void	SDLGraph::init() {
 	snake = IMG_LoadTexture(gRenderer, "resources/square.png");
 	apple = IMG_LoadTexture(gRenderer, "resources/apple.png");
 	if (!snake || !apple)
-		close("snake or apple image could not load");
+		close("Snake or apple image could not load");
+
+	textFont = TTF_OpenFont("resources/SEASRN.ttf", 24);
+	if (!textFont)
+	{
+		std::cout << SDL_GetError() << std::endl;
+		close("Unable to render text surface! SDL_ttf Error");
+	}
 }
 
 int		SDLGraph::close(std::string msg) {
@@ -82,10 +101,6 @@ void	SDLGraph::move() {
 		case SDLK_RIGHT:	(direction == 'L' && snakeSize > 1) ? close("boom") : direction = 'R'; break ;
 		case SDLK_ESCAPE:	close("Exit with escape");
 	}
-	// std::cout << "The " 
-	// 			<<  SDL_GetKeyName(event.key.keysym.sym)
-	// 			<< " key was pressed!\n";
-	// std::cout << "x = " << snakeRECT[0].x << " y = " << snakeRECT[0].y << std::endl;
 }
 
 void	SDLGraph::moveSnake() {
@@ -145,7 +160,7 @@ void	SDLGraph::generateApple() {
 		appleRECT.y = (rand() % (SCREEN_HEIGHT / 100 - 1) + 1) * 100;
 		noCollision = true;
 		for (int i = 0; i < snakeRECT.size(); i++)
-			if (snakeRECT[i].x == appleRECT.x || snakeRECT[i].y == appleRECT.y)
+			if (snakeRECT[i].x == appleRECT.x && snakeRECT[i].y == appleRECT.y)
 				noCollision = false;
 	}
 	std::cout << "APPLE x = " << appleRECT.x << " y = " << appleRECT.y << std::endl;
@@ -182,13 +197,18 @@ void	SDLGraph::draw() {
 		SDL_RenderCopy(gRenderer, snake, NULL, &snakeRECT[i]);
 	}
 	SDL_RenderCopy(gRenderer, apple, NULL, &appleRECT);
-	SDL_RenderPresent(gRenderer);
 
+	SDL_Color textColor = { 0, 0, 0, 255 };
+	surfaceMsg = TTF_RenderText_Solid(textFont, ("SCORE : " + std::to_string(snakeSize)).c_str(), textColor);
+	msg = SDL_CreateTextureFromSurface(gRenderer, surfaceMsg);
+	SDL_RenderCopy(gRenderer, msg, NULL, &msgRECT);
+
+	SDL_RenderPresent(gRenderer);
 }
 
 void	SDLGraph::mainCycle() {
-	int i = 0;
-	startTime = std::clock();
+	size_t i = 0;
+	startTime = SDL_GetTicks();
 
 	generateApple();
 	while (!quit)
@@ -207,6 +227,7 @@ void	SDLGraph::mainCycle() {
 					close("exit");
 			}
 		}
+		// std::cout << "Milliseconds since start time " << SDL_GetTicks() - startTime << std::endl; 
 		checkCollision();
 		draw();
 		i++;
