@@ -34,15 +34,16 @@ void	SFMLGraph::init() {
 	
 	window = new sf::RenderWindow(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Nibbler");
 
-	sf::Texture squareTexture;
-	if (!squareTexture.loadFromFile("resources/square.png", sf::IntRect(50, 50, 50, 50)))
-	    exit(1);
-	squareTexture.setSmooth(true);
+	sf::Texture texture1;
+    texture1.loadFromFile("resources/square.png");
+    appleSprite.setTexture(texture1);
+	appleSprite.setPosition(20, 20);
 
-	sf::Texture appleTexture;
-	if (!appleTexture.loadFromFile("resources/apple.png", sf::IntRect(100, 100, 50, 50)))
-	    exit(1);
-	appleTexture.setSmooth(true);
+	sf::Texture texture2;
+    texture2.loadFromFile("resources/apple.png");
+
+    squareSprite = new sf::Sprite(texture2);
+	squareSprite->setPosition(150, 150);
 }
 
 // int		SFMLGraph::close(std::string msg) {
@@ -143,8 +144,8 @@ void	SFMLGraph::init() {
 
 void	SFMLGraph::draw() {
   window->clear();
-  window->draw(&squareTexture);
-  window->draw(&appleTexture);
+  window->draw(*squareSprite);
+  window->draw(appleSprite);
   window->display();
 
 }
@@ -153,21 +154,20 @@ void	SFMLGraph::mainCycle() {
 	// size_t i = 0;
 
 	// generateApple();
-	// while (!quit)
-	// {
+	while (window->isOpen()) {
 	// 	if (i % 15 == 0)
 	// 		moveSnake();
 	// 	if (i % 500 == 0 || appleRECT.x == -1000)
 	// 		generateApple();
-	// 	while (window->pollEvent(event))
-	// 	{
-	// 		if (event.type == sf::Event::Closed)
-	// 			window->close();
-	// 	}
+		sf::Event event;
+		while (window->pollEvent(event)) {
+			if (event.type == sf::Event::Closed)
+				window->close();
+		}
+		draw();
 	// 	// std::cout << "Milliseconds since start time " << SDL_GetTicks() - startTime << std::endl; 
 	// 	checkCollision();
 	// 	draw();
 	// 	i++;
-	// }
-	draw();
+	}
 }

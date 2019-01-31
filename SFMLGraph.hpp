@@ -8,13 +8,11 @@ class SFMLGraph
 	int SCREEN_WIDTH;
 	int SCREEN_HEIGHT;
 
-	sf::Texture appleTexture;
-	sf::Texture squareTexture;
+	sf::Sprite				*squareSprite;
+	sf::Sprite				appleSprite;
 	char					direction;
 	int						snakeSize;
 	sf::RenderWindow		*window;
-
-	// Uint32					startTime;
 
 public:
 
