@@ -1,4 +1,5 @@
 #include "SDLGraph.hpp"
+#include "SDLGraph.hpp"
 
 SDLGraph::SDLGraph() {
 	
