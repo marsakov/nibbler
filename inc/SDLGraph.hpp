@@ -9,23 +9,24 @@
 
 class SDLGraph : public IGraph
 {
-	int						SCREEN_WIDTH;
-	int						SCREEN_HEIGHT;
+	// int						SCREEN_WIDTH;
+	// int						SCREEN_HEIGHT;
 
 	SDL_Window				*window;
 	SDL_Renderer			*gRenderer;
-	SDL_Texture 			*snake;
-	SDL_Texture 			*apple;
+	SDL_Texture 			*snakeTexture;
+	SDL_Texture 			*appleTexture;
 	SDL_Rect				msgRECT;
-	std::vector<SDL_Rect>	snakeRECT;
-	SDL_Rect				appleRECT;
-	SDL_Rect				pieceRECT;
+	// std::vector<SDL_Rect>	snakeRECT;
+	// SDL_Rect				appleRECT;
+	// SDL_Rect				pieceRECT;
+	SDL_Rect				rectForSDL;
 	SDL_Event				event;
 	TTF_Font				*textFont;
 	SDL_Surface				*surfaceMsg;
 	SDL_Texture				*msg;
-	char					direction;
-	int						snakeSize;
+	// char					direction;
+	// int						snakeSize;
 
 public:
 
@@ -33,18 +34,16 @@ public:
 
 	SDLGraph();
 	SDLGraph(SDLGraph &obj);
-	SDLGraph(int width, int height);
+	SDLGraph(int width, int height, Snake *s);
 
 	virtual int		close(std::string msg);
-	// virtual void	mainCycle();
 	virtual void	init();
 	virtual void	draw();
-	virtual void	move();
-	virtual void	moveSnake();
-	virtual void	generateApple();
-	virtual void	checkCollision();
+	virtual int		move();
 	virtual bool	windIsOpen();
-	virtual void	handleEvent();
+	virtual int		handleEvent();
+
+	SDL_Rect		toSDLRect(rect r);
 	
 	void			renderText(const char *text);
 };

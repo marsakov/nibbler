@@ -2,47 +2,65 @@
 #include <dlfcn.h>
 #include "../inc/IGraph.hpp"
 
-int main(int argc, char *argv[])
-{
-	void *ext_library;
-	typedef IGraph* create_t(int, int);
-	typedef void destroy_t(IGraph*);
+IGraph *getLib(int libNum, int w, int h, Snake *snake) {
+	void			*ext_library;
+	typedef IGraph*	create_t(int, int, Snake*);
+	typedef void	destroy_t(IGraph*);
 
-	ext_library = dlopen("libSFML.so", RTLD_LAZY);
-	if (!ext_library){
-		//если ошибка, то вывести ее на экран
+	switch (libNum){
+		case 1: {
+			ext_library = dlopen("libSDL.so", RTLD_LAZY);
+			w /= 2;
+			h /= 2;
+			break ;
+		}
+		case 2:
+			ext_library = dlopen("libSFML.so", RTLD_LAZY); break ;
+		default :
+			ext_library = dlopen("libSDL.so", RTLD_LAZY); break ;
+	}
+	
+	if (!ext_library) {
 		fprintf(stderr,"dlopen() error: %s\n", dlerror());
-		exit(1); // в случае ошибки можно, например, закончить работу программы
+		exit(1);
 	};
 
 	create_t* creat = (create_t*)dlsym(ext_library,"createGraph");
 	destroy_t* destroy = (destroy_t*)dlsym(ext_library,"destroyGraph");
 
-	IGraph *dynlib = creat(2000, 1600);
+	return (creat(w, h, snake));
+}
 
+int main(int argc, char *argv[])
+{
+	IGraph *dynlib;
+	Snake *snake = new Snake(5120/2, 2880/2);
 	size_t i = 0;
+	int libNum = 1;
+	int newLibNum;
 
-	dynlib->generateApple();
+	dynlib = getLib(libNum, 5120/2, 2880/2, snake);
+	snake->generateApple();
 	while (dynlib->windIsOpen()) {
-		if (i % 15 == 0)
-			dynlib->moveSnake();
-		if (i % 750 == 0 || appleRECT.x == -1000)
-			dynlib->generateApple();
-		dynlib->handleEvent();
-		dynlib->checkCollision();
+		if (i % 15 == 0) {
+			if (!snake->moveSnake()){
+				std::cout << "snake outside the box" << std::endl;
+				exit(1);
+			}
+		}
+		if (i % 750 == 0 || snake->appleRECT.x == -1000)
+			snake->generateApple();
+		newLibNum = dynlib->handleEvent();
+		if (newLibNum && newLibNum != libNum)
+			dynlib = getLib(newLibNum, 5120/2, 2880/2, snake);
+		if (!snake->checkCollision()) {
+			std::cout << "boom" << std::endl;
+			exit(1);
+		}
 		dynlib->draw();
 		i++;
-		if (i == 2000000000)
-			i = 0;
 	}
 
-	// dynlib->mainCycle();
-
-	dlclose(ext_library);
-
-	// SFMLGraph sdl;
-	
-	// sdl.mainCycle();
-	// system("leaks a.out");
+	// dlclose(ext_library);
 	return (0);
 }
