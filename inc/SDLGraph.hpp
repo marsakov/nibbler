@@ -1,15 +1,16 @@
+#pragma once
+
+#include "IGraph.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include <iostream>
-#include <vector>
-#include <ctime>
 
-class SDLGraph
+
+class SDLGraph : public IGraph
 {
-	int SCREEN_WIDTH;
-	int SCREEN_HEIGHT;
+	int						SCREEN_WIDTH;
+	int						SCREEN_HEIGHT;
 
 	SDL_Window				*window;
 	SDL_Renderer			*gRenderer;
@@ -25,7 +26,6 @@ class SDLGraph
 	SDL_Texture				*msg;
 	char					direction;
 	int						snakeSize;
-	Uint32					startTime;
 
 public:
 
@@ -34,15 +34,17 @@ public:
 	SDLGraph();
 	SDLGraph(SDLGraph &obj);
 	SDLGraph(int width, int height);
-	~SDLGraph();
 
-	int		close(std::string msg);
-	void	mainCycle();
-	void	init();
-	void	draw();
-	void	move();
-	void	moveSnake();
-	void	generateApple();
-	void	checkCollision();
-	void	renderText(const char *text);
+	virtual int		close(std::string msg);
+	// virtual void	mainCycle();
+	virtual void	init();
+	virtual void	draw();
+	virtual void	move();
+	virtual void	moveSnake();
+	virtual void	generateApple();
+	virtual void	checkCollision();
+	virtual bool	windIsOpen();
+	virtual void	handleEvent();
+	
+	void			renderText(const char *text);
 };

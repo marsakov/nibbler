@@ -1,5 +1,4 @@
-#include "SDLGraph.hpp"
-#include "SDLGraph.hpp"
+#include "../inc/SDLGraph.hpp"
 
 SDLGraph::SDLGraph() {
 	
@@ -226,30 +225,42 @@ void	SDLGraph::draw() {
 	SDL_RenderPresent(gRenderer);
 }
 
-void	SDLGraph::mainCycle() {
-	size_t i = 0;
-	startTime = SDL_GetTicks();
-
-	generateApple();
-	while (!quit)
-	{
-		if (i % 15 == 0)
-			moveSnake();
-		if (i % 750 == 0 || appleRECT.x == -1000)
-			generateApple();
-		while (SDL_PollEvent(&event)) 
-		{
-			switch (event.type)
-			{
-				case SDL_KEYDOWN:
-					move(); break ;
-				case SDL_QUIT:
-					close("exit");
-			}
+void	SFMLGraph::handleEvent() {
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+			case SDL_KEYDOWN:
+				move(); break ;
+			case SDL_QUIT:
+				close("exit");
 		}
-		// std::cout << "Milliseconds since start time " << SDL_GetTicks() - startTime << std::endl; 
-		checkCollision();
-		draw();
-		i++;
 	}
+}
+
+bool	SFMLGraph::windIsOpen() {
+	return (!quit);
+}
+
+// void	SDLGraph::mainCycle() {
+// 	size_t i = 0;
+
+// 	generateApple();
+// 	while (windIsOpen()) {
+// 		if (i % 15 == 0)
+// 			moveSnake();
+// 		if (i % 750 == 0 || appleRECT.x == -1000)
+// 			generateApple();
+// 		handleEvent();
+// 		checkCollision();
+// 		draw();
+// 		i++;
+// 	}
+// }
+
+
+extern "C" IGraph createGraph(int x, int y) {
+	return (new SDLGraph(x, y));
+}
+
+extern "C"	void destroyGraph(IGraph *graph) {
+	delete graph;
 }

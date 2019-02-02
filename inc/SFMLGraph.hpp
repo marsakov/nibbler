@@ -1,20 +1,21 @@
+#pragma once
+
+#include "IGraph.hpp"
 #include <SFML/Graphics.hpp>
-#include <iostream>
-#include <vector>
 
 typedef struct rect
 {
-	int x;
-	int y;
-	double w;
-	double h;
+	int		x;
+	int		y;
+	double	w;
+	double	h;
 	
 } rect;
 
-class SFMLGraph
+class SFMLGraph : public IGraph
 {
-	int SCREEN_WIDTH;
-	int SCREEN_HEIGHT;
+	int						SCREEN_WIDTH;
+	int						SCREEN_HEIGHT;
 
 	sf::Texture 			texture1;
 	sf::Texture 			texture2;
@@ -30,13 +31,8 @@ class SFMLGraph
 
 	sf::Event				event;
 
-
-	//SDL_Rect				appleRECT;
 	rect					appleRECT;
 	rect					pieceRECT;  
-	//snakeRECTx[i]
-	// int 					snakeRECTx[];
-	// int 					snakeRECTy[];
 
 public:
 
@@ -45,14 +41,15 @@ public:
 	SFMLGraph();
 	SFMLGraph(SFMLGraph &obj);
 	SFMLGraph(int width, int height);
-	~SFMLGraph();
 
-	int		close(std::string msg);
-	void	mainCycle();
-	void	init();
-	void	draw();
-	void	move();
-	void	moveSnake();
-	void	generateApple();
-	void	checkCollision();
+	virtual int		close(std::string msg);
+	// virtual void	mainCycle();
+	virtual void	init();
+	virtual void	draw();
+	virtual void	move();
+	virtual void	moveSnake();
+	virtual void	generateApple();
+	virtual void	checkCollision();
+	virtual bool	windIsOpen();
+	virtual void	handleEvent();
 };

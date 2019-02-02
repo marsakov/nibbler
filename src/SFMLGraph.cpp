@@ -1,4 +1,4 @@
-#include "SFMLGraph.hpp"
+#include "../inc/SFMLGraph.hpp"
 
 SFMLGraph::SFMLGraph() {
 	
@@ -22,22 +22,19 @@ SFMLGraph::SFMLGraph(int width, int height) {
 	init();
 }
 
-// SFMLGraph::SFMLGraph(SFMLGraph &obj) {
-// 	*this = obj;
-// }
-
-SFMLGraph::~SFMLGraph() {
-
+SFMLGraph::SFMLGraph(SFMLGraph &obj) {
+	*this = obj;
 }
+
 
 void	SFMLGraph::init() {
 	
 	window = new sf::RenderWindow(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Nibbler", sf::Style::Titlebar | sf::Style::Close);
 	window->setFramerateLimit(60);
 
-    texture1.loadFromFile("food.png");
-    texture2.loadFromFile("body.png");
-    texture3.loadFromFile("tile.png");
+    texture1.loadFromFile("resources/apple.png");
+    texture2.loadFromFile("resources/square.png");
+    texture3.loadFromFile("resources/bckgrnd.jpg");
 
     appleSprite.setTexture(texture1);
     squareSprite.setTexture(texture2);
@@ -52,11 +49,6 @@ void	SFMLGraph::init() {
 	appleSprite.setScale(0.1, 0.1);
 	squareSprite.setScale(0.1, 0.1);
 	background.setScale(5, 5);
-
-	// appleSprite.setPosition(50, 50);
-	// squareSprite.setPosition(150, 150);
-
-
 
 }
 
@@ -171,30 +163,43 @@ void	SFMLGraph::draw() {
 	window->display();
 }
 
-extern "C" void	SFMLGraph::mainCycle() {
-	size_t i = 0;
-
-	generateApple();
-	while (window->isOpen()) {
-		if (i % 15 == 0)
-			moveSnake();
-		if (i % 500 == 0 || appleRECT.x == -1000)
-			generateApple();
-		while (window->pollEvent(event)) {
-			switch (event.type)
-            {
-				case sf::Event::Closed:
-					window->close(); break;
-				case sf::Event::KeyPressed:
-					move(); break;
-				default : break ; 
-			}
+void	SFMLGraph::handleEvent() {
+	while (window->pollEvent(event)) {
+		switch (event.type) {
+			case sf::Event::Closed:
+				window->close(); break;
+			case sf::Event::KeyPressed:
+				move(); break;
+			default : break ; 
 		}
-	// 	// std::cout << "Milliseconds since start time " << SDL_GetTicks() - startTime << std::endl; 
-		checkCollision();
-		draw();
-		i++;
 	}
 }
 
+bool	SFMLGraph::windIsOpen() {
+	return (window->isOpen());
+}
 
+
+// void	SFMLGraph::mainCycle() {
+// 	size_t i = 0;
+
+// 	generateApple();
+// 	while (windIsOpen()) {
+// 		if (i % 15 == 0)
+// 			moveSnake();
+// 		if (i % 750 == 0 || appleRECT.x == -1000)
+// 			generateApple();
+// 		handleEvent();
+// 		checkCollision();
+// 		draw();
+// 		i++;
+// 	}
+// }
+
+extern "C" IGraph *createGraph(int x, int y) {
+	return (new SFMLGraph(x, y));
+}
+
+extern "C"	void destroyGraph(IGraph *graph) {
+	delete graph;
+}
