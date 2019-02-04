@@ -32,6 +32,7 @@ public:
 	SFMLGraph();
 	SFMLGraph(SFMLGraph &obj);
 	SFMLGraph(int width, int height, Snake *s);
+	virtual ~SFMLGraph();
 
 	virtual int		close(std::string msg);
 	virtual void	init();

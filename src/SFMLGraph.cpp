@@ -13,11 +13,6 @@ SFMLGraph::SFMLGraph() {
 SFMLGraph::SFMLGraph(int width, int height, Snake *s) {
 	
 	snake = s;
-	snake->direction = 'R';
-	snake->snakeSize = 1;
-
-	snake->SCREEN_WIDTH = width;
-	snake->SCREEN_HEIGHT = height;
 	init();
 }
 
@@ -25,6 +20,9 @@ SFMLGraph::SFMLGraph(SFMLGraph &obj) {
 	*this = obj;
 }
 
+SFMLGraph::~SFMLGraph() {
+	window->close();
+}
 
 void	SFMLGraph::init() {
 	
@@ -83,8 +81,6 @@ void	SFMLGraph::draw() {
 		squareSprite.setPosition(snake->snakeRECT[i].x, snake->snakeRECT[i].y);
 		window->draw(squareSprite);
 	}
-
-	
 	window->display();
 }
 

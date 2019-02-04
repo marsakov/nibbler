@@ -9,24 +9,19 @@
 
 class SDLGraph : public IGraph
 {
-	// int						SCREEN_WIDTH;
-	// int						SCREEN_HEIGHT;
+
 
 	SDL_Window				*window;
 	SDL_Renderer			*gRenderer;
 	SDL_Texture 			*snakeTexture;
 	SDL_Texture 			*appleTexture;
 	SDL_Rect				msgRECT;
-	// std::vector<SDL_Rect>	snakeRECT;
-	// SDL_Rect				appleRECT;
-	// SDL_Rect				pieceRECT;
 	SDL_Rect				rectForSDL;
 	SDL_Event				event;
 	TTF_Font				*textFont;
 	SDL_Surface				*surfaceMsg;
 	SDL_Texture				*msg;
-	// char					direction;
-	// int						snakeSize;
+
 
 public:
 
@@ -35,6 +30,8 @@ public:
 	SDLGraph();
 	SDLGraph(SDLGraph &obj);
 	SDLGraph(int width, int height, Snake *s);
+	virtual ~SDLGraph();
+
 
 	virtual int		close(std::string msg);
 	virtual void	init();

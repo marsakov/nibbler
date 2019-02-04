@@ -14,16 +14,23 @@ SDLGraph::SDLGraph() {
 SDLGraph::SDLGraph(int width, int height, Snake *s) {
 	snake = s;
 	quit = false;
-	snake->direction = 'R';
-	snake->snakeSize = 1;
-
-	snake->SCREEN_WIDTH = width/2;
-	snake->SCREEN_HEIGHT = height/2;
 	init();
 }
 
 SDLGraph::SDLGraph(SDLGraph &obj) {
 	*this = obj;
+}
+
+SDLGraph::~SDLGraph() {
+	SDL_DestroyTexture(appleTexture);
+	SDL_DestroyTexture(snakeTexture);
+	SDL_DestroyTexture(msg);
+	SDL_FreeSurface(surfaceMsg);
+	SDL_DestroyRenderer(gRenderer);
+	SDL_DestroyWindow(window);
+	TTF_CloseFont(textFont);
+	TTF_Quit();
+	SDL_Quit();
 }
 
 void	SDLGraph::init() {
@@ -75,15 +82,7 @@ void	SDLGraph::init() {
 
 int		SDLGraph::close(std::string msg) {
 	std::cout << msg << std::endl;
-	// SDL_DestroyTexture(appleTexture);
-	// SDL_DestroyTexture(snake);
-	// SDL_DestroyTexture(msg);
-	SDL_FreeSurface(surfaceMsg);
-	SDL_DestroyRenderer(gRenderer);
-	SDL_DestroyWindow(window);
-	TTF_CloseFont(textFont);
-	TTF_Quit();
-	SDL_Quit();
+	this->~SDLGraph();
 	exit(1);
 	return (0);
 }
