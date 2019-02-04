@@ -13,6 +13,9 @@ SDLGraph::SDLGraph() {
 
 SDLGraph::SDLGraph(int width, int height, Snake *s) {
 	snake = s;
+	snake->SCREEN_WIDTH /= 2;
+	snake->SCREEN_HEIGHT /= 2;
+	std::cout << "w = " << snake->SCREEN_WIDTH << " h = " << snake->SCREEN_HEIGHT << std::endl;
 	quit = false;
 	init();
 }
@@ -22,15 +25,14 @@ SDLGraph::SDLGraph(SDLGraph &obj) {
 }
 
 SDLGraph::~SDLGraph() {
+	snake->SCREEN_WIDTH *= 2;
+	snake->SCREEN_HEIGHT *= 2;
 	if (appleTexture)
 		SDL_DestroyTexture(appleTexture);
 	if (snakeTexture)
 		SDL_DestroyTexture(snakeTexture);
-	if (msg)
-		SDL_DestroyTexture(msg);
-	SDL_FreeSurface(surfaceMsg);
-	SDL_DestroyRenderer(gRenderer);
 	TTF_CloseFont(textFont);
+	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(window);
 	TTF_Quit();
 	SDL_Quit();
@@ -38,10 +40,6 @@ SDLGraph::~SDLGraph() {
 
 void	SDLGraph::init() {
 
-	msgRECT.x = 25;
-	msgRECT.y = 10;
-	msgRECT.w = 300;
-	msgRECT.h = 25;
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
@@ -82,10 +80,10 @@ int		SDLGraph::close(std::string msg) {
 int		SDLGraph::move() {
 	switch( event.key.keysym.sym )
 	{
-		case SDLK_UP:		(snake->direction == 'D' && snake->snakeSize > 1) ? close("boom") : snake->direction = 'U'; break ;
-		case SDLK_DOWN:		(snake->direction == 'U' && snake->snakeSize > 1) ? close("boom") : snake->direction = 'D'; break ;
-		case SDLK_LEFT:		(snake->direction == 'R' && snake->snakeSize > 1) ? close("boom") : snake->direction = 'L'; break ;
-		case SDLK_RIGHT:	(snake->direction == 'L' && snake->snakeSize > 1) ? close("boom") : snake->direction = 'R'; break ;
+		case SDLK_UP:		(snake->direction != 'D') ? snake->direction = 'U' : 0; break ;
+		case SDLK_DOWN:		(snake->direction != 'U') ? snake->direction = 'D' : 0; break ;
+		case SDLK_LEFT:		(snake->direction != 'R') ? snake->direction = 'L' : 0; break ;
+		case SDLK_RIGHT:	(snake->direction != 'L') ? snake->direction = 'R' : 0; break ;
 		case SDLK_ESCAPE:	close("Exit with escape");
 		case SDLK_1:		return (1);
 		case SDLK_2:		return (2);
@@ -99,8 +97,15 @@ void	SDLGraph::renderText(const char *text) {
     SDL_Surface *surface;
     SDL_Texture *texture;
 
+
+	
+
 	SDL_Color color = { 0, 0, 0, 255 };
     surface = TTF_RenderText_Solid(textFont, text, color);
+    msgRECT.x = 25;
+	msgRECT.y = 10;
+	msgRECT.w = surface->w;
+	msgRECT.h = surface->h;
     texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 
     SDL_FreeSurface(surface);

@@ -14,6 +14,7 @@ public:
 	std::vector<rect>		snakeRECT;
 	char					direction;
 	int						snakeSize;
+	int						snakeStep;
 	rect					appleRECT;
 	rect					pieceRECT;
 

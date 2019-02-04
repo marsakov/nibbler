@@ -1,5 +1,0 @@
-/Users/msakovyc/nibbler/cmake-build-debug/CMakeFiles/libSDL.so.dir
-/Users/msakovyc/nibbler/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/msakovyc/nibbler/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/msakovyc/nibbler/cmake-build-debug/CMakeFiles/libSFML.so.dir
-/Users/msakovyc/nibbler/cmake-build-debug/CMakeFiles/nibbler.dir

@@ -1,1 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -g -dynamiclib -Wl,-headerpad_max_install_names  -o liblibSDL.so.dylib -install_name @rpath/liblibSDL.so.dylib CMakeFiles/libSDL.so.dir/src/SDLGraph.cpp.o 

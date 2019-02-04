@@ -19,7 +19,6 @@ class SDLGraph : public IGraph
 	SDL_Rect				rectForSDL;
 	SDL_Event				event;
 	TTF_Font				*textFont;
-	SDL_Surface				*surfaceMsg;
 	SDL_Texture				*msg;
 
 

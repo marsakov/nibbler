@@ -11,8 +11,9 @@ SFMLGraph::SFMLGraph() {
 }
 
 SFMLGraph::SFMLGraph(int width, int height, Snake *s) {
-	
 	snake = s;
+	snake->snakeStep *= 2;
+	std::cout << "w = " << snake->SCREEN_WIDTH << " h = " << snake->SCREEN_HEIGHT << std::endl;
 	init();
 }
 
@@ -21,6 +22,7 @@ SFMLGraph::SFMLGraph(SFMLGraph &obj) {
 }
 
 SFMLGraph::~SFMLGraph() {
+	snake->snakeStep /= 2;
 	window->close();
 }
 
@@ -37,9 +39,9 @@ void	SFMLGraph::init() {
     squareSprite.setTexture(texture2);
     background.setTexture(texture3);
 
-	appleSprite.setScale(0.1, 0.1);
-	squareSprite.setScale(0.1, 0.1);
-	background.setScale(5, 5);
+	appleSprite.setScale(0.25, 0.25);
+	squareSprite.setScale(0.25, 0.25);
+	background.setScale(3, 3);
 
 }
 
@@ -53,10 +55,10 @@ int		SFMLGraph::close(std::string msg) {
 int		SFMLGraph::move() {
 	switch( event.key.code )
 	{
-		case sf::Keyboard::Up:			(snake->direction == 'D' && snake->snakeSize > 1) ? close("boom") : snake->direction = 'U'; break ;
-		case sf::Keyboard::Down:		(snake->direction == 'U' && snake->snakeSize > 1) ? close("boom") : snake->direction = 'D'; break ;
-		case sf::Keyboard::Left:		(snake->direction == 'R' && snake->snakeSize > 1) ? close("boom") : snake->direction = 'L'; break ;
-		case sf::Keyboard::Right:		(snake->direction == 'L' && snake->snakeSize > 1) ? close("boom") : snake->direction = 'R'; break ;
+		case sf::Keyboard::Up:			(snake->direction != 'D') ? snake->direction = 'U' : 0; break ;
+		case sf::Keyboard::Down:		(snake->direction != 'U') ? snake->direction = 'D' : 0; break ;
+		case sf::Keyboard::Left:		(snake->direction != 'R') ? snake->direction = 'L' : 0; break ;
+		case sf::Keyboard::Right:		(snake->direction != 'L') ? snake->direction = 'R' : 0; break ;
 		case sf::Keyboard::Escape:		close("Exit with escape");
 		case sf::Keyboard::Num1:		return (1);
 		case sf::Keyboard::Num2:		return (2);

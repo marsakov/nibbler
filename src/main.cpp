@@ -3,8 +3,10 @@
 
 int main(int argc, char *argv[])
 {
-	Snake *snake = new Snake(5120/2, 2880/2);
-	Game game(5120/2, 2880/2);
+	int w = std::stoi( argv[1] ) / 50 * 50;
+	int h = std::stoi( argv[2] ) / 50 * 50;
+	Snake *snake = new Snake(w, h);
+	Game game(w, h);
 
 	size_t i = 0;
 	int libNum = 2;

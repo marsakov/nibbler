@@ -3,6 +3,7 @@
 Snake::Snake(int width, int height) {
 	direction = 'R';
 	snakeSize = 1;
+	snakeStep = 50;
 
 	SCREEN_WIDTH = width;
 	SCREEN_HEIGHT = height;
@@ -51,28 +52,28 @@ bool Snake::moveSnake() {
 		{
 			if (snakeRECT[0].y <= 50)
 				return (false);
-			snakeRECT[0].y -= 50;
+			snakeRECT[0].y -= snakeStep;
 			break ;
 		}
 		case 'D':
 		{
 			if (snakeRECT[0].y >= SCREEN_HEIGHT - 100)
 				return (false);
-			snakeRECT[0].y += 50;
+			snakeRECT[0].y += snakeStep;
 			break ;
 		}
 		case 'L':
 		{
 			if (snakeRECT[0].x <= 50)
 				return (false);
-			snakeRECT[0].x -= 50;
+			snakeRECT[0].x -= snakeStep;
 			break ;
 		}
 		case 'R':
 		{
 			if (snakeRECT[0].x >= SCREEN_WIDTH - 100)
 				return (false);
-			snakeRECT[0].x += 50;
+			snakeRECT[0].x += snakeStep;
 			break ;
 		}
 	}
