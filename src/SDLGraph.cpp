@@ -13,8 +13,6 @@ SDLGraph::SDLGraph() {
 
 SDLGraph::SDLGraph(int width, int height, Snake *s) {
 	snake = s;
-	snake->SCREEN_WIDTH /= 2;
-	snake->SCREEN_HEIGHT /= 2;
 	std::cout << "w = " << snake->SCREEN_WIDTH << " h = " << snake->SCREEN_HEIGHT << std::endl;
 	quit = false;
 	init();
@@ -25,8 +23,6 @@ SDLGraph::SDLGraph(SDLGraph &obj) {
 }
 
 SDLGraph::~SDLGraph() {
-	snake->SCREEN_WIDTH *= 2;
-	snake->SCREEN_HEIGHT *= 2;
 	if (appleTexture)
 		SDL_DestroyTexture(appleTexture);
 	if (snakeTexture)
