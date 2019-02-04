@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/msakovyc/nibbler/inc/Game.hpp
+dlfcn.h
+-
+IGraph.hpp
+/Users/msakovyc/nibbler/inc/IGraph.hpp
+Snake.hpp
+/Users/msakovyc/nibbler/inc/Snake.hpp
+
+/Users/msakovyc/nibbler/inc/IGraph.hpp
+Snake.hpp
+/Users/msakovyc/nibbler/inc/Snake.hpp
+
+/Users/msakovyc/nibbler/inc/Rect.hpp
+
+/Users/msakovyc/nibbler/inc/Snake.hpp
+iostream
+-
+vector
+-
+Rect.hpp
+/Users/msakovyc/nibbler/inc/Rect.hpp
+
+/Users/msakovyc/nibbler/src/Game.cpp
+../inc/Game.hpp
+/Users/msakovyc/nibbler/inc/Game.hpp
+
+/Users/msakovyc/nibbler/src/Snake.cpp
+../inc/Snake.hpp
+/Users/msakovyc/nibbler/inc/Snake.hpp
+
+/Users/msakovyc/nibbler/src/main.cpp
+../inc/Game.hpp
+/Users/msakovyc/nibbler/inc/Game.hpp
+

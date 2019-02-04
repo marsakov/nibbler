@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 	Game game(5120/2, 2880/2);
 
 	size_t i = 0;
-	int libNum = 1;
+	int libNum = 2;
 	int newLibNum;
 
 	game.getLib(libNum, snake);

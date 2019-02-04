@@ -37,12 +37,6 @@ void	SFMLGraph::init() {
     squareSprite.setTexture(texture2);
     background.setTexture(texture3);
 
-	snake->pieceRECT.x = 50;
-	snake->pieceRECT.y = 50;
-	snake->pieceRECT.w = 0.1;
-	snake->pieceRECT.h = 0.1;
-
-    snake->snakeRECT.push_back(snake->pieceRECT);
 	appleSprite.setScale(0.1, 0.1);
 	squareSprite.setScale(0.1, 0.1);
 	background.setScale(5, 5);

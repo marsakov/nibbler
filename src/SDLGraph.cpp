@@ -22,29 +22,21 @@ SDLGraph::SDLGraph(SDLGraph &obj) {
 }
 
 SDLGraph::~SDLGraph() {
-	SDL_DestroyTexture(appleTexture);
-	SDL_DestroyTexture(snakeTexture);
-	SDL_DestroyTexture(msg);
+	if (appleTexture)
+		SDL_DestroyTexture(appleTexture);
+	if (snakeTexture)
+		SDL_DestroyTexture(snakeTexture);
+	if (msg)
+		SDL_DestroyTexture(msg);
 	SDL_FreeSurface(surfaceMsg);
 	SDL_DestroyRenderer(gRenderer);
-	SDL_DestroyWindow(window);
 	TTF_CloseFont(textFont);
+	SDL_DestroyWindow(window);
 	TTF_Quit();
 	SDL_Quit();
 }
 
 void	SDLGraph::init() {
-
-	snake->pieceRECT.x = 50;
-	snake->pieceRECT.y = 50;
-	snake->pieceRECT.w = 50;
-	snake->pieceRECT.h = 50;
-	snake->snakeRECT.push_back(snake->pieceRECT);
-
-	snake->appleRECT.x = 0;
-	snake->appleRECT.y = 50;
-	snake->appleRECT.w = 50;
-	snake->appleRECT.h = 50;
 
 	msgRECT.x = 25;
 	msgRECT.y = 10;

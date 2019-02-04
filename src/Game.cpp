@@ -15,9 +15,9 @@ Game::~Game() {
 
 void	Game::closeLib() {
 	std::cout << "closeLib" << std::endl;
-	delete dynLib;
-	dynLib = NULL;
 	destroy(dynLib);
+	// delete dynLib;
+	// dynLib = NULL;
 }
 
 void	Game::getLib(int libNum, Snake *s) {
@@ -25,14 +25,14 @@ void	Game::getLib(int libNum, Snake *s) {
 	switch (libNum){
 		case 1: {
 			ext_library = dlopen("libSDL.so", RTLD_LAZY);
-			// Snake.SCREEN_WIDTH /= 2;
-			// Snake.SCREEN_HEIGHT /= 2;
 			break ;
 		}
-		case 2:
+		case 2: {
 			ext_library = dlopen("libSFML.so", RTLD_LAZY); break ;
-		default :
-			ext_library = dlopen("libSDL.so", RTLD_LAZY); break ;
+		}
+		default : {
+			ext_library = dlopen("libSFML.so", RTLD_LAZY); break ;
+		}
 	}
 	
 	if (!ext_library) {

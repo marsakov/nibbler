@@ -6,6 +6,16 @@ Snake::Snake(int width, int height) {
 
 	SCREEN_WIDTH = width;
 	SCREEN_HEIGHT = height;
+	pieceRECT.x = 50;
+	pieceRECT.y = 50;
+	pieceRECT.w = 50;
+	pieceRECT.h = 50;
+	snakeRECT.push_back(pieceRECT);
+
+	appleRECT.x = 0;
+	appleRECT.y = 50;
+	appleRECT.w = 50;
+	appleRECT.h = 50;
 }
 
 Snake::Snake(Snake &obj) {
