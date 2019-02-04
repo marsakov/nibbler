@@ -2,16 +2,22 @@
 
 Snake::Snake(int width, int height) {
 	direction = 'R';
-	snakeSize = 1;
+	snakeSize = 4;
 	snakeStep = 50;
 
 	SCREEN_WIDTH = width;
 	SCREEN_HEIGHT = height;
-	pieceRECT.x = 50;
-	pieceRECT.y = 50;
+
+	pieceRECT.x = width / 100 * 50 + 100;
+	pieceRECT.y = height / 100 * 50;
 	pieceRECT.w = 50;
 	pieceRECT.h = 50;
 	snakeRECT.push_back(pieceRECT);
+	for (int i = 0; i < 3; i++)
+	{
+		pieceRECT.x -= 50;
+		snakeRECT.push_back(pieceRECT);
+	}
 
 	appleRECT.x = 0;
 	appleRECT.y = 50;

@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 	Game game(w, h);
 
 	size_t i = 0;
-	int libNum = 2;
+	int libNum = 1;
 	int newLibNum;
 
 	game.getLib(libNum, snake);
