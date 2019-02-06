@@ -15,6 +15,7 @@ class Game
 	IGraph			*dynLib;
 	Snake			*snake;
 	bool			menu;
+	bool			start;
 	int				buttonNum;
 
 public:

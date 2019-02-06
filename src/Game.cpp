@@ -1,12 +1,19 @@
 #include "../inc/Game.hpp"
 
 Game::Game() {
-
+	buttonNum = 1;
+	snake = new Snake(1000, 800);
+	libNum = num1;
+	menu = true;
+	start = false;
 }
 
 Game::Game(int w, int h) {
 	snake = new Snake(w, h);
 	libNum = num1;
+	menu = true;
+	start = false;
+	buttonNum = 1;
 }
 
 Game::~Game() {
@@ -56,21 +63,32 @@ void	Game::keyHandle(eKeyType key) {
 		snake->choseDirection(key);
 	else if (menu) {
 		switch (key) {
-			case (up):		(buttonNum == 1) ? buttonNum = 3 : buttonNum--; break;
-			case (down):	(buttonNum == 3) ? buttonNum = 1 : buttonNum++; break;
-			case (escape):	dynLib->close("EXIT"); break;
+			case (up):		(buttonNum == 1) ? buttonNum = 4 : buttonNum--; break;
+			case (down):	(buttonNum == 4) ? buttonNum = 1 : buttonNum++; break;
+			case (left):	(snake->snakeSpeed != 10) ? snake->snakeSpeed-- : 0; break;
+			case (right):	(snake->snakeSpeed != 25) ? snake->snakeSpeed++ : 0; break;
+			case (escape):	menu = false; break;
 			case (enter): {
 				switch (buttonNum) {
-					case 1 : menu = false; break ;
-					case 2 : {
-						int w = snake->SCREEN_WIDTH;
-						int h = snake->SCREEN_HEIGHT;
-						delete snake;
-						snake = new Snake(w, h);
+					case 1 : {
+						menu = false;
+						start = true;
 						break ;
 					}
-					case 3 : dynLib->close("EXIT");
-					break ;
+					case 2 : {
+						menu = false;
+						start = true;
+						int w = snake->SCREEN_WIDTH;
+						int h = snake->SCREEN_HEIGHT;
+						int s = snake->snakeSpeed;
+						delete snake;
+						snake = new Snake(w, h);
+						snake->snakeSpeed = s;
+						closeLib();
+						getLib(libNum);
+						break ;
+					}
+					case 4 : dynLib->close("EXIT"); break ;
 				}
 			}
 			default : break ;
@@ -84,10 +102,9 @@ void	Game::mainCycle() {
 	eKeyType key;
 
 	getLib(libNum);
-	snake->generateApple();
 	while (dynLib->windIsOpen()) {
 
-		if (!menu && (i % 15 == 0 && !snake->moveSnake() )){
+		if (!menu && (i % (15 - (snake->snakeSpeed - 15)) == 0 && !snake->moveSnake() )){
 			std::cout << "snake outside the box" << std::endl;
 			exit(1);
 		}
@@ -103,12 +120,13 @@ void	Game::mainCycle() {
 			exit(1);
 		}
 		if (menu)
-			dynLib->drawMenu();
+			dynLib->drawMenu(buttonNum, start);
 		else
 			dynLib->draw();
 		if ( i == 2000000000 )
 			i = 0;
-		i++;
+		if (!menu)
+			i++;
 	}
 }
 

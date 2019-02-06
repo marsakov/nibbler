@@ -6,8 +6,6 @@ SDLGraph::SDLGraph() {
 	snake->direction = 'R';
 	snake->snakeSize = 1;
 
-	snake->SCREEN_WIDTH = 1000;
-	snake->SCREEN_HEIGHT = 900;
 	init();
 }
 
@@ -90,7 +88,7 @@ eKeyType		SDLGraph::getKey() {
 	return (none);
 }
 
-void	SDLGraph::renderText(const char *text, int x, int y) {
+void	SDLGraph::renderText(const char *text, int x, int y, bool selection) {
 
     SDL_Surface *surface;
     SDL_Texture *texture;
@@ -102,6 +100,12 @@ void	SDLGraph::renderText(const char *text, int x, int y) {
 	msgRECT.w = surface->w;
 	msgRECT.h = surface->h;
     texture = SDL_CreateTextureFromSurface(gRenderer, surface);
+
+    if (selection) {
+		SDL_Rect outlineRect = { x, y, surface->w, surface->h };
+		SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		SDL_RenderDrawRect( gRenderer, &outlineRect );
+	}
 
     SDL_FreeSurface(surface);
     SDL_RenderCopy(gRenderer, texture, NULL, &msgRECT);
@@ -117,21 +121,17 @@ SDL_Rect	SDLGraph::toSDLRect(rect r) {
 	return (sdlR);
 }
 
-void	SDLGraph::drawMenu() {
-
-	// SDL_Rect outlineRect = { SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6, SCREEN_WIDTH * 2 / 3, SCREEN_HEIGHT * 2 / 3 };
-	// SDL_SetRenderDrawColor( gRenderer, 0x00, 0xFF, 0x00, 0xFF );        
-	// SDL_RenderDrawRect( gRenderer, &outlineRect );
-	
+void	SDLGraph::drawMenu(int buttonNum, bool start) {
 
 	SDL_SetRenderDrawColor( gRenderer, 144, 193, 171, 255 );
 	SDL_RenderClear(gRenderer);
 
-
 	SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-	renderText("CONTINUE", snake->SCREEN_WIDTH / 2 - 100, snake->SCREEN_HEIGHT / 2 - 100);
-	renderText("NEW GAME", snake->SCREEN_WIDTH / 2 - 100, snake->SCREEN_HEIGHT / 2);
-	renderText("EXIT", snake->SCREEN_WIDTH / 2 - 100, snake->SCREEN_HEIGHT / 2 + 100);
+	if (start)
+		renderText("CONTINUE", snake->SCREEN_WIDTH / 2 - 50, snake->SCREEN_HEIGHT / 2 - 100, (buttonNum == 1) ? true : false);
+	renderText("NEW GAME", snake->SCREEN_WIDTH / 2 - 50, snake->SCREEN_HEIGHT / 2 - 50, (buttonNum == 2) ? true : false);
+	renderText(("SPEED  " + std::to_string(snake->snakeSpeed)).c_str(), snake->SCREEN_WIDTH / 2 - 50, snake->SCREEN_HEIGHT / 2, (buttonNum == 3) ? true : false);
+	renderText("EXIT", snake->SCREEN_WIDTH / 2 - 50, snake->SCREEN_HEIGHT / 2 + 50, (buttonNum == 4) ? true : false);
 
 	SDL_RenderDrawLine(gRenderer, 50, 50, 50, snake->SCREEN_HEIGHT - 50);
 	SDL_RenderDrawLine(gRenderer, 50, 50, snake->SCREEN_WIDTH - 50, 50);
@@ -160,7 +160,7 @@ void	SDLGraph::draw() {
 	rectForSDL = toSDLRect(snake->appleRECT);
 	SDL_RenderCopy(gRenderer, appleTexture, NULL, &rectForSDL);
 
-	renderText(("SCORE = " + std::to_string(snake->snakeSize)).c_str(), 50, 10);
+	renderText(("SCORE = " + std::to_string(snake->snakeSize)).c_str(), 50, 10, false);
 
 	SDL_RenderPresent(gRenderer);
 }

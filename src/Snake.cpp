@@ -4,6 +4,7 @@ Snake::Snake(int width, int height) {
 	direction = 'R';
 	snakeSize = 4;
 	snakeStep = 50;
+	snakeSpeed = 15;
 
 	SCREEN_WIDTH = width;
 	SCREEN_HEIGHT = height;
@@ -23,6 +24,7 @@ Snake::Snake(int width, int height) {
 	appleRECT.y = 50;
 	appleRECT.w = 50;
 	appleRECT.h = 50;
+	generateApple();
 }
 
 Snake::Snake(Snake &obj) {

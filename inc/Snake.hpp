@@ -29,6 +29,7 @@ public:
 	char					direction;
 	int						snakeSize;
 	int						snakeStep;
+	int						snakeSpeed;
 	rect					appleRECT;
 	rect					pieceRECT;
 

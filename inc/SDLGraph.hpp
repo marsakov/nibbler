@@ -18,7 +18,7 @@ class SDLGraph : public IGraph
 	SDL_Event				event;
 	TTF_Font				*textFont;
 	SDL_Texture				*msg;
-
+	Snake					*snake;
 
 public:
 
@@ -33,12 +33,12 @@ public:
 	virtual int				close(std::string msg);
 	virtual void			init();
 	virtual void			draw();
-	virtual void			drawMenu();
+	virtual void			drawMenu(int buttonNum, bool start);
 	virtual eKeyType		getKey();
 	virtual bool			windIsOpen();
 	virtual eKeyType		handleEvent();
 
 	SDL_Rect				toSDLRect(rect r);
 	
-	void					renderText(const char *text, int x, int y);
+	void					renderText(const char *text, int x, int y, bool selection);
 };
