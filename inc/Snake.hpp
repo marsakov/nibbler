@@ -4,6 +4,20 @@
 #include <vector>
 #include "Rect.hpp"
 
+enum eKeyType
+{
+	up,
+	down,
+	left,
+	right,
+	escape,
+	enter,
+	num1,
+	num2,
+	num3,
+	none
+};
+
 class Snake
 {
 
@@ -22,8 +36,9 @@ public:
 	Snake(Snake &obj);
 	~Snake();
 
+	void	choseDirection(eKeyType key);
 	bool	moveSnake();
 	void	generateApple();
-	bool	checkCollision();	
+	bool	checkCollision();
 
 };

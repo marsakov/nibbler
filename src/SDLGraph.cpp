@@ -1,7 +1,7 @@
 #include "../inc/SDLGraph.hpp"
 
 SDLGraph::SDLGraph() {
-	
+
 	quit = false;
 	snake->direction = 'R';
 	snake->snakeSize = 1;
@@ -11,7 +11,8 @@ SDLGraph::SDLGraph() {
 	init();
 }
 
-SDLGraph::SDLGraph(int width, int height, Snake *s) {
+SDLGraph::SDLGraph(Snake *s) {
+	std::cout << "SDLGraph" << std::endl;
 	snake = s;
 	std::cout << "w = " << snake->SCREEN_WIDTH << " h = " << snake->SCREEN_HEIGHT << std::endl;
 	quit = false;
@@ -73,33 +74,31 @@ int		SDLGraph::close(std::string msg) {
 	return (0);
 }
 
-int		SDLGraph::move() {
+eKeyType		SDLGraph::getKey() {
 	switch( event.key.keysym.sym )
 	{
-		case SDLK_UP:		(snake->direction != 'D') ? snake->direction = 'U' : 0; break ;
-		case SDLK_DOWN:		(snake->direction != 'U') ? snake->direction = 'D' : 0; break ;
-		case SDLK_LEFT:		(snake->direction != 'R') ? snake->direction = 'L' : 0; break ;
-		case SDLK_RIGHT:	(snake->direction != 'L') ? snake->direction = 'R' : 0; break ;
-		case SDLK_ESCAPE:	close("Exit with escape");
-		case SDLK_1:		return (1);
-		case SDLK_2:		return (2);
-		case SDLK_3:		return (3);
+		case SDLK_UP:		return (up);
+		case SDLK_DOWN:		return (down);
+		case SDLK_LEFT:		return (left);
+		case SDLK_RIGHT:	return (right);
+		case SDLK_ESCAPE:	return (escape);
+		case SDLK_RETURN:	return (enter);
+		case SDLK_1:		return (num1);
+		case SDLK_2:		return (num2);
+		case SDLK_3:		return (num3);
 	}
-	return (0);
+	return (none);
 }
 
-void	SDLGraph::renderText(const char *text) {
+void	SDLGraph::renderText(const char *text, int x, int y) {
 
     SDL_Surface *surface;
     SDL_Texture *texture;
 
-
-	
-
 	SDL_Color color = { 0, 0, 0, 255 };
     surface = TTF_RenderText_Solid(textFont, text, color);
-    msgRECT.x = 25;
-	msgRECT.y = 10;
+    msgRECT.x = x;
+	msgRECT.y = y;
 	msgRECT.w = surface->w;
 	msgRECT.h = surface->h;
     texture = SDL_CreateTextureFromSurface(gRenderer, surface);
@@ -116,6 +115,30 @@ SDL_Rect	SDLGraph::toSDLRect(rect r) {
 	sdlR.w = r.w;
 	sdlR.h = r.h;
 	return (sdlR);
+}
+
+void	SDLGraph::drawMenu() {
+
+	// SDL_Rect outlineRect = { SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6, SCREEN_WIDTH * 2 / 3, SCREEN_HEIGHT * 2 / 3 };
+	// SDL_SetRenderDrawColor( gRenderer, 0x00, 0xFF, 0x00, 0xFF );        
+	// SDL_RenderDrawRect( gRenderer, &outlineRect );
+	
+
+	SDL_SetRenderDrawColor( gRenderer, 144, 193, 171, 255 );
+	SDL_RenderClear(gRenderer);
+
+
+	SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	renderText("CONTINUE", snake->SCREEN_WIDTH / 2 - 100, snake->SCREEN_HEIGHT / 2 - 100);
+	renderText("NEW GAME", snake->SCREEN_WIDTH / 2 - 100, snake->SCREEN_HEIGHT / 2);
+	renderText("EXIT", snake->SCREEN_WIDTH / 2 - 100, snake->SCREEN_HEIGHT / 2 + 100);
+
+	SDL_RenderDrawLine(gRenderer, 50, 50, 50, snake->SCREEN_HEIGHT - 50);
+	SDL_RenderDrawLine(gRenderer, 50, 50, snake->SCREEN_WIDTH - 50, 50);
+	SDL_RenderDrawLine(gRenderer, snake->SCREEN_WIDTH - 50, 50, snake->SCREEN_WIDTH - 50, snake->SCREEN_HEIGHT - 50);
+	SDL_RenderDrawLine(gRenderer, 50, snake->SCREEN_HEIGHT - 50, snake->SCREEN_WIDTH - 50, snake->SCREEN_HEIGHT - 50);
+
+	SDL_RenderPresent(gRenderer);
 }
 
 void	SDLGraph::draw() {
@@ -137,17 +160,18 @@ void	SDLGraph::draw() {
 	rectForSDL = toSDLRect(snake->appleRECT);
 	SDL_RenderCopy(gRenderer, appleTexture, NULL, &rectForSDL);
 
-	renderText(("SCORE = " + std::to_string(snake->snakeSize)).c_str());
+	renderText(("SCORE = " + std::to_string(snake->snakeSize)).c_str(), 50, 10);
 
 	SDL_RenderPresent(gRenderer);
 }
 
-int		SDLGraph::handleEvent() {
-	int num = 0;
+eKeyType		SDLGraph::handleEvent() {
+	eKeyType num = none;
+
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 			case SDL_KEYDOWN: {
-				if ( (num = move()) != 0)
+				if ( (num = getKey()) != none)
 					return (num);
 				break ;
 			}
@@ -155,15 +179,15 @@ int		SDLGraph::handleEvent() {
 				close("exit");
 		}
 	}
-	return (0);
+	return (none);
 }
 
 bool	SDLGraph::windIsOpen() {
 	return (!quit);
 }
 
-extern "C" IGraph *createGraph(int x, int y, Snake *s) {
-	return (new SDLGraph(x, y, s));
+extern "C" IGraph *createGraph(Snake *s) {
+	return (new SDLGraph(s));
 }
 
 extern "C"	void destroyGraph(IGraph *graph) {

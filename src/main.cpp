@@ -3,38 +3,29 @@
 
 int main(int argc, char *argv[])
 {
-	int w = std::stoi( argv[1] ) / 50 * 50;
-	int h = std::stoi( argv[2] ) / 50 * 50;
-	Snake *snake = new Snake(w, h);
-	Game game(w, h);
+	int w;
+	int h;
 
-	size_t i = 0;
-	int libNum = 1;
-	int newLibNum;
-
-	game.getLib(libNum, snake);
-	snake->generateApple();
-	while (game.dynLib->windIsOpen()) {
-		if (i % 15 == 0) {
-			if (!snake->moveSnake()){
-				std::cout << "snake outside the box" << std::endl;
-				exit(1);
-			}
-		}
-		if (i % 750 == 0 || snake->appleRECT.x == -1000)
-			snake->generateApple();
-		newLibNum = game.dynLib->handleEvent();
-		if (newLibNum && newLibNum != libNum) {
-			game.closeLib();
-			game.getLib(newLibNum, snake);
-		}
-		if (!snake->checkCollision()) {
-			std::cout << "boom" << std::endl;
-			exit(1);
-		}
-		game.dynLib->draw();
-		i++;
+	if (argc != 3) {
+		std::cout << "Usage:\n./ nibbler [width] [height]\nsize must be integer" << std::endl;
+		exit(1);
+	}
+	try {
+		w = std::stoi( argv[1] ) / 50 * 50;
+		h = std::stoi( argv[2] ) / 50 * 50;
+	}
+	catch (std::exception e) {
+		std::cout << "Usage:\n./ nibbler [width] [height]\nsize must be integer" << std::endl;
+		exit(1);
+	}
+	if (w < 1000 || w > 2500 || h < 800 || h > 1300 ) {
+		std::cout << "1000 < width < 2500\n800 < height < 1300" << std::endl;
+		exit(1);
 	}
 
+	Game game(w, h);
+
+	game.mainCycle();
+	
 	return (0);
 }

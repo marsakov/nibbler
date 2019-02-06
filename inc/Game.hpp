@@ -6,21 +6,25 @@
 
 class Game
 {
-	int				SCREEN_WIDTH;
-	int				SCREEN_HEIGHT;
+	eKeyType		libNum;
 	void			*ext_library;
-	typedef IGraph*	create_t(int, int, Snake*);
+	typedef IGraph*	create_t(Snake*);
 	typedef void	destroy_t(IGraph*);
 	create_t*		creat;
 	destroy_t*		destroy;
+	IGraph			*dynLib;
+	Snake			*snake;
+	bool			menu;
+	int				buttonNum;
 
 public:
-	IGraph			*dynLib;
 
 	Game();
 	Game(int w, int h);
 	~Game();
 	
-	void	getLib(int libNum, Snake *s);
+	void	keyHandle(eKeyType key);
+	void	getLib(eKeyType key);
 	void	closeLib();
+	void	mainCycle();
 };

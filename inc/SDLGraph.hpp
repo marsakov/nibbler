@@ -9,8 +9,6 @@
 
 class SDLGraph : public IGraph
 {
-
-
 	SDL_Window				*window;
 	SDL_Renderer			*gRenderer;
 	SDL_Texture 			*snakeTexture;
@@ -28,18 +26,19 @@ public:
 
 	SDLGraph();
 	SDLGraph(SDLGraph &obj);
-	SDLGraph(int width, int height, Snake *s);
+	SDLGraph(Snake *s);
 	virtual ~SDLGraph();
 
 
-	virtual int		close(std::string msg);
-	virtual void	init();
-	virtual void	draw();
-	virtual int		move();
-	virtual bool	windIsOpen();
-	virtual int		handleEvent();
+	virtual int				close(std::string msg);
+	virtual void			init();
+	virtual void			draw();
+	virtual void			drawMenu();
+	virtual eKeyType		getKey();
+	virtual bool			windIsOpen();
+	virtual eKeyType		handleEvent();
 
-	SDL_Rect		toSDLRect(rect r);
+	SDL_Rect				toSDLRect(rect r);
 	
-	void			renderText(const char *text);
+	void					renderText(const char *text, int x, int y);
 };

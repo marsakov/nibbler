@@ -33,7 +33,18 @@ Snake::~Snake() {
 
 }
 
-bool Snake::moveSnake() {
+void	Snake::choseDirection(eKeyType key) {
+	switch( key )
+	{
+		case up:		(direction != 'D') ? direction = 'U' : 0; break ;
+		case down:		(direction != 'U') ? direction = 'D' : 0; break ;
+		case left:		(direction != 'R') ? direction = 'L' : 0; break ;
+		case right:		(direction != 'L') ? direction = 'R' : 0; break ;
+		default : break ; 
+	}
+}
+
+bool 	Snake::moveSnake() {
 
 	bool moveLastPiece = true;
 	
