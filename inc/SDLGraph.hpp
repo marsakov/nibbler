@@ -18,22 +18,24 @@ class SDLGraph : public IGraph
 	SDL_Event				event;
 	TTF_Font				*textFont;
 	SDL_Texture				*msg;
-	Snake					*snake;
+	Snake					*snake1;
+	Snake					*snake2;
 
 public:
 
-	bool			quit;
+	bool					quit;
+	bool					multiplayer;
 
 	SDLGraph();
 	SDLGraph(SDLGraph &obj);
-	SDLGraph(Snake *s);
+	SDLGraph(Snake *s1, Snake *s2);
 	virtual ~SDLGraph();
 
 
 	virtual int				close(std::string msg);
 	virtual void			init();
-	virtual void			draw();
-	virtual void			drawMenu(int buttonNum, bool start);
+	virtual void			draw(rect appleRect);
+	virtual void			drawMenu(int buttonNum, bool start, int speed);
 	virtual eKeyType		getKey();
 	virtual bool			windIsOpen();
 	virtual eKeyType		handleEvent();

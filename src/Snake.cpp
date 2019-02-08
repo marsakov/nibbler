@@ -2,29 +2,23 @@
 
 Snake::Snake(int width, int height) {
 	direction = 'R';
-	snakeSize = 4;
-	snakeStep = 50;
-	snakeSpeed = 15;
+	size = 4;
+	step = 50;
 
-	SCREEN_WIDTH = width;
-	SCREEN_HEIGHT = height;
+	screenWidth = width;
+	screenHeiht = height;
 
-	pieceRECT.x = width / 100 * 50 + 100;
-	pieceRECT.y = height / 100 * 50;
-	pieceRECT.w = 50;
-	pieceRECT.h = 50;
-	snakeRECT.push_back(pieceRECT);
+	pieceRect.x = width / 100 * 50 + 50;
+	pieceRect.y = height / 100 * 50;
+	pieceRect.w = 50;
+	pieceRect.h = 50;
+	snakeRect.push_back(pieceRect);
 	for (int i = 0; i < 3; i++)
 	{
-		pieceRECT.x -= 50;
-		snakeRECT.push_back(pieceRECT);
+		pieceRect.x -= 50;
+		snakeRect.push_back(pieceRect);
 	}
 
-	appleRECT.x = 0;
-	appleRECT.y = 50;
-	appleRECT.w = 50;
-	appleRECT.h = 50;
-	generateApple();
 }
 
 Snake::Snake(Snake &obj) {
@@ -50,84 +44,54 @@ bool 	Snake::moveSnake() {
 
 	bool moveLastPiece = true;
 	
-	if (snakeRECT.size() != snakeSize) {
+	if (snakeRect.size() != size) {
 		moveLastPiece = false;
-		pieceRECT.x = snakeRECT[snakeRECT.size() - 1].x;
-		pieceRECT.y = snakeRECT[snakeRECT.size() - 1].y;
-		pieceRECT.w = snakeRECT[snakeRECT.size() - 1].w;
-		pieceRECT.h = snakeRECT[snakeRECT.size() - 1].h;
+		pieceRect.x = snakeRect[snakeRect.size() - 1].x;
+		pieceRect.y = snakeRect[snakeRect.size() - 1].y;
+		pieceRect.w = snakeRect[snakeRect.size() - 1].w;
+		pieceRect.h = snakeRect[snakeRect.size() - 1].h;
 	}
 
-	for (int i = snakeRECT.size() - 1; i > 0; i--) {
-		snakeRECT[i].x = snakeRECT[i - 1].x;
-		snakeRECT[i].y = snakeRECT[i - 1].y;
-		snakeRECT[i].w = snakeRECT[i - 1].w;
-		snakeRECT[i].h = snakeRECT[i - 1].h;
+	for (int i = snakeRect.size() - 1; i > 0; i--) {
+		snakeRect[i].x = snakeRect[i - 1].x;
+		snakeRect[i].y = snakeRect[i - 1].y;
+		snakeRect[i].w = snakeRect[i - 1].w;
+		snakeRect[i].h = snakeRect[i - 1].h;
 	}
 
 	switch (direction)
 	{
 		case 'U':
 		{
-			if (snakeRECT[0].y <= 50)
+			if (snakeRect[0].y <= 50)
 				return (false);
-			snakeRECT[0].y -= snakeStep;
+			snakeRect[0].y -= step;
 			break ;
 		}
 		case 'D':
 		{
-			if (snakeRECT[0].y >= SCREEN_HEIGHT - 100)
+			if (snakeRect[0].y >= screenHeiht - 100)
 				return (false);
-			snakeRECT[0].y += snakeStep;
+			snakeRect[0].y += step;
 			break ;
 		}
 		case 'L':
 		{
-			if (snakeRECT[0].x <= 50)
+			if (snakeRect[0].x <= 50)
 				return (false);
-			snakeRECT[0].x -= snakeStep;
+			snakeRect[0].x -= step;
 			break ;
 		}
 		case 'R':
 		{
-			if (snakeRECT[0].x >= SCREEN_WIDTH - 100)
+			if (snakeRect[0].x >= screenWidth - 100)
 				return (false);
-			snakeRECT[0].x += snakeStep;
+			snakeRect[0].x += step;
 			break ;
 		}
 	}
 
 	if (!moveLastPiece)
-		snakeRECT.push_back(pieceRECT);
-	return (true);
-}
-
-void	Snake::generateApple() {
-	bool noCollision = false;
-
-	while (!noCollision) 
-	{
-		appleRECT.x = (rand() % (SCREEN_WIDTH / 100 - 1) + 1) * 100;
-		appleRECT.y = (rand() % (SCREEN_HEIGHT / 100 - 1) + 1) * 100;
-		noCollision = true;
-		for (int i = 0; i < snakeRECT.size(); i++)
-			if (snakeRECT[i].x == appleRECT.x && snakeRECT[i].y == appleRECT.y)
-				noCollision = false;
-	}
-	std::cout << "APPLE x = " << appleRECT.x << " y = " << appleRECT.y << std::endl;
-}
-
-bool	Snake::checkCollision() {
-
-	if (snakeRECT[0].x == appleRECT.x && snakeRECT[0].y == appleRECT.y)
-	{
-		appleRECT.x = -1000;
-		appleRECT.y = -1000;
-		snakeSize++;
-		std::cout << "snakeSize = " << snakeSize << std::endl;
-	}
-	for (int i = 1; i < snakeRECT.size(); i++)
-		if (snakeRECT[0].x == snakeRECT[i].x && snakeRECT[0].y == snakeRECT[i].y)
-			return (false);
+		snakeRect.push_back(pieceRect);
 	return (true);
 }

@@ -2,6 +2,7 @@
 
 #include "IGraph.hpp"
 #include <SFML/Graphics.hpp>
+#include <algorithm>
 
 class SFMLGraph : public IGraph
 {
@@ -19,21 +20,23 @@ class SFMLGraph : public IGraph
 	sf::Sprite				background;
 	sf::RenderWindow		*window;
 	sf::Event				event;
-	Snake					*snake;
+	Snake					*snake1;
+	Snake					*snake2;
 
 public:
 
-	bool			quit;
+	bool					quit;
+	bool					multiplayer;
 
 	SFMLGraph();
 	SFMLGraph(SFMLGraph &obj);
-	SFMLGraph(Snake *s);
+	SFMLGraph(Snake *s1, Snake *s2);
 	virtual ~SFMLGraph();
 
 	virtual int				close(std::string msg);
 	virtual void			init();
-	virtual void			draw();
-	virtual void			drawMenu(int buttonNum, bool start);
+	virtual void			draw(rect appleRect);
+	virtual void			drawMenu(int buttonNum, bool start, int speed);
 	virtual eKeyType		getKey();
 	virtual bool			windIsOpen();
 	virtual eKeyType		handleEvent();

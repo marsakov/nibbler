@@ -2,7 +2,16 @@
 
 #include <iostream>
 #include <vector>
-#include "Rect.hpp"
+
+typedef struct	rect
+{
+	int		x;
+	int		y;
+	double	w;
+	double	h;
+
+}				rect;
+
 
 enum eKeyType
 {
@@ -22,16 +31,13 @@ class Snake
 {
 
 public:
-	int						SCREEN_WIDTH;
-	int						SCREEN_HEIGHT;
-
-	std::vector<rect>		snakeRECT;
+	int						screenWidth;
+	int						screenHeiht;
+	std::vector<rect>		snakeRect;
 	char					direction;
-	int						snakeSize;
-	int						snakeStep;
-	int						snakeSpeed;
-	rect					appleRECT;
-	rect					pieceRECT;
+	int						size;
+	int						step;
+	rect					pieceRect;
 
 	Snake(int width, int height);
 	Snake(Snake &obj);
@@ -39,7 +45,5 @@ public:
 
 	void	choseDirection(eKeyType key);
 	bool	moveSnake();
-	void	generateApple();
-	bool	checkCollision();
 
 };

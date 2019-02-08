@@ -1,19 +1,25 @@
 #include "../inc/Game.hpp"
 
 Game::Game() {
-	buttonNum = 1;
-	snake = new Snake(1000, 800);
+	snake1 = new Snake(1000, 800);
+	snake2 = new Snake(1000, 800);
 	libNum = num1;
+	buttonNum = 1;
 	menu = true;
 	start = false;
+	multiplayer = false;
+	speed = 15;
 }
 
 Game::Game(int w, int h) {
-	snake = new Snake(w, h);
+	snake1 = new Snake(w, h);
+	snake2 = new Snake(w, h);
 	libNum = num1;
+	buttonNum = 1;
 	menu = true;
 	start = false;
-	buttonNum = 1;
+	multiplayer = false;
+	speed = 15;
 }
 
 Game::~Game() {
@@ -47,7 +53,40 @@ void	Game::getLib(eKeyType key) {
 	creat = (create_t*)dlsym(ext_library,"createGraph");
 	destroy = (destroy_t*)dlsym(ext_library,"destroyGraph");
 
-	dynLib = creat(snake);
+	dynLib = creat(snake1, snake2);
+	if (multiplayer)
+	{
+		dynLib->multiplayer = true;
+		std::cout << "multiplayer on" << std::endl;
+	}
+	else
+	{
+		dynLib->multiplayer = false;
+		std::cout << "multiplayer OFF" << std::endl;
+	}
+}
+
+bool	Game::newGame() {
+
+	Snake *newSnake = new Snake(snake1->screenWidth, snake1->screenHeiht);
+	delete snake1;
+	snake1 = newSnake;
+
+	if (multiplayer) {
+		start = false;
+		newSnake = new Snake(snake1->screenWidth, snake1->screenHeiht);
+		delete snake2;
+		snake2 = newSnake;
+
+		for (int i = 0; i < 4; i++)
+			snake2->snakeRect[i].y += 100;
+
+	}
+
+	closeLib();
+	getLib(libNum);
+
+	return (true);
 }
 
 void	Game::keyHandle(eKeyType key) {
@@ -60,13 +99,13 @@ void	Game::keyHandle(eKeyType key) {
 	else if (!menu && key == escape)
 		menu = true;
 	else if (!menu && key >= up && key <= right)
-		snake->choseDirection(key);
+		snake1->choseDirection(key);
 	else if (menu) {
 		switch (key) {
 			case (up):		(buttonNum == 1) ? buttonNum = 4 : buttonNum--; break;
 			case (down):	(buttonNum == 4) ? buttonNum = 1 : buttonNum++; break;
-			case (left):	(snake->snakeSpeed != 10) ? snake->snakeSpeed-- : 0; break;
-			case (right):	(snake->snakeSpeed != 25) ? snake->snakeSpeed++ : 0; break;
+			case (left):	(speed != 10) ? speed-- : 0; break;
+			case (right):	(speed != 25) ? speed++ : 0; break;
 			case (escape):	menu = false; break;
 			case (enter): {
 				switch (buttonNum) {
@@ -76,17 +115,21 @@ void	Game::keyHandle(eKeyType key) {
 						break ;
 					}
 					case 2 : {
+						newGame();
 						menu = false;
 						start = true;
-						int w = snake->SCREEN_WIDTH;
-						int h = snake->SCREEN_HEIGHT;
-						int s = snake->snakeSpeed;
-						delete snake;
-						snake = new Snake(w, h);
-						snake->snakeSpeed = s;
-						closeLib();
-						getLib(libNum);
 						break ;
+					}
+					case 3 : {
+						if (multiplayer) {
+							multiplayer = false;
+							dynLib->multiplayer = false;
+						}
+						else {
+							multiplayer = true;
+							dynLib->multiplayer = true;
+						}
+						break; 
 					}
 					case 4 : dynLib->close("EXIT"); break ;
 				}
@@ -96,33 +139,92 @@ void	Game::keyHandle(eKeyType key) {
 	}
 }
 
+void	Game::generateApple() {
+	bool noCollision = false;
+
+	while (!noCollision) 
+	{
+		appleRect.x = (rand() % (snake1->screenWidth / 100 - 1) + 1) * 100;
+		appleRect.y = (rand() % (snake1->screenHeiht / 100 - 1) + 1) * 100;
+		noCollision = true;
+		for (int i = 0; i < snake1->snakeRect.size(); i++)
+			if (snake1->snakeRect[i].x == appleRect.x && snake1->snakeRect[i].y == appleRect.y)
+				noCollision = false;
+		if (multiplayer) {
+			for (int i = 0; i < snake2->snakeRect.size(); i++)
+				if (snake2->snakeRect[i].x == appleRect.x && snake2->snakeRect[i].y == appleRect.y)
+					noCollision = false;
+		}
+	}
+	std::cout << "APPLE x = " << appleRect.x << " y = " << appleRect.y << std::endl;
+}
+
+bool	Game::checkCollision() {
+
+	if (snake1->snakeRect[0].x == appleRect.x && snake1->snakeRect[0].y == appleRect.y)
+	{
+		appleRect.x = -1000;
+		appleRect.y = -1000;
+		snake1->size++;
+		std::cout << "snake1->size = " << snake1->size << std::endl;
+	}
+	else if (multiplayer && snake2->snakeRect[0].x == appleRect.x && snake2->snakeRect[0].y == appleRect.y) {
+		appleRect.x = -1000;
+		appleRect.y = -1000;
+		snake2->size++;
+		std::cout << "snake2->size = " << snake2->size << std::endl;
+	}
+
+	for (int i = 1; i < snake1->snakeRect.size(); i++) {
+		if (snake1->snakeRect[0].x == snake1->snakeRect[i].x && snake1->snakeRect[0].y == snake1->snakeRect[i].y)
+			return (false);
+		else if (multiplayer && snake2->snakeRect[0].x == snake1->snakeRect[i].x && snake2->snakeRect[0].y == snake1->snakeRect[i].y)
+			snake1->snakeRect.resize(i + 1);
+	}
+
+	if (multiplayer) {
+		for (int i = 1; i < snake2->snakeRect.size(); i++) {
+			if (snake2->snakeRect[0].x == snake2->snakeRect[i].x && snake2->snakeRect[0].y == snake2->snakeRect[i].y)
+				return (false);
+			else if (multiplayer && snake1->snakeRect[0].x == snake2->snakeRect[i].x && snake1->snakeRect[0].y == snake2->snakeRect[i].y)
+				snake2->snakeRect.resize(i + 1);
+		}
+	}
+	return (true);
+}
 
 void	Game::mainCycle() {
 	size_t i = 0;
 	eKeyType key;
 
+	generateApple();
 	getLib(libNum);
 	while (dynLib->windIsOpen()) {
 
-		if (!menu && (i % (15 - (snake->snakeSpeed - 15)) == 0 && !snake->moveSnake() )){
+		if (!menu && (i % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){
 			std::cout << "snake outside the box" << std::endl;
-			exit(1);
+			usleep(1000000);
+			start = false;
+			menu = true;
 		}
-		if (!menu && (i % 750 == 0 || snake->appleRECT.x == -1000))
-			snake->generateApple();
+		if (!menu && (i % 750 == 0 || appleRect.x == -1000))
+			generateApple();
 
 		key = dynLib->handleEvent();
 		if (key != none)
 			keyHandle(key);
 
-		if (!menu && !snake->checkCollision()) {
+		if (!menu && !checkCollision()) {
 			std::cout << "boom" << std::endl;
-			exit(1);
+			usleep(1000000);
+			start = false;
+			menu = true;
 		}
+
 		if (menu)
-			dynLib->drawMenu(buttonNum, start);
+			dynLib->drawMenu(buttonNum, start, speed);
 		else
-			dynLib->draw();
+			dynLib->draw(appleRect);
 		if ( i == 2000000000 )
 			i = 0;
 		if (!menu)
