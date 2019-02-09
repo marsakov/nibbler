@@ -1,7 +1,7 @@
 #include "../inc/SFMLGraph.hpp"
 
 SFMLGraph::SFMLGraph() {
-	
+	key = none;
 	snake1->direction = 'R';
 	snake1->size = 1;
 	snake1->screenWidth = 1000;
@@ -10,6 +10,7 @@ SFMLGraph::SFMLGraph() {
 }
 
 SFMLGraph::SFMLGraph(Snake *s1, Snake *s2) {
+	key = none;
 	std::cout << "SFMLGraph" << std::endl;
 	snake1 = s1;
 	snake2 = s2;
@@ -24,6 +25,11 @@ SFMLGraph::SFMLGraph(SFMLGraph &obj) {
 SFMLGraph::~SFMLGraph() {
 	window->close();
 }
+
+void		SFMLGraph::setMultiplayer(bool m) { multiplayer = m ;}
+eKeyType	SFMLGraph::getKey() { return (key);}
+void		SFMLGraph::setKey(eKeyType k) { key = k; }
+
 
 void		SFMLGraph::init() {
 	
@@ -68,21 +74,24 @@ int			SFMLGraph::close(std::string msg) {
 	return (0);
 }
 
-eKeyType	SFMLGraph::getKey() {
+void		SFMLGraph::setKeyDown() {
 	switch( event.key.code )
 	{
-		case sf::Keyboard::Up:			return (up);
-		case sf::Keyboard::Down:		return (down);
-		case sf::Keyboard::Left:		return (left);
-		case sf::Keyboard::Right:		return (right);
-		case sf::Keyboard::Escape:		return (escape);
-		case sf::Keyboard::Return:		return (enter);
-		case sf::Keyboard::Num1:		return (num1);
-		case sf::Keyboard::Num2:		return (num2);
-		case sf::Keyboard::Num3:		return (num3);
+		case sf::Keyboard::W:			{ key = w; break ; }
+		case sf::Keyboard::S:			{ key = s; break ; }
+		case sf::Keyboard::A:			{ key = a; break ; }
+		case sf::Keyboard::D:			{ key = d; break ; }
+		case sf::Keyboard::Up:			{ key = up; break ; }
+		case sf::Keyboard::Down:		{ key = down; break ; }
+		case sf::Keyboard::Left:		{ key = left; break ; }
+		case sf::Keyboard::Right:		{ key = right; break ; }
+		case sf::Keyboard::Escape:		{ key = escape; break ; }
+		case sf::Keyboard::Return:		{ key = enter; break ; }
+		case sf::Keyboard::Num1:		{ key = num1; break ; }
+		case sf::Keyboard::Num2:		{ key = num2; break ; }
+		case sf::Keyboard::Num3:		{ key = num3; break ; }
 		default: break;
 	}
-	return (none);
 }
 
 void		SFMLGraph::renderText(std::string textString, int x, int y, bool selection) {
@@ -109,7 +118,7 @@ void		SFMLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	if (start)
 		renderText("CONTINUE", snake1->screenWidth - 100, snake1->screenHeiht - 200, (buttonNum == 1) ? true : false);
 	renderText("NEW GAME", snake1->screenWidth - 100, snake1->screenHeiht - 100, (buttonNum == 2) ? true : false);
-	renderText(std::string("MULTIPLAYER  [") + (multiplayer ? "ON]" : "OFF]"), snake1->screenWidth - 100, snake1->screenHeiht, (buttonNum == 3) ? true : false);
+	renderText(std::string("MULTIPLAYER ") + (multiplayer ? "ON" : "OFF"), snake1->screenWidth - 100, snake1->screenHeiht, (buttonNum == 3) ? true : false);
 	renderText("EXIT", snake1->screenWidth - 100, snake1->screenHeiht + 100, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), snake1->screenWidth - 100, snake1->screenHeiht - 600, false);
 
@@ -150,23 +159,17 @@ void		SFMLGraph::draw(rect appleRect) {
 	window->display();
 }
 
-eKeyType	SFMLGraph::handleEvent() {
-	eKeyType num;
+void	SFMLGraph::handleEvent() {
 
 	while (window->pollEvent(event)) {
 		switch (event.type) {
 			case sf::Event::Closed:
 				window->close(); break;
 			case sf::Event::KeyPressed:
-			{
-				if ( (num = getKey()) != none)
-					return (num);
-				break;
-			}
+				setKeyDown(); break;
 			default : break ; 
 		}
 	}
-	return (none);
 }
 
 bool	SFMLGraph::windIsOpen() {

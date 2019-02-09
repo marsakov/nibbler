@@ -1,7 +1,7 @@
 #include "../inc/SDLGraph.hpp"
 
 SDLGraph::SDLGraph() {
-
+	key = none;
 	quit = false;
 	snake1->direction = 'R';
 	snake1->size = 1;
@@ -12,6 +12,7 @@ SDLGraph::SDLGraph(Snake *s1, Snake *s2) {
 	std::cout << "SDLGraph" << std::endl;
 	snake1 = s1;
 	snake2 = s2;
+	key = none;
 	std::cout << "w = " << snake1->screenWidth << " h = " << snake1->screenHeiht << std::endl;
 	quit = false;
 	init();
@@ -24,14 +25,21 @@ SDLGraph::SDLGraph(SDLGraph &obj) {
 SDLGraph::~SDLGraph() {
 	if (appleTexture)
 		SDL_DestroyTexture(appleTexture);
-	if (snakeTexture)
-		SDL_DestroyTexture(snakeTexture);
+	if (snake1Texture)
+		SDL_DestroyTexture(snake1Texture);
+	if (snake2Texture)
+		SDL_DestroyTexture(snake2Texture);
 	TTF_CloseFont(textFont);
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(window);
 	TTF_Quit();
 	SDL_Quit();
 }
+
+void		SDLGraph::setMultiplayer(bool m) { multiplayer = m; }
+eKeyType	SDLGraph::getKey() { return (key); }
+void		SDLGraph::setKey(eKeyType k) { key = k; }
+
 
 void		SDLGraph::init() {
 
@@ -51,9 +59,10 @@ void		SDLGraph::init() {
 
 	SDL_SetRenderDrawColor( gRenderer, 144, 193, 171, 255 );
 
-	snakeTexture = IMG_LoadTexture(gRenderer, "resources/square.png");
-	appleTexture = IMG_LoadTexture(gRenderer, "resources/apple.png");
-	if (!snakeTexture || !appleTexture)
+	snake1Texture = IMG_LoadTexture(gRenderer, "resources/square.png");
+	snake2Texture = IMG_LoadTexture(gRenderer, "resources/square1.png");
+	appleTexture = IMG_LoadTexture(gRenderer, "resources/apple1.png");
+	if (!snake1Texture || !appleTexture || !snake2Texture)
 		close("Snake1 or appleTexture image could not load");
 
 	textFont = TTF_OpenFont("resources/SEASRN.ttf", 24);
@@ -71,20 +80,24 @@ int			SDLGraph::close(std::string msg) {
 	return (0);
 }
 
-eKeyType	SDLGraph::getKey() {
+void		SDLGraph::setKeyDown() {
 	switch( event.key.keysym.sym )
 	{
-		case SDLK_UP:		return (up);
-		case SDLK_DOWN:		return (down);
-		case SDLK_LEFT:		return (left);
-		case SDLK_RIGHT:	return (right);
-		case SDLK_ESCAPE:	return (escape);
-		case SDLK_RETURN:	return (enter);
-		case SDLK_1:		return (num1);
-		case SDLK_2:		return (num2);
-		case SDLK_3:		return (num3);
+		case SDLK_w:		{ key = w; break; }
+		case SDLK_s:		{ key = s; break; }
+		case SDLK_a:		{ key = a; break; }
+		case SDLK_d:		{ key = d; break; }
+		case SDLK_UP:		{ key = up; break; }
+		case SDLK_DOWN:		{ key = down; break; }
+		case SDLK_LEFT:		{ key = left; break; }
+		case SDLK_RIGHT:	{ key = right; break; }
+		case SDLK_ESCAPE:	{ key = escape; break; }
+		case SDLK_RETURN:	{ key = enter; break; }
+		case SDLK_1:		{ key = num1; break; }
+		case SDLK_2:		{ key = num2; break; }
+		case SDLK_3:		{ key = num3; break; }
+		default:			{ key = none; break; }
 	}
-	return (none);
 }
 
 void		SDLGraph::renderText(const char *text, int x, int y, bool selection) {
@@ -129,7 +142,7 @@ void		SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	if (start)
 		renderText("CONTINUE", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 100, (buttonNum == 1) ? true : false);
 	renderText("NEW GAME", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 50, (buttonNum == 2) ? true : false);
-	renderText((std::string("MULTIPLAYER  [") + (multiplayer ? "ON]" : "OFF]")).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, (buttonNum == 3) ? true : false);
+	renderText((std::string("MULTIPLAYER ") + (multiplayer ? "ON" : "OFF")).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, (buttonNum == 3) ? true : false);
 	renderText("EXIT", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 + 50, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 300, false);
 
@@ -153,42 +166,36 @@ void		SDLGraph::draw(rect appleRect) {
 	SDL_RenderDrawLine(gRenderer, snake1->screenWidth - 50, 50, snake1->screenWidth - 50, snake1->screenHeiht - 50);
 	SDL_RenderDrawLine(gRenderer, 50, snake1->screenHeiht - 50, snake1->screenWidth - 50, snake1->screenHeiht - 50);
 	
-	for (int i = 0; i < snake1->snakeRect.size(); i++) {
-		rectForSDL = toSDLRect(snake1->snakeRect[i]);
-		SDL_RenderCopy(gRenderer, snakeTexture, NULL, &rectForSDL);
-	}
-
-	if (multiplayer) {
-		for (int i = 0; i < snake2->snakeRect.size(); i++) {
-			rectForSDL = toSDLRect(snake2->snakeRect[i]);
-			SDL_RenderCopy(gRenderer, snakeTexture, NULL, &rectForSDL);
-		}
-		renderText(("SCORE = " + std::to_string(snake1->size)).c_str(), snake1->screenWidth - 250, 10, false);
-	}
-
 	rectForSDL = toSDLRect(appleRect);
 	SDL_RenderCopy(gRenderer, appleTexture, NULL, &rectForSDL);
 
 	renderText(("SCORE = " + std::to_string(snake1->size)).c_str(), 50, 10, false);
 
+	for (int i = 0; i < snake1->snakeRect.size(); i++) {
+		rectForSDL = toSDLRect(snake1->snakeRect[i]);
+		SDL_RenderCopy(gRenderer, snake1Texture, NULL, &rectForSDL);
+	}
+
+	if (multiplayer) {
+		for (int i = 0; i < snake2->snakeRect.size(); i++) {
+			rectForSDL = toSDLRect(snake2->snakeRect[i]);
+			SDL_RenderCopy(gRenderer, snake2Texture, NULL, &rectForSDL);
+		}
+		renderText(("SCORE = " + std::to_string(snake2->size)).c_str(), snake2->screenWidth - 250, 10, false);
+	}
+
 	SDL_RenderPresent(gRenderer);
 }
 
-eKeyType	SDLGraph::handleEvent() {
-	eKeyType num = none;
-
+void	SDLGraph::handleEvent() {
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
-			case SDL_KEYDOWN: {
-				if ( (num = getKey()) != none)
-					return (num);
-				break ;
-			}
+			case SDL_KEYDOWN:
+				setKeyDown(); break ;
 			case SDL_QUIT:
 				close("exit");
 		}
 	}
-	return (none);
 }
 
 bool		SDLGraph::windIsOpen() {

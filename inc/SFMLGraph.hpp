@@ -23,10 +23,14 @@ class SFMLGraph : public IGraph
 	Snake					*snake1;
 	Snake					*snake2;
 
+protected:
+	bool					multiplayer;
+	eKeyType				key;
+
+
 public:
 
 	bool					quit;
-	bool					multiplayer;
 
 	SFMLGraph();
 	SFMLGraph(SFMLGraph &obj);
@@ -37,9 +41,12 @@ public:
 	virtual void			init();
 	virtual void			draw(rect appleRect);
 	virtual void			drawMenu(int buttonNum, bool start, int speed);
-	virtual eKeyType		getKey();
 	virtual bool			windIsOpen();
-	virtual eKeyType		handleEvent();
+	virtual void			handleEvent();
+	virtual	void			setMultiplayer(bool m);
+	virtual void			setKeyDown();
+	virtual eKeyType		getKey();
+	virtual void			setKey(eKeyType k);
 
 	void					renderText(std::string text, int x, int y, bool selection);
 

@@ -15,6 +15,10 @@ typedef struct	rect
 
 enum eKeyType
 {
+	w,
+	s,
+	a,
+	d,
 	up,
 	down,
 	left,

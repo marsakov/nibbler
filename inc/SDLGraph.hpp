@@ -11,7 +11,8 @@ class SDLGraph : public IGraph
 {
 	SDL_Window				*window;
 	SDL_Renderer			*gRenderer;
-	SDL_Texture 			*snakeTexture;
+	SDL_Texture 			*snake1Texture;
+	SDL_Texture 			*snake2Texture;
 	SDL_Texture 			*appleTexture;
 	SDL_Rect				msgRECT;
 	SDL_Rect				rectForSDL;
@@ -21,10 +22,13 @@ class SDLGraph : public IGraph
 	Snake					*snake1;
 	Snake					*snake2;
 
+protected:
+	bool					multiplayer;
+	eKeyType				key;
+
 public:
 
 	bool					quit;
-	bool					multiplayer;
 
 	SDLGraph();
 	SDLGraph(SDLGraph &obj);
@@ -36,9 +40,12 @@ public:
 	virtual void			init();
 	virtual void			draw(rect appleRect);
 	virtual void			drawMenu(int buttonNum, bool start, int speed);
-	virtual eKeyType		getKey();
 	virtual bool			windIsOpen();
-	virtual eKeyType		handleEvent();
+	virtual void			handleEvent();
+	virtual	void			setMultiplayer(bool m);
+	virtual void			setKeyDown();
+	virtual eKeyType		getKey();
+	virtual void			setKey(eKeyType k);
 
 	SDL_Rect				toSDLRect(rect r);
 	
