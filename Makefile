@@ -1,12 +1,3 @@
-# clang++ -I ~/.brew/include -L ~/.brew/lib -lSDL2 -lSDL2_image -lSDL2_ttf main.cpp SDLGraph.cpp
-# clang++ -I ~/.brew/include -L ~/.brew/lib -lsfml-graphics -lsfml-window -lsfml-system -rpath ~/.brew/lib main.cpp SFMLGraph.cpp
-
-
-
-# g++ -shared -fPIC src/SFMLGraph.cpp -o libSFML.so -I ~/.brew/include -L ~/.brew/lib -lsfml-graphics -lsfml-window -lsfml-system -rpath ~/.brew/lib
-# g++ -shared -fPIC src/SDLGraph.cpp -o libSDL.so -I ~/.brew/include -L ~/.brew/lib -lSDL2 -lSDL2_image -lSDL2_ttf
-# g++ src/main.cpp src/Snake.cpp]
-
 
 NAME	:= nibbler
 
@@ -22,6 +13,7 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	g++ -shared -fPIC src/SFMLGraph.cpp -o libSFML.so -I ~/.brew/include -L ~/.brew/lib -lsfml-graphics -lsfml-window -lsfml-system -rpath ~/.brew/lib
 	g++ -shared -fPIC src/SDLGraph.cpp -o libSDL.so -I ~/.brew/include -L ~/.brew/lib -lSDL2 -lSDL2_image -lSDL2_ttf
+	g++ -shared -fPIC src/OpenGLGraph.cpp -o libOpenGL.so -framework OpenGL -I ~/.brew/include -L ~/.brew/lib -lSDL2 -lSDL2_image -Wno-deprecated-declarations
 	$(CC) $(CFLAGS) -o $@ $^ -fsanitize=address
 
 %.o: %.cpp $(DEPS)

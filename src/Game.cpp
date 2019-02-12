@@ -40,6 +40,9 @@ void	Game::getLib(eKeyType key) {
 		case num2: {
 			ext_library = dlopen("libSFML.so", RTLD_LAZY); break ;
 		}
+		case num3: {
+			ext_library = dlopen("libOpenGL.so", RTLD_LAZY); break ;
+		}
 		default : {
 			ext_library = dlopen("libSFML.so", RTLD_LAZY); break ;
 		}

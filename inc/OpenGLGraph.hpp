@@ -3,8 +3,9 @@
 #include "IGraph.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-
+#include <OpenGL/glu.h>
+#include <OpenGL/glext.h>
+#include <iostream> 
 
 class SDLGraph : public IGraph
 {
@@ -16,7 +17,7 @@ class SDLGraph : public IGraph
 	SDL_Rect				msgRECT;
 	SDL_Rect				rectForSDL;
 	SDL_Event				event;
-	TTF_Font				*textFont;
+	//TTF_Font				*textFont;
 	SDL_Texture				*msg;
 	Snake					*snake1;
 	Snake					*snake2;
