@@ -166,16 +166,18 @@ void		SDLGraph::draw(rect appleRect) {
 	SDL_RenderDrawLine(gRenderer, snake1->screenWidth - 50, 50, snake1->screenWidth - 50, snake1->screenHeiht - 50);
 	SDL_RenderDrawLine(gRenderer, 50, snake1->screenHeiht - 50, snake1->screenWidth - 50, snake1->screenHeiht - 50);
 	
+	appleRect.h = 50;
+	appleRect.w = 50;
+	// std::cout << "appleRect.x = " << appleRect.x << "  appleRect.y = " << appleRect.y << std::endl;
+	// std::cout << "appleRect.h = " << appleRect.h << "  appleRect.w = " << appleRect.w << std::endl;
 	rectForSDL = toSDLRect(appleRect);
 	SDL_RenderCopy(gRenderer, appleTexture, NULL, &rectForSDL);
 
 	renderText(("SCORE = " + std::to_string(snake1->size)).c_str(), 50, 10, false);
-
 	for (int i = 0; i < snake1->snakeRect.size(); i++) {
 		rectForSDL = toSDLRect(snake1->snakeRect[i]);
 		SDL_RenderCopy(gRenderer, snake1Texture, NULL, &rectForSDL);
 	}
-
 	if (multiplayer) {
 		for (int i = 0; i < snake2->snakeRect.size(); i++) {
 			rectForSDL = toSDLRect(snake2->snakeRect[i]);
@@ -183,7 +185,6 @@ void		SDLGraph::draw(rect appleRect) {
 		}
 		renderText(("SCORE = " + std::to_string(snake2->size)).c_str(), snake2->screenWidth - 250, 10, false);
 	}
-
 	SDL_RenderPresent(gRenderer);
 }
 

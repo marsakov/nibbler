@@ -142,6 +142,11 @@ void		SFMLGraph::draw(rect appleRect) {
 	text.setPosition(100, 20);
 	window->draw(text);
 
+	appleRect.h = 50;
+	appleRect.w = 50;
+	std::cout << "appleRect.x = " << appleRect.x << "  appleRect.y = " << appleRect.y << std::endl;
+	std::cout << "appleRect.h = " << appleRect.h << "  appleRect.w = " << appleRect.w << std::endl;
+
 	appleSprite.setPosition(appleRect.x * 2, appleRect.y * 2);
 	window->draw(appleSprite);
 	for (int i = 0; i < snake1->snakeRect.size(); i++) {
