@@ -21,6 +21,8 @@ class SDLGraph : public IGraph
 	SDL_Texture				*msg;
 	Snake					*snake1;
 	Snake					*snake2;
+	float xrf, yrf, zrf;
+	int x,y,z;
 
 protected:
 	bool					multiplayer;
@@ -39,11 +41,14 @@ public:
 	virtual int				close(std::string msg);
 	virtual void			init();
 	virtual void			draw(rect appleRect);
+	void  					drawSnake3D();
+	void 					drawApple3D(rect appleRect);
 	virtual void			drawMenu(int buttonNum, bool start, int speed);
 	virtual bool			windIsOpen();
 	virtual void			handleEvent();
 	virtual	void			setMultiplayer(bool m);
 	virtual void			setKeyDown();
+	void 					setKeyDownRotate();
 	virtual eKeyType		getKey();
 	virtual void			setKey(eKeyType k);
 
