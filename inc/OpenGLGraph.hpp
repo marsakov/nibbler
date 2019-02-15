@@ -22,7 +22,9 @@ class SDLGraph : public IGraph
 	Snake					*snake1;
 	Snake					*snake2;
 	float xrf, yrf, zrf;
-	int x,y,z;
+	double x,y,z;
+	double k;
+	double x1, y1;
 
 protected:
 	bool					multiplayer;
@@ -51,6 +53,9 @@ public:
 	void 					setKeyDownRotate();
 	virtual eKeyType		getKey();
 	virtual void			setKey(eKeyType k);
+	void 					drawSphere(double r, int lats, int longs, rect appleRect);
+	void 					drawFrame();
+
 
 	SDL_Rect				toSDLRect(rect r);
 	

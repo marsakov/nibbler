@@ -168,8 +168,6 @@ void		SDLGraph::draw(rect appleRect) {
 	
 	appleRect.h = 50;
 	appleRect.w = 50;
-	// std::cout << "appleRect.x = " << appleRect.x << "  appleRect.y = " << appleRect.y << std::endl;
-	// std::cout << "appleRect.h = " << appleRect.h << "  appleRect.w = " << appleRect.w << std::endl;
 	rectForSDL = toSDLRect(appleRect);
 	SDL_RenderCopy(gRenderer, appleTexture, NULL, &rectForSDL);
 
