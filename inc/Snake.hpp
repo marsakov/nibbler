@@ -9,6 +9,10 @@ typedef struct	rect
 	int		y;
 	double	w;
 	double	h;
+	int 	s;
+	double	r;
+	double	g;
+	double	b;
 
 }				rect;
 

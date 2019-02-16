@@ -44,7 +44,10 @@ public:
 	virtual void			init();
 	virtual void			draw(rect appleRect);
 	void  					drawSnake3D();
-	void 					drawApple3D(rect appleRect);
+
+	void 					drawApple3DSphera(rect appleRect);
+	void 					drawApple3DCube(rect appleRect);
+
 	virtual void			drawMenu(int buttonNum, bool start, int speed);
 	virtual bool			windIsOpen();
 	virtual void			handleEvent();
