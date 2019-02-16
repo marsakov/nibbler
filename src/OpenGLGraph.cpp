@@ -15,11 +15,7 @@ SDLGraph::SDLGraph(Snake *s1, Snake *s2) {
 	key = none;
 	std::cout << "w = " << snake1->screenWidth << " h = " << snake1->screenHeiht << std::endl;
 	quit = false;
-	xrf = 0, yrf = 0, zrf = 0; // углы поворота
-	// xrf -= 5;
-	// yrf -= 3;
-	//zrf -= 10;
-	init();
+	xrf = 0, yrf = 0, zrf = 0; 
 }
 
 SDLGraph::SDLGraph(SDLGraph &obj) {
@@ -27,16 +23,9 @@ SDLGraph::SDLGraph(SDLGraph &obj) {
 }
 
 SDLGraph::~SDLGraph() {
-	// if (appleTexture)
-	//     SDL_DestroyTexture(appleTexture);
-	// if (snake1Texture)
-	//     SDL_DestroyTexture(snake1Texture);
-	// if (snake2Texture)
-	//     SDL_DestroyTexture(snake2Texture);
-	// TTF_CloseFont(textFont);
-	// SDL_DestroyRenderer(gRenderer);
+
 	SDL_DestroyWindow(window);
-	// TTF_Quit();
+
 	SDL_Quit();
 }
 
@@ -125,48 +114,48 @@ void        SDLGraph::setKeyDown() {
 }
 
 void        SDLGraph::renderText(const char *text, int x, int y, bool selection) {
+	if (selection)
+		glColor3f(0.97f*0.6, 0.14f*0.6, 0.45f*0.6);
+	else 
+		glColor3f(0, 0, 0);
+	glMatrixMode(GL_PROJECTION);
+	double *matrix = new double[16];
+	glGetDoublev(GL_PROJECTION_MATRIX, matrix);
+	glLoadIdentity();
+	glOrtho(-100.0, 100.0, -100.0, 100.0, -100.0, 100.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glPushMatrix();
+	glLoadIdentity();
+	glRasterPos2i(x,y);
+	for(int i=0; i<strlen(text); i++)
+	{
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,(int)text[i]);
+	}
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixd(matrix);
+	glMatrixMode(GL_MODELVIEW);
 
-	// SDL_Surface *surface;
-	// SDL_Texture *texture;
-
-	// SDL_Color color = { 0, 0, 0, 255 };
-	// surface = TTF_RenderText_Solid(textFont, text, color);
-	// msgRECT.x = x;
-	// msgRECT.y = y;
-	// msgRECT.w = surface->w;
-	// msgRECT.h = surface->h;
-	// texture = SDL_CreateTextureFromSurface(gRenderer, surface);
-
-	// if (selection) {
-	//     SDL_Rect outlineRect = { x, y, surface->w, surface->h };
-	//     SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-	//     SDL_RenderDrawRect( gRenderer, &outlineRect );
-	// }
-
-	// SDL_FreeSurface(surface);
-	// SDL_RenderCopy(gRenderer, texture, NULL, &msgRECT);
-	// SDL_DestroyTexture(texture);
 }
 
 void        SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 
-	// SDL_SetRenderDrawColor( gRenderer, 144, 193, 171, 255 );
-	// SDL_RenderClear(gRenderer);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glPointSize(5);
 
-	// SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-	// if (start)
-	//     renderText("CONTINUE", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 100, (buttonNum == 1) ? true : false);
-	// renderText("NEW GAME", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 50, (buttonNum == 2) ? true : false);
-	// renderText((std::string("MULTIPLAYER ") + (multiplayer ? "ON" : "OFF")).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, (buttonNum == 3) ? true : false);
-	// renderText("EXIT", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 + 50, (buttonNum == 4) ? true : false);
-	// renderText(("SPEED  " + std::to_string(speed)).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 300, false);
+	glTranslatef(0.0f, 0.0f, -20.0f);
+	
+	if (start)
+		renderText("CONTINUE", -20, 20, (buttonNum == 1) ? true : false);
+	renderText("NEW GAME", -20, 10, (buttonNum == 2) ? true : false);
+	renderText((std::string("MULTIPLAYER ") + (multiplayer ? "ON" : "OFF")).c_str(), -20, 0, (buttonNum == 3) ? true : false);
+	renderText("EXIT", -20, -10, (buttonNum == 4) ? true : false);
+	renderText(("SPEED  " + std::to_string(speed)).c_str(), -20, 80, false);
+	glutSwapBuffers();
+	
+	SDL_GL_SwapWindow(window);
 
-	// SDL_RenderDrawLine(gRenderer, 50, 50, 50, snake1->screenHeiht - 50);
-	// SDL_RenderDrawLine(gRenderer, 50, 50, snake1->screenWidth - 50, 50);
-	// SDL_RenderDrawLine(gRenderer, snake1->screenWidth - 50, 50, snake1->screenWidth - 50, snake1->screenHeiht - 50);
-	// SDL_RenderDrawLine(gRenderer, 50, snake1->screenHeiht - 50, snake1->screenWidth - 50, snake1->screenHeiht - 50);
-
-	// SDL_RenderPresent(gRenderer);
 }
 
 void  SDLGraph::drawSnake3D() {
@@ -174,7 +163,14 @@ void  SDLGraph::drawSnake3D() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	
-
+	if (snake1->screenWidth > snake1->screenHeiht) {
+		k = (snake1->screenHeiht - 800) * 0.024;
+		glTranslatef(0.0f, 0.0f, 6 - k);
+	}
+	else {
+		k = (snake1->screenHeiht - 1000) * 0.0245; //////////////////// ? 1000
+		glTranslatef(0.0f, 0.0f, 2.86 - k);
+	}
 	// xrf = 0;
 	// yrf = 0;
 	// zrf = 0;
@@ -494,14 +490,6 @@ void        SDLGraph::draw(rect appleRect) {
 	setKeyDownRotate();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	if (snake1->screenWidth > snake1->screenHeiht) {
-		k = (snake1->screenHeiht - 800) * 0.024;
-		glTranslatef(0.0f, 0.0f, 6 - k);
-	}
-	else {
-		k = (snake1->screenHeiht - 1000) * 0.0245; //////////////////// ? 1000
-		glTranslatef(0.0f, 0.0f, 2.86 - k);
-	}
 
 	glColor3f(1.0f, 1.0f, 0.0f);        // Красная сторона (Передняя)
 
