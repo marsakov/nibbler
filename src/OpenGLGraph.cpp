@@ -15,7 +15,11 @@ SDLGraph::SDLGraph(Snake *s1, Snake *s2) {
 	key = none;
 	std::cout << "w = " << snake1->screenWidth << " h = " << snake1->screenHeiht << std::endl;
 	quit = false;
-	xrf = 0, yrf = 0, zrf = 0; 
+	xrf = 0, yrf = 0, zrf = 0; // углы поворота
+	// xrf -= 5;
+	// yrf -= 3;
+	//zrf -= 10;
+	init();
 }
 
 SDLGraph::SDLGraph(SDLGraph &obj) {
@@ -23,9 +27,16 @@ SDLGraph::SDLGraph(SDLGraph &obj) {
 }
 
 SDLGraph::~SDLGraph() {
-
+	// if (appleTexture)
+	//     SDL_DestroyTexture(appleTexture);
+	// if (snake1Texture)
+	//     SDL_DestroyTexture(snake1Texture);
+	// if (snake2Texture)
+	//     SDL_DestroyTexture(snake2Texture);
+	// TTF_CloseFont(textFont);
+	// SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(window);
-
+	// TTF_Quit();
 	SDL_Quit();
 }
 
@@ -136,7 +147,6 @@ void        SDLGraph::renderText(const char *text, int x, int y, bool selection)
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixd(matrix);
 	glMatrixMode(GL_MODELVIEW);
-
 }
 
 void        SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
@@ -145,7 +155,7 @@ void        SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	glPointSize(5);
 
 	glTranslatef(0.0f, 0.0f, -20.0f);
-	
+
 	if (start)
 		renderText("CONTINUE", -20, 20, (buttonNum == 1) ? true : false);
 	renderText("NEW GAME", -20, 10, (buttonNum == 2) ? true : false);
@@ -153,9 +163,8 @@ void        SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	renderText("EXIT", -20, -10, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), -20, 80, false);
 	glutSwapBuffers();
-	
-	SDL_GL_SwapWindow(window);
 
+	SDL_GL_SwapWindow(window);
 }
 
 void  SDLGraph::drawSnake3D() {
@@ -163,6 +172,7 @@ void  SDLGraph::drawSnake3D() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	
+
 	if (snake1->screenWidth > snake1->screenHeiht) {
 		k = (snake1->screenHeiht - 800) * 0.024;
 		glTranslatef(0.0f, 0.0f, 6 - k);
@@ -171,6 +181,7 @@ void  SDLGraph::drawSnake3D() {
 		k = (snake1->screenHeiht - 1000) * 0.0245; //////////////////// ? 1000
 		glTranslatef(0.0f, 0.0f, 2.86 - k);
 	}
+
 	// xrf = 0;
 	// yrf = 0;
 	// zrf = 0;
