@@ -1,4 +1,4 @@
-#include "../inc/SDLGraph.hpp"
+#include "SDLGraph.hpp"
 
 SDLGraph::SDLGraph() {
 	key = none;
@@ -29,6 +29,10 @@ SDLGraph::~SDLGraph() {
 		SDL_DestroyTexture(snake1Texture);
 	if (snake2Texture)
 		SDL_DestroyTexture(snake2Texture);
+	if (head1Texture)
+		SDL_DestroyTexture(head1Texture);
+	if (head2Texture)
+		SDL_DestroyTexture(head2Texture);
 	TTF_CloseFont(textFont);
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(window);
@@ -61,6 +65,8 @@ void		SDLGraph::init() {
 
 	snake1Texture = IMG_LoadTexture(gRenderer, "resources/square.png");
 	snake2Texture = IMG_LoadTexture(gRenderer, "resources/square1.png");
+	head1Texture = IMG_LoadTexture(gRenderer, "resources/square1.png");
+	head2Texture = IMG_LoadTexture(gRenderer, "resources/square.png");
 	appleTexture = IMG_LoadTexture(gRenderer, "resources/apple1.png");
 	if (!snake1Texture || !appleTexture || !snake2Texture)
 		close("Snake1 or appleTexture image could not load");
@@ -106,6 +112,8 @@ void		SDLGraph::renderText(const char *text, int x, int y, bool selection) {
     SDL_Texture *texture;
 
 	SDL_Color color = { 0, 0, 0, 255 };
+	// if (selection) 
+	// 	color = { 255, 255, 255, 255 };
     surface = TTF_RenderText_Solid(textFont, text, color);
     msgRECT.x = x;
 	msgRECT.y = y;
@@ -172,14 +180,26 @@ void		SDLGraph::draw(rect appleRect) {
 	SDL_RenderCopy(gRenderer, appleTexture, NULL, &rectForSDL);
 
 	renderText(("SCORE = " + std::to_string(snake1->size)).c_str(), 50, 10, false);
-	for (int i = 0; i < snake1->snakeRect.size(); i++) {
-		rectForSDL = toSDLRect(snake1->snakeRect[i]);
-		SDL_RenderCopy(gRenderer, snake1Texture, NULL, &rectForSDL);
+	for (int i = 0; i < snake1->snakeRect.size(); i++) { 
+		if (i == 0) {
+			rectForSDL = toSDLRect(snake1->snakeRect[i]);
+			SDL_RenderCopy(gRenderer, head1Texture, NULL, &rectForSDL);
+		} else {
+			rectForSDL = toSDLRect(snake1->snakeRect[i]);
+			SDL_RenderCopy(gRenderer, snake1Texture, NULL, &rectForSDL);
+		}
+		
 	}
 	if (multiplayer) {
 		for (int i = 0; i < snake2->snakeRect.size(); i++) {
-			rectForSDL = toSDLRect(snake2->snakeRect[i]);
-			SDL_RenderCopy(gRenderer, snake2Texture, NULL, &rectForSDL);
+			if (i == 0) {
+				rectForSDL = toSDLRect(snake2->snakeRect[i]);
+				SDL_RenderCopy(gRenderer, head2Texture, NULL, &rectForSDL);
+			} else {
+				rectForSDL = toSDLRect(snake2->snakeRect[i]);
+				SDL_RenderCopy(gRenderer, snake2Texture, NULL, &rectForSDL);
+			}
+			
 		}
 		renderText(("SCORE = " + std::to_string(snake2->size)).c_str(), snake2->screenWidth - 250, 10, false);
 	}

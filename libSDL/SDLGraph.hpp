@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IGraph.hpp"
+#include "../inc/IGraph.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -13,6 +13,8 @@ class SDLGraph : public IGraph
 	SDL_Renderer			*gRenderer;
 	SDL_Texture 			*snake1Texture;
 	SDL_Texture 			*snake2Texture;
+	SDL_Texture 			*head1Texture;
+	SDL_Texture 			*head2Texture;
 	SDL_Texture 			*appleTexture;
 	SDL_Rect				msgRECT;
 	SDL_Rect				rectForSDL;

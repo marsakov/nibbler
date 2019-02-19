@@ -3,25 +3,32 @@
 #include <dlfcn.h>
 #include <unistd.h>
 #include "IGraph.hpp"
+#include "../libSFMLSound/SoundSFML.hpp"
 #include "Snake.hpp"
 
 class Game
 {
-	eKeyType		libNum;
-	void			*ext_library;
-	typedef IGraph*	create_t(Snake*, Snake*);
-	typedef void	destroy_t(IGraph*);
-	create_t*		creat;
-	destroy_t*		destroy;
-	IGraph			*dynLib;
-	Snake			*snake1;
-	Snake			*snake2;
-	int				speed;
-	bool			multiplayer;
-	bool			menu;
-	bool			start;
-	int				buttonNum;
-	rect			appleRect;
+	eKeyType			libNum;
+	void				*ext_library;
+	void				*ext_library2;
+	typedef IGraph*		create_t(Snake*, Snake*);
+	typedef void		destroy_t(IGraph*);
+	typedef SoundSFML*	create_s();
+	typedef void		destroy_s(SoundSFML*);
+	create_t*			creat;
+	destroy_t*			destroy;
+	create_s*			creatS;
+	destroy_s*			destroyS;
+	IGraph				*dynLib;
+	SoundSFML			*soundLib;
+	Snake				*snake1;
+	Snake				*snake2;
+	int					speed;
+	bool				multiplayer;
+	bool				menu;
+	bool				start;
+	int					buttonNum;
+	rect				appleRect;
 
 public:
 

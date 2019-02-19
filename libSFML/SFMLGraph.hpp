@@ -1,7 +1,8 @@
 #pragma once
 
-#include "IGraph.hpp"
+#include "../inc/IGraph.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <algorithm>
 
 class SFMLGraph : public IGraph
@@ -9,6 +10,9 @@ class SFMLGraph : public IGraph
 	sf::Texture 			texture1;
 	sf::Texture 			texture2;
 	sf::Texture 			texture3;
+	sf::Texture 			texture4;
+	sf::Texture 			texture5;
+	sf::Texture 			texture6;
 	sf::Font				font;
 	sf::Text				text;
 	sf::RectangleShape		*line1;
@@ -16,8 +20,11 @@ class SFMLGraph : public IGraph
 	sf::RectangleShape		*line3;
 	sf::RectangleShape		*line4;
 	sf::Sprite				squareSprite;
+	sf::Sprite				squareSprite2;
 	sf::Sprite				appleSprite;
 	sf::Sprite				background;
+	sf::Sprite				headSprite;
+	sf::Sprite				headSprite2;
 	sf::RenderWindow		*window;
 	sf::Event				event;
 	Snake					*snake1;

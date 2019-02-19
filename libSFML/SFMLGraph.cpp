@@ -1,4 +1,5 @@
-#include "../inc/SFMLGraph.hpp"
+#include "SFMLGraph.hpp"
+
 
 SFMLGraph::SFMLGraph() {
 	key = none;
@@ -32,13 +33,26 @@ void		SFMLGraph::setKey(eKeyType k) { key = k; }
 
 
 void		SFMLGraph::init() {
-	
+		
+	// sf::SoundBuffer shootBuffer; // create buff
+	// shootBuffer.loadFromFile("resources/FamiliarRoads.ogg"); //wav, ogg              load sound
+	// sf::Sound shoot(shootBuffer); // create sound
+	// shoot.play(); //make sound
+
+	// sf::Music music;
+	// music.openFromFile("resources/FamiliarRoads.ogg");
+	// music.play(); 
+
+
 	window = new sf::RenderWindow(sf::VideoMode(snake1->screenWidth*2, snake1->screenHeiht*2), "Nibbler", sf::Style::Titlebar | sf::Style::Close);
 	window->setFramerateLimit(60);
 
-    texture1.loadFromFile("resources/apple1.png");
-    texture2.loadFromFile("resources/square1.png");
+    texture1.loadFromFile("resources/cubeApple.png");
+    texture2.loadFromFile("resources/cube.png");
     texture3.loadFromFile("resources/bckgrnd.jpg");
+    texture4.loadFromFile("resources/head.png");
+    texture5.loadFromFile("resources/cube2.png");
+    texture6.loadFromFile("resources/head.png");
 	font.loadFromFile("resources/SEASRN.ttf");
 	text.setStyle(sf::Text::Bold);
 	text.setFont(font);
@@ -57,10 +71,17 @@ void		SFMLGraph::init() {
 
     appleSprite.setTexture(texture1);
     squareSprite.setTexture(texture2);
+    squareSprite2.setTexture(texture5);
+    headSprite.setTexture(texture4);
+    headSprite2.setTexture(texture6);
     background.setTexture(texture3);
 
-	appleSprite.setScale(0.3, 0.3);
-	squareSprite.setScale(0.3, 0.3);
+
+	appleSprite.setScale(0.1, 0.1);
+	headSprite.setScale(0.1, 0.1);
+	headSprite2.setScale(0.1, 0.1);
+	squareSprite.setScale(0.1, 0.1);
+	squareSprite2.setScale(0.1, 0.1);
 	float scale = std::max(snake1->screenWidth, snake1->screenHeiht) / 100 * 0.1 + 0.25;
 	std::cout << scale << std::endl;
 	background.setScale(scale, scale);
@@ -147,14 +168,24 @@ void		SFMLGraph::draw(rect appleRect) {
 	appleSprite.setPosition(appleRect.x * 2, appleRect.y * 2);
 	window->draw(appleSprite);
 	for (int i = 0; i < snake1->snakeRect.size(); i++) {
-		squareSprite.setPosition(snake1->snakeRect[i].x * 2, snake1->snakeRect[i].y * 2);
-		window->draw(squareSprite);
+		if (i == 0) {
+			headSprite.setPosition(snake1->snakeRect[i].x * 2, snake1->snakeRect[i].y * 2);
+			window->draw(headSprite);
+		} else {
+			squareSprite.setPosition(snake1->snakeRect[i].x * 2, snake1->snakeRect[i].y * 2);
+			window->draw(squareSprite);
+		}
 	}
 
 	if (multiplayer) {
 		for (int i = 0; i < snake2->snakeRect.size(); i++) {
-			squareSprite.setPosition(snake2->snakeRect[i].x * 2, snake2->snakeRect[i].y * 2);
-			window->draw(squareSprite);
+			if (i == 0) {
+				headSprite2.setPosition(snake2->snakeRect[i].x * 2, snake2->snakeRect[i].y * 2);
+				window->draw(headSprite2);
+			} else {
+				squareSprite2.setPosition(snake2->snakeRect[i].x * 2, snake2->snakeRect[i].y * 2);
+				window->draw(squareSprite2);
+			}
 		}
 	}
 

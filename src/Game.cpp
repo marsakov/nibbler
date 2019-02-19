@@ -20,6 +20,16 @@ Game::Game(int w, int h) {
 	start = false;
 	multiplayer = false;
 	speed = 15;
+
+	std::cout << "Music 1" << std::endl;
+
+	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
+	creatS = (create_s*)dlsym(ext_library2,"createSound");
+	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
+	soundLib = creatS();
+	std::cout << "Music 2" << std::endl;
+	//usleep(10000000);
+	//std::cout << "usleep(10000000)" << std::endl;
 }
 
 Game::~Game() {
@@ -34,17 +44,16 @@ void	Game::closeLib() {
 void	Game::getLib(eKeyType key) {
 	switch (key){
 		case num1: {
-			ext_library = dlopen("libSDL.so", RTLD_LAZY);
-			break ;
+			ext_library = dlopen("libSDL/libSDL.so", RTLD_LAZY); break ;
 		}
 		case num2: {
-			ext_library = dlopen("libSFML.so", RTLD_LAZY); break ;
+			ext_library = dlopen("libSFML/libSFML.so", RTLD_LAZY); break ;
 		}
 		case num3: {
-			ext_library = dlopen("libOpenGL.so", RTLD_LAZY); break ;
+			ext_library = dlopen("libOpenGL/libOpenGL.so", RTLD_LAZY); break ;
 		}
 		default : {
-			ext_library = dlopen("libSFML.so", RTLD_LAZY); break ;
+			ext_library = dlopen("libSFML/libSFML.so", RTLD_LAZY); break ;
 		}
 	}
 	
@@ -239,8 +248,11 @@ bool	Game::checkCollision() {
 void	Game::mainCycle() {
 	size_t i = 0;
 
+	std::cout << "GAME.cpp SoundSFML s.init()" << std::endl;
+
 	generateApple();
 	getLib(libNum);
+	
 	while (dynLib->windIsOpen()) {
 
 		if (!menu && (i % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){

@@ -1,8 +1,11 @@
 #include "../inc/Game.hpp"
+#include "../libSFMLSound/SoundSFML.hpp"
+
 
 
 int main(int argc, char *argv[])
 {
+
 	int w;
 	int h;
 
@@ -24,8 +27,9 @@ int main(int argc, char *argv[])
 	}
 
 	Game game(w, h);
-
+	// // SoundSFML s;
+	// // s.init();
+	// std::cout << "main.cpp SoundSFML s.init()" << std::endl;
 	game.mainCycle();
-	
 	return (0);
 }

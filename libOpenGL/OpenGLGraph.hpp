@@ -1,8 +1,7 @@
 #pragma once
 
-#include "IGraph.hpp"
+#include "../inc/IGraph.hpp"
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <GLUT/glut.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/glext.h>

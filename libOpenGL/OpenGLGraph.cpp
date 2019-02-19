@@ -1,4 +1,4 @@
-#include "../inc/OpenGLGraph.hpp"
+#include "OpenGLGraph.hpp"
 
 SDLGraph::SDLGraph() {
 	key = none;
@@ -372,7 +372,7 @@ void SDLGraph::drawSphere(double r, int lats, int longs, rect appleRect) {
 	y = (snake1->screenHeiht - appleRect.y - 50 - snake1->screenHeiht/2)/50; 
 	x += 0.5;
 	y += 0.5;
-	std::cout << "APPLE x = " << x << " y = " << y << std::endl;
+	// std::cout << "APPLE x = " << x << " y = " << y << std::endl;
 	int i, j;
 	for(i = 0; i <= lats; i++) {
 		double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
