@@ -1,19 +1,33 @@
 #pragma once
 
-//#include <SFML/Audio.hpp>
-//#include "../libSFML/SFMLGraph.hpp"
-#include <algorithm>
+#include "ISound.hpp"
+#include <SFML/Audio.hpp>
+#include <iostream>
 
-class SoundSFML
+class SoundSFML : public ISound
 {
 
-public:
-	// sf::SoundBuffer menuBuffer, eatBuffer;
-	// sf::Music music_menu, music_game;
-	SoundSFML();
-	//SoundSFML(SoundSFML &obj);
-	~SoundSFML();
+sf::SoundBuffer 	menuBuffer, eatBuffer;
+sf::Music 			music_menu, music_game;
+sf::Sound 			eat, menu_sound;
 
-	void	init();
+protected:
+
+	bool menu;
+	bool change_sound;
+	bool eat_sound;
+	bool switch_menu_sound;
+
+public:
+
+	SoundSFML();
+	virtual ~SoundSFML();
+
+	virtual void	init();
+	virtual void 	Sound();
+	virtual void 	set_menu(bool b);
+	virtual void 	set_change_sound(bool b);
+	virtual void 	set_eat_sound(bool b);
+	virtual void 	set_switch_menu_sound(bool b);
 	
 };

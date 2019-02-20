@@ -1,4 +1,5 @@
 #include "../inc/Game.hpp"
+// #include "../libSFMLSound/SoundSFML.hpp"
 
 Game::Game() {
 	snake1 = new Snake(1000, 800);
@@ -20,16 +21,10 @@ Game::Game(int w, int h) {
 	start = false;
 	multiplayer = false;
 	speed = 15;
-
-	std::cout << "Music 1" << std::endl;
-
 	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
 	creatS = (create_s*)dlsym(ext_library2,"createSound");
 	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
 	soundLib = creatS();
-	std::cout << "Music 2" << std::endl;
-	//usleep(10000000);
-	//std::cout << "usleep(10000000)" << std::endl;
 }
 
 Game::~Game() {
@@ -102,33 +97,62 @@ bool	Game::newGame() {
 }
 
 void	Game::keyHandle(eKeyType key) {
+	if (!menu)
+		soundLib->set_menu(false);
 	
 	if (key >= num1 && key <= num3 && libNum != key) {
 		libNum = key;
 		closeLib();
 		getLib(key);
 	}
-	else if (!menu && key == escape)
+	else if (!menu && key == escape) {
 		menu = true;
+		soundLib->set_menu(true);
+		soundLib->set_change_sound(true);
+	}
 	else if (!menu && key >= up && key <= right)
 		snake1->choseDirection(key);
 	else if (!menu && multiplayer && key >= w && key <= d)
 		snake2->choseDirection(key);
 	else if (menu) {
 		switch (key) {
-			case (up):		(buttonNum == 1) ? buttonNum = 4 : buttonNum--; break;
-			case (down):	(buttonNum == 4) ? buttonNum = 1 : buttonNum++; break;
-			case (left):	(speed != 10) ? speed-- : 0; break;
-			case (right):	(speed != 25) ? speed++ : 0; break;
-			case (escape):	menu = false; break;
+			case (up):		{
+				(buttonNum == 1) ? buttonNum = 4 : buttonNum--;
+				soundLib->set_switch_menu_sound(true);
+				break;
+			}
+			case (down):	{
+				(buttonNum == 4) ? buttonNum = 1 : buttonNum++; 
+				soundLib->set_switch_menu_sound(true);
+				break;
+			}
+			case (left):	{
+				(speed != 10) ? speed-- : 0;
+				soundLib->set_switch_menu_sound(true);
+				break;
+			}
+			case (right):	{
+				soundLib->set_switch_menu_sound(true);
+				(speed != 25) ? speed++ : 0;
+				break;
+			}
+			// case (escape):	{ 
+			// 	menu = false;
+			// 	soundLib->set_change_sound(true);
+			// 	break;
+			// }
 			case (enter): {
 				switch (buttonNum) {
 					case 1 : {
+						soundLib->set_menu(false);
+						soundLib->set_change_sound(true);
 						menu = false;
 						start = true;
 						break ;
 					}
 					case 2 : {
+						soundLib->set_menu(false);
+						soundLib->set_change_sound(true);
 						newGame();
 						menu = false;
 						start = true;
@@ -213,16 +237,18 @@ bool	Game::checkCollision() {
 		appleRect.y = -1000;
 		snake1->size++;
 		std::cout << "snake1->size = " << snake1->size << std::endl;
+		soundLib->set_eat_sound(true);
 	}
 	else if (multiplayer && snake2->snakeRect[0].x == appleRect.x && snake2->snakeRect[0].y == appleRect.y) {
 		appleRect.x = -1000;
 		appleRect.y = -1000;
 		snake2->size++;
 		std::cout << "snake2->size = " << snake2->size << std::endl;
+		soundLib->set_eat_sound(true);
 	}
 
 	for (int i = 1; i < snake1->snakeRect.size(); i++) {
-		if (snake1->snakeRect[0].x == snake1->snakeRect[i].x && snake1->snakeRect[0].y == snake1->snakeRect[i].y)
+		if (snake1->snakeRect[0].x == snake1->snakeRect[i].x && snake1->snakeRect[0].y == snake1->snakeRect[i].y) 
 			return (false);
 		else if (multiplayer && snake2->snakeRect[0].x == snake1->snakeRect[i].x && snake2->snakeRect[0].y == snake1->snakeRect[i].y) {
 			snake1->snakeRect.resize(i);
@@ -248,22 +274,30 @@ bool	Game::checkCollision() {
 void	Game::mainCycle() {
 	size_t i = 0;
 
-	std::cout << "GAME.cpp SoundSFML s.init()" << std::endl;
-
 	generateApple();
 	getLib(libNum);
 	
 	while (dynLib->windIsOpen()) {
-
+		soundLib->Sound();
 		if (!menu && (i % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){
 			std::cout << "snake outside the box" << std::endl;
 			usleep(1000000);
+			soundLib->set_menu(true);
+			soundLib->set_change_sound(true);
 			start = false;
 			menu = true;
 		}
 		if (multiplayer && !menu && (i % (15 - (speed - 15)) == 0 && !snake2->moveSnake() )) {
 			std::cout << "snake outside the box" << std::endl;
+			// в отдельную функцию
+
+
+			// выключить музыку 
+			// включить звук БУМ
 			usleep(1000000);
+			// включить музыку меню
+			soundLib->set_menu(true);
+			soundLib->set_change_sound(true);
 			start = false;
 			menu = true;
 		}
@@ -276,6 +310,8 @@ void	Game::mainCycle() {
 		if (!menu && !checkCollision()) {
 			std::cout << "boom" << std::endl;
 			usleep(1000000);
+			soundLib->set_menu(true);
+			soundLib->set_change_sound(true);
 			start = false;
 			menu = true;
 		}
