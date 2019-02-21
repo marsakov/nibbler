@@ -25,6 +25,14 @@ Game::Game(int w, int h) {
 	creatS = (create_s*)dlsym(ext_library2,"createSound");
 	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
 	soundLib = creatS();
+
+	////////////////////////////////////////////////////////////////////////////////////////////
+	snake1->snakeRect[0].r = 1;
+	snake1->snakeRect[0].g = 1;
+	snake1->snakeRect[0].b = 1;
+	snake2->snakeRect[0].r = 1;
+	snake2->snakeRect[0].g = 1;
+	snake2->snakeRect[0].b = 1;
 }
 
 Game::~Game() {
@@ -325,6 +333,7 @@ void	Game::mainCycle() {
 		else
 			dynLib->draw(appleRect);
 		soundLib->Sound();
+
 		if ( i == 2000000000 )
 			i = 0;
 		if (!menu)

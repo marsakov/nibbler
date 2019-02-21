@@ -1,10 +1,5 @@
 #include "SoundSFML.hpp"
 //clang++ src/SoundSFML.cpp -I ~/.brew/include -L ~/.brew/lib -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-system -rpath ~/.brew/lib src/main.cpp src/Game.cpp src/Snake.cpp
-// #include <iostream>
-// #include <SFML/Audio.hpp>
-
-// sf::SoundBuffer 	menuBuffer, eatBuffer;
-// sf::Music 			music_menu, music_game;
 
 SoundSFML::SoundSFML() {
 	std::cout << "SoundSFML::SoundSFML()" << std::endl;
@@ -15,9 +10,7 @@ SoundSFML::SoundSFML() {
 	init();
 }
 
-SoundSFML::~SoundSFML() {
-	
-}
+SoundSFML::~SoundSFML() { }
 
 void 	SoundSFML::Sound() {
 
@@ -39,29 +32,19 @@ void 	SoundSFML::Sound() {
 				music_game.stop();
 				music_end.play();
 				game_over = false;
-				//sf::sleep(sf::milliseconds(3500));
-				// music_end.stop();
 				std::cout << "game over" << std::endl;
 			}
-			// if (continue_music) {
-			// 	music_game.pause();
-			// 	continue_music = false;
-			// }
-			// else
-			// 	music_game.stop();
 			music_game.pause();
 			while (music_end.getStatus() != sf::Music::Stopped) {
-				// music_menu.play();
 			}
 			music_menu.play();
 			music_menu.setLoop(true);
 			std::cout << "menu" << std::endl;
-			
 		}
 		else {
 			music_menu.pause(); 
 			music_game.play(); 
-			music_game.setLoop(true); // loop
+			music_game.setLoop(true);
 			std::cout << "game" << std::endl;
 		}
 		change_sound = false;
@@ -79,28 +62,15 @@ void	SoundSFML::init() {
 		music_end.openFromFile("resources/end.ogg");
 
 		// sound
-		menuBuffer.loadFromFile("resources/+.ogg");
+		menuBuffer.loadFromFile("resources/++.ogg");
 		eatBuffer.loadFromFile("resources/eat.ogg");
 
-		
-
-		// start play music
-		// music_menu.play();
-		// music_game.setLoop(true);
-
-		
 	}
 	catch (std::exception &e) {
 			std::cout << e.what() << std::endl;
 	}
-	// eatBuffer = sf::SoundBuffer();
-	// menuBuffer = sf::SoundBuffer();
 	eat.setBuffer(eatBuffer);
 	menu_sound.setBuffer(menuBuffer);
-
-	//music_end.play();
-	eat.play(); //make sound
-
 
 	std::cout << "SoundSFML::init()" << std::endl;
 }

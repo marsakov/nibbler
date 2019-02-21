@@ -47,12 +47,12 @@ void		SFMLGraph::init() {
 	window = new sf::RenderWindow(sf::VideoMode(snake1->screenWidth*2, snake1->screenHeiht*2), "Nibbler", sf::Style::Titlebar | sf::Style::Close);
 	window->setFramerateLimit(60);
 
-    texture1.loadFromFile("resources/cubeApple.png");
-    texture2.loadFromFile("resources/cube.png");
+    texture1.loadFromFile("resources/cubeApple.png"); // apple
+    texture2.loadFromFile("resources/snake1.png"); // snake
     texture3.loadFromFile("resources/bckgrnd.jpg");
-    texture4.loadFromFile("resources/head.png");
-    texture5.loadFromFile("resources/cube2.png");
-    texture6.loadFromFile("resources/head.png");
+    texture4.loadFromFile("resources/snake1.png");
+    texture5.loadFromFile("resources/snake2.png");
+    texture6.loadFromFile("resources/snake2.png");
 	font.loadFromFile("resources/SEASRN.ttf");
 	text.setStyle(sf::Text::Bold);
 	text.setFont(font);
@@ -78,10 +78,10 @@ void		SFMLGraph::init() {
 
 
 	appleSprite.setScale(0.1, 0.1);
-	headSprite.setScale(0.1, 0.1);
-	headSprite2.setScale(0.1, 0.1);
-	squareSprite.setScale(0.1, 0.1);
-	squareSprite2.setScale(0.1, 0.1);
+	headSprite.setScale(0.16, 0.16);
+	headSprite2.setScale(0.16, 0.16);
+	squareSprite.setScale(0.16, 0.16);
+	squareSprite2.setScale(0.16, 0.16);
 	float scale = std::max(snake1->screenWidth, snake1->screenHeiht) / 100 * 0.1 + 0.25;
 	std::cout << scale << std::endl;
 	background.setScale(scale, scale);
