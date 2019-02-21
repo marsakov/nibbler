@@ -144,6 +144,7 @@ void	Game::keyHandle(eKeyType key) {
 			case (enter): {
 				switch (buttonNum) {
 					case 1 : {
+						soundLib->set_continue_music(true);
 						soundLib->set_menu(false);
 						soundLib->set_change_sound(true);
 						menu = false;
@@ -278,9 +279,10 @@ void	Game::mainCycle() {
 	getLib(libNum);
 	
 	while (dynLib->windIsOpen()) {
-		soundLib->Sound();
+		// soundLib->Sound();
 		if (!menu && (i % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){
 			std::cout << "snake outside the box" << std::endl;
+			soundLib->set_game_over(true);
 			usleep(1000000);
 			soundLib->set_menu(true);
 			soundLib->set_change_sound(true);
@@ -294,6 +296,8 @@ void	Game::mainCycle() {
 
 			// выключить музыку 
 			// включить звук БУМ
+
+			soundLib->set_game_over(true);
 			usleep(1000000);
 			// включить музыку меню
 			soundLib->set_menu(true);
@@ -320,6 +324,7 @@ void	Game::mainCycle() {
 			dynLib->drawMenu(buttonNum, start, speed);
 		else
 			dynLib->draw(appleRect);
+		soundLib->Sound();
 		if ( i == 2000000000 )
 			i = 0;
 		if (!menu)

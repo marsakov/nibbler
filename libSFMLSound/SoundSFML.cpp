@@ -10,6 +10,8 @@ SoundSFML::SoundSFML() {
 	std::cout << "SoundSFML::SoundSFML()" << std::endl;
 	menu = true;
 	change_sound = true;
+	game_over = false;
+	continue_music = true;
 	init();
 }
 
@@ -19,29 +21,13 @@ SoundSFML::~SoundSFML() {
 
 void 	SoundSFML::Sound() {
 
-	// if (eat_sound) {
-	// 	sf::Sound eat(eatBuffer);
-	// 	eat.play(); //make sound
-	// 	eat_sound = false;
-	// 	std::cout << "eat_sound" << std::endl;
-	// }
-	// if (switch_menu_sound) {
-	// 	sf::Sound menu_sound(menuBuffer); // create sound
-	// 	menu_sound.play(); //make sound
-	// 	switch_menu_sound = false;
-	// 	std::cout << "switch_menu_sound" << std::endl;
-	// }
-
-
 	if (eat_sound) {
-		// sf::Sound eat(eatBuffer);
-		eat.play(); //make sound
+		eat.play();
 		eat_sound = false;
 		std::cout << "eat_sound" << std::endl;
 	}
 	if (switch_menu_sound) {
-		// sf::Sound menu_sound(menuBuffer); // create sound
-		menu_sound.play(); //make sound
+		menu_sound.play();
 		switch_menu_sound = false;
 		std::cout << "switch_menu_sound" << std::endl;
 	}
@@ -49,10 +35,28 @@ void 	SoundSFML::Sound() {
 	if (change_sound) {
 		std::cout << "CHANGE" << std::endl;
 		if (menu) {
+			if (game_over) {
+				music_game.stop();
+				music_end.play();
+				game_over = false;
+				//sf::sleep(sf::milliseconds(3500));
+				// music_end.stop();
+				std::cout << "game over" << std::endl;
+			}
+			// if (continue_music) {
+			// 	music_game.pause();
+			// 	continue_music = false;
+			// }
+			// else
+			// 	music_game.stop();
 			music_game.pause();
-			music_menu.play(); 
-			music_menu.setLoop(true); // loop
+			while (music_end.getStatus() != sf::Music::Stopped) {
+				// music_menu.play();
+			}
+			music_menu.play();
+			music_menu.setLoop(true);
 			std::cout << "menu" << std::endl;
+			
 		}
 		else {
 			music_menu.pause(); 
@@ -62,6 +66,7 @@ void 	SoundSFML::Sound() {
 		}
 		change_sound = false;
 	}
+
 }
 
 void	SoundSFML::init() {
@@ -69,8 +74,9 @@ void	SoundSFML::init() {
 	try {
 
 		// music
-		// music_menu.openFromFile("resources/menu.ogg");
-		// music_game.openFromFile("resources/game.ogg");
+		music_menu.openFromFile("resources/menu.ogg");
+		music_game.openFromFile("resources/game.ogg");
+		music_end.openFromFile("resources/end.ogg");
 
 		// sound
 		menuBuffer.loadFromFile("resources/+.ogg");
@@ -92,6 +98,7 @@ void	SoundSFML::init() {
 	eat.setBuffer(eatBuffer);
 	menu_sound.setBuffer(menuBuffer);
 
+	//music_end.play();
 	eat.play(); //make sound
 
 
@@ -114,7 +121,13 @@ void 	SoundSFML::set_switch_menu_sound(bool b) {
 	switch_menu_sound = b;
 }
 
+void 	SoundSFML::set_game_over(bool b) {
+	game_over = b;
+}
 
+void 	SoundSFML::set_continue_music(bool b) {
+	continue_music = b;
+}
 
 extern "C" ISound *createSound() {
 	return (new SoundSFML());
