@@ -29,6 +29,8 @@ class Game
 	bool				start;
 	int					buttonNum;
 	rect				appleRect;
+	int					winner;
+	int					gameOverCount;
 
 public:
 
@@ -43,5 +45,6 @@ public:
 	void	generateApple();
 	bool	checkCollision();
 	bool	newGame();
+	void	gameOver();
 
 };

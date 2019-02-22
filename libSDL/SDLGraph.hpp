@@ -48,6 +48,8 @@ public:
 	virtual void			setKeyDown();
 	virtual eKeyType		getKey();
 	virtual void			setKey(eKeyType k);
+	virtual void			drawGameOver(int winner);
+	
 
 	SDL_Rect				toSDLRect(rect r);
 	

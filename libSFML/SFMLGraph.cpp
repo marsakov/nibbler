@@ -120,9 +120,9 @@ void		SFMLGraph::renderText(std::string textString, int x, int y, bool selection
 	text.setString(textString);
 	text.setPosition(x, y);
 	if (selection)
-		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+		text.setFillColor(sf::Color::Magenta);
 	else
-		text.setStyle(sf::Text::Bold);
+		text.setFillColor(sf::Color::White);
 	window->draw(text);
 }
 
@@ -143,6 +143,21 @@ void		SFMLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	renderText("EXIT", snake1->screenWidth - 100, snake1->screenHeiht + 100, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), snake1->screenWidth - 100, snake1->screenHeiht - 600, false);
 
+
+	window->draw(text);
+
+	window->display();
+}
+
+void		SFMLGraph::drawGameOver(int winner) {
+
+	renderText("GAME OVER", snake1->screenWidth - 100, snake1->screenHeiht - 100, false);
+	if (multiplayer) {
+		renderText(("Snake1 SCORE " + std::to_string(snake1->size)).c_str(), snake1->screenWidth - 100, snake1->screenHeiht, (winner == 1) ? true : false);
+		renderText(("Snake2 SCORE " + std::to_string(snake2->size)).c_str(),snake1->screenWidth - 100, snake1->screenHeiht + 100, (winner == 2) ? true : false);
+	}
+	else
+		renderText(("Snake1 SCORE " + std::to_string(snake1->size)).c_str(), snake1->screenWidth - 100, snake1->screenHeiht, true);
 
 	window->draw(text);
 

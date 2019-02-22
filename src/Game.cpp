@@ -15,21 +15,21 @@ Game::Game() {
 Game::Game(int w, int h) {
 	snake1 = new Snake(w, h);
 	snake2 = new Snake(w, h);
-	libNum = num1;
-	buttonNum = 1;
+	libNum = num3;
+	buttonNum = 2;
 	menu = true;
 	start = false;
 	multiplayer = false;
 	speed = 15;
+	winner = 1;
 	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
 	creatS = (create_s*)dlsym(ext_library2,"createSound");
 	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
 	soundLib = creatS();
 
-	////////////////////////////////////////////////////////////////////////////////////////////
-	snake1->snakeRect[0].r = 1;
-	snake1->snakeRect[0].g = 1;
-	snake1->snakeRect[0].b = 1;
+	snake1->snakeRect[0].r = 0.97f;
+	snake1->snakeRect[0].g = 0.14f;
+	snake1->snakeRect[0].b = 0.45f;
 	snake2->snakeRect[0].r = 1;
 	snake2->snakeRect[0].g = 1;
 	snake2->snakeRect[0].b = 1;
@@ -84,12 +84,18 @@ void	Game::getLib(eKeyType key) {
 bool	Game::newGame() {
 
 	Snake *newSnake = new Snake(snake1->screenWidth, snake1->screenHeiht);
+	newSnake->snakeRect[0].r = snake1->snakeRect[0].r;
+	newSnake->snakeRect[0].g = snake1->snakeRect[0].g;
+	newSnake->snakeRect[0].b = snake1->snakeRect[0].b;
 	delete snake1;
 	snake1 = newSnake;
 
 	if (multiplayer) {
 		start = false;
 		newSnake = new Snake(snake1->screenWidth, snake1->screenHeiht);
+		newSnake->snakeRect[0].r = snake2->snakeRect[0].r;
+		newSnake->snakeRect[0].g = snake2->snakeRect[0].g;
+		newSnake->snakeRect[0].b = snake2->snakeRect[0].b;
 		delete snake2;
 		snake2 = newSnake;
 
@@ -100,6 +106,8 @@ bool	Game::newGame() {
 
 	closeLib();
 	getLib(libNum);
+
+	soundLib->set_new_game(true);
 
 	return (true);
 }
@@ -125,12 +133,12 @@ void	Game::keyHandle(eKeyType key) {
 	else if (menu) {
 		switch (key) {
 			case (up):		{
-				(buttonNum == 1) ? buttonNum = 4 : buttonNum--;
+				((buttonNum == 2 && !start) || (buttonNum == 1 && start)) ? buttonNum = 4 : buttonNum--;
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (down):	{
-				(buttonNum == 4) ? buttonNum = 1 : buttonNum++; 
+				(buttonNum == 4) ? buttonNum = (start ? 1 : 2) : buttonNum++; 
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
@@ -144,15 +152,9 @@ void	Game::keyHandle(eKeyType key) {
 				(speed != 25) ? speed++ : 0;
 				break;
 			}
-			// case (escape):	{ 
-			// 	menu = false;
-			// 	soundLib->set_change_sound(true);
-			// 	break;
-			// }
 			case (enter): {
 				switch (buttonNum) {
 					case 1 : {
-						soundLib->set_continue_music(true);
 						soundLib->set_menu(false);
 						soundLib->set_change_sound(true);
 						menu = false;
@@ -235,7 +237,7 @@ void	Game::generateApple() {
 					noCollision = false;
 		}
 	}
-	std::cout << "APPLE x = " << appleRect.x << " y = " << appleRect.y << std::endl;
+	// std::cout << "APPLE x = " << appleRect.x << " y = " << appleRect.y << std::endl;
 }
 
 bool	Game::checkCollision() {
@@ -245,39 +247,55 @@ bool	Game::checkCollision() {
 		appleRect.x = -1000;
 		appleRect.y = -1000;
 		snake1->size++;
-		std::cout << "snake1->size = " << snake1->size << std::endl;
+		// std::cout << "snake1->size = " << snake1->size << std::endl;
 		soundLib->set_eat_sound(true);
 	}
 	else if (multiplayer && snake2->snakeRect[0].x == appleRect.x && snake2->snakeRect[0].y == appleRect.y) {
 		appleRect.x = -1000;
 		appleRect.y = -1000;
 		snake2->size++;
-		std::cout << "snake2->size = " << snake2->size << std::endl;
+		// std::cout << "snake2->size = " << snake2->size << std::endl;
 		soundLib->set_eat_sound(true);
 	}
 
 	for (int i = 1; i < snake1->snakeRect.size(); i++) {
-		if (snake1->snakeRect[0].x == snake1->snakeRect[i].x && snake1->snakeRect[0].y == snake1->snakeRect[i].y) 
+		if (snake1->snakeRect[0].x == snake1->snakeRect[i].x && snake1->snakeRect[0].y == snake1->snakeRect[i].y) {
+			winner = 1;
 			return (false);
+		}
 		else if (multiplayer && snake2->snakeRect[0].x == snake1->snakeRect[i].x && snake2->snakeRect[0].y == snake1->snakeRect[i].y) {
 			snake1->snakeRect.resize(i);
 			snake1->size = i;
+			soundLib->set_eat_sound(true);
 		}
 	}
 
 	if (multiplayer) {
-		if (snake1->snakeRect[0].x == snake2->snakeRect[0].x && snake1->snakeRect[0].y == snake2->snakeRect[0].y)
+		if (snake1->snakeRect[0].x == snake2->snakeRect[0].x && snake1->snakeRect[0].y == snake2->snakeRect[0].y) 
 			return (false);
 		for (int i = 1; i < snake2->snakeRect.size(); i++) {
-			if (snake2->snakeRect[0].x == snake2->snakeRect[i].x && snake2->snakeRect[0].y == snake2->snakeRect[i].y)
+			if (snake2->snakeRect[0].x == snake2->snakeRect[i].x && snake2->snakeRect[0].y == snake2->snakeRect[i].y) {
+				winner = 2;
 				return (false);
+			}
 			else if (snake1->snakeRect[0].x == snake2->snakeRect[i].x && snake1->snakeRect[0].y == snake2->snakeRect[i].y) {
 				snake2->size = i;
 				snake2->snakeRect.resize(i);
+				soundLib->set_eat_sound(true);
 			}
 		}
 	}
 	return (true);
+}
+
+void	Game::gameOver() {
+	soundLib->set_game_over(true);
+	usleep(1000000);
+	soundLib->set_menu(true);
+	soundLib->set_change_sound(true);
+	start = false;
+	menu = true;
+	gameOverCount = 200;
 }
 
 void	Game::mainCycle() {
@@ -287,31 +305,17 @@ void	Game::mainCycle() {
 	getLib(libNum);
 	
 	while (dynLib->windIsOpen()) {
-		// soundLib->Sound();
+
 		if (!menu && (i % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){
+			winner = 1;
 			std::cout << "snake outside the box" << std::endl;
-			soundLib->set_game_over(true);
-			usleep(1000000);
-			soundLib->set_menu(true);
-			soundLib->set_change_sound(true);
-			start = false;
-			menu = true;
+			gameOver();
 		}
 		if (multiplayer && !menu && (i % (15 - (speed - 15)) == 0 && !snake2->moveSnake() )) {
 			std::cout << "snake outside the box" << std::endl;
-			// в отдельную функцию
 
-
-			// выключить музыку 
-			// включить звук БУМ
-
-			soundLib->set_game_over(true);
-			usleep(1000000);
-			// включить музыку меню
-			soundLib->set_menu(true);
-			soundLib->set_change_sound(true);
-			start = false;
-			menu = true;
+			winner = 2;
+			gameOver();
 		}
 		if (!menu && (i % 750 == 0 || appleRect.x == -1000))
 			generateApple();
@@ -321,17 +325,18 @@ void	Game::mainCycle() {
 
 		if (!menu && !checkCollision()) {
 			std::cout << "boom" << std::endl;
-			usleep(1000000);
-			soundLib->set_menu(true);
-			soundLib->set_change_sound(true);
-			start = false;
-			menu = true;
+			gameOver();
 		}
 
-		if (menu)
+		if (gameOverCount) {
+			dynLib->drawGameOver(winner);
+			gameOverCount--;
+		}
+		else if (menu)
 			dynLib->drawMenu(buttonNum, start, speed);
 		else
 			dynLib->draw(appleRect);
+
 		soundLib->Sound();
 
 		if ( i == 2000000000 )

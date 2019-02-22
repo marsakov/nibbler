@@ -54,6 +54,8 @@ public:
 	virtual void			setKeyDown();
 	virtual eKeyType		getKey();
 	virtual void			setKey(eKeyType k);
+	virtual void			drawGameOver(int winner);
+	
 
 	void					renderText(std::string text, int x, int y, bool selection);
 

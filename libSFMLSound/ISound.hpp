@@ -10,7 +10,7 @@ protected:
 	bool eat_sound;
 	bool switch_menu_sound;
 	bool game_over;
-	bool continue_music;
+	bool new_game;
 
 
 public:
@@ -23,6 +23,6 @@ public:
 	virtual void 	set_eat_sound(bool b) = 0;
 	virtual void 	set_switch_menu_sound(bool b) = 0;
 	virtual void 	set_game_over(bool b) = 0;
-	virtual void 	set_continue_music(bool b)= 0;
+	virtual void 	set_new_game(bool b) = 0;
 
 };

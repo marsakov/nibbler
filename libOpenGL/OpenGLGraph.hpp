@@ -39,6 +39,8 @@ public:
 
 	void 					drawApple3DSphera(rect appleRect);
 	void 					drawApple3DCube(rect appleRect);
+	void					drawCubeFrame(rect snakeRect);
+	void					drawCube(rect snakeRect, rect snakeColor);
 
 	virtual void			drawMenu(int buttonNum, bool start, int speed);
 	virtual bool			windIsOpen();
@@ -50,6 +52,8 @@ public:
 	virtual void			setKey(eKeyType k);
 	void 					drawSphere(double r, int lats, int longs, rect appleRect);
 	void 					drawFrame();
+	virtual void			drawGameOver(int winner);
+
 
 
 	SDL_Rect				toSDLRect(rect r);

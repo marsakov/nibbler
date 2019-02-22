@@ -10,6 +10,10 @@ OBJS	:= $(SRCS:%.cpp=%.o)
 all: $(NAME)
 
 $(NAME): $(OBJS)
+	make -C libOpenGL
+	make -C libSDL
+	make -C libSFML
+	make -C libSFMLSound
 	$(CC) $(CFLAGS) -o $@ $^ -fsanitize=address 
 
 %.o: %.cpp $(DEPS)
@@ -20,5 +24,9 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
+	make fclean -C libOpenGL
+	make fclean -C libSDL
+	make fclean -C libSFML
+	make fclean -C libSFMLSound	
 
 re: fclean all

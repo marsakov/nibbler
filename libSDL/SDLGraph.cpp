@@ -112,20 +112,16 @@ void		SDLGraph::renderText(const char *text, int x, int y, bool selection) {
     SDL_Texture *texture;
 
 	SDL_Color color = { 0, 0, 0, 255 };
-	// if (selection) 
-	// 	color = { 255, 255, 255, 255 };
+	if (selection) {
+		SDL_Color color1 = { 255, 255, 255, 255 };
+		color = color1;
+	}
     surface = TTF_RenderText_Solid(textFont, text, color);
     msgRECT.x = x;
 	msgRECT.y = y;
 	msgRECT.w = surface->w;
 	msgRECT.h = surface->h;
     texture = SDL_CreateTextureFromSurface(gRenderer, surface);
-
-    if (selection) {
-		SDL_Rect outlineRect = { x, y, surface->w, surface->h };
-		SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-		SDL_RenderDrawRect( gRenderer, &outlineRect );
-	}
 
     SDL_FreeSurface(surface);
     SDL_RenderCopy(gRenderer, texture, NULL, &msgRECT);
@@ -158,6 +154,21 @@ void		SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	SDL_RenderDrawLine(gRenderer, 50, 50, snake1->screenWidth - 50, 50);
 	SDL_RenderDrawLine(gRenderer, snake1->screenWidth - 50, 50, snake1->screenWidth - 50, snake1->screenHeiht - 50);
 	SDL_RenderDrawLine(gRenderer, 50, snake1->screenHeiht - 50, snake1->screenWidth - 50, snake1->screenHeiht - 50);
+
+	SDL_RenderPresent(gRenderer);
+}
+
+void		SDLGraph::drawGameOver(int winner) {
+
+	SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	renderText("GAME OVER", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 50, false);
+	if (multiplayer) {
+		renderText(("Snake1 SCORE " + std::to_string(snake1->size)).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, (winner == 1) ? true : false);
+		renderText(("Snake2 SCORE " + std::to_string(snake2->size)).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 + 50, (winner == 2) ? true : false);
+	}
+	else
+		renderText(("Snake1 SCORE " + std::to_string(snake1->size)).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, true);
+
 
 	SDL_RenderPresent(gRenderer);
 }
