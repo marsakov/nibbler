@@ -1,5 +1,19 @@
 #pragma once
 
+#include <netdb.h> 
+#include <netinet/in.h> 
+#include <stdlib.h> 
+#include <string.h> 
+#include <sys/socket.h> 
+#include <sys/types.h> 
+#include <arpa/inet.h> 
+#include <iostream>
+#include <unistd.h>
+#include <stdio.h> 
+
+#define PORT 8080 
+#define SA struct sockaddr 
+
 #include <dlfcn.h>
 #include <unistd.h>
 #include "IGraph.hpp"
@@ -31,11 +45,16 @@ class Game
 	rect				appleRect;
 	int					winner;
 	int					gameOverCount;
+	int sockfd, connfd;
+	int					network;
+	eKeyType			keyToNetwork;
+	// eKeyType			keyFromNetwork;
 
 public:
 
 	Game();
 	Game(int w, int h);
+	Game(int w, int h, std::string ip);
 	~Game();
 	
 	void	keyHandle(eKeyType key);
@@ -46,5 +65,6 @@ public:
 	bool	checkCollision();
 	bool	newGame();
 	void	gameOver();
-
+	void	networkFunc();
+	void	createServer();
 };

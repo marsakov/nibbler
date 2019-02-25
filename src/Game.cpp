@@ -35,61 +35,113 @@ Game::Game(int w, int h) {
 	snake2->snakeRect[0].b = 0.12f;
 }
 
-Game::~Game() {
-	dlclose(ext_library);
+Game::Game(int w, int h, std::string id) {
+	snake1 = new Snake(w, h);
+	snake2 = new Snake(w, h);
+	libNum = num1;
+	buttonNum = 2;
+	menu = true;
+	start = false;
+	multiplayer = false;
+	speed = 15;
+	winner = 1;
+	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
+	creatS = (create_s*)dlsym(ext_library2,"createSound");
+	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
+	soundLib = creatS();
+
+	snake1->snakeRect[0].r = 0.97f;
+	snake1->snakeRect[0].g = 0.14f;
+	snake1->snakeRect[0].b = 0.45f;
+	snake2->snakeRect[0].r = 0.98f;
+	snake2->snakeRect[0].g = 0.58f;
+	snake2->snakeRect[0].b = 0.12f;
+
+
+	struct sockaddr_in servaddr, cli; 
+	network = 2;
+  
+    // socket create and varification 
+    sockfd = socket(AF_INET, SOCK_STREAM, 0); 
+    if (sockfd == -1) { 
+        printf("socket creation failed...\n"); 
+        exit(0); 
+    } 
+    else
+        printf("Socket successfully created..\n"); 
+    bzero(&servaddr, sizeof(servaddr)); 
+  
+    // assign IP, PORT 
+    servaddr.sin_family = AF_INET; 
+    servaddr.sin_addr.s_addr = inet_addr(id.c_str()); 
+    servaddr.sin_port = htons(PORT); 
+  
+    // connect the client socket to server socket 
+    if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) != 0) { 
+        printf("connection with the server failed...\n"); 
+        exit(0); 
+    } 
+    else
+        printf("connected to the server..\n"); 
 }
 
-// void	Game::createServer() {
-// 	  int sockfd, connfd, len; 
-//     struct sockaddr_in servaddr, cli; 
+Game::~Game() {
+	dlclose(ext_library);
+	close(sockfd); 
+}
+
+void	Game::createServer() {
+	network = 1;
+	int len; 
+	struct sockaddr_in servaddr, cli; 
   
-//     // socket create and verification 
-//     sockfd = socket(AF_INET, SOCK_STREAM, 0); 
-//     if (sockfd == -1) { 
-//         printf("socket creation failed...\n"); 
-//         exit(0); 
-//     } 
-//     else
-//         printf("Socket successfully created..\n"); 
-//     bzero(&servaddr, sizeof(servaddr)); 
+	// socket create and verification 
+	sockfd = socket(AF_INET, SOCK_STREAM, 0); 
+	if (sockfd == -1) { 
+		printf("socket creation failed...\n"); 
+		exit(0); 
+	} 
+	else
+		printf("Socket successfully created..\n"); 
+	bzero(&servaddr, sizeof(servaddr)); 
   
-//     // assign IP, PORT 
-//     servaddr.sin_family = AF_INET; 
-//     servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
-//     servaddr.sin_port = htons(PORT); 
+	// assign IP, PORT 
+	servaddr.sin_family = AF_INET; 
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
+	servaddr.sin_port = htons(PORT); 
   
-//     // Binding newly created socket to given IP and verification 
-//     if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) { 
-//         printf("socket bind failed...\n"); 
-//         exit(0); 
-//     } 
-//     else
-//         printf("Socket successfully binded..\n"); 
+	// Binding newly created socket to given IP and verification 
+	if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) { 
+		printf("socket bind failed...\n"); 
+		exit(0); 
+	} 
+	else
+		printf("Socket successfully binded..\n"); 
   
-//     // Now server is ready to listen and verification 
-//     if ((listen(sockfd, 5)) != 0) { 
-//         printf("Listen failed...\n"); 
-//         exit(0); 
-//     } 
-//     else
-//         printf("Server listening..\n"); 
-//     len = sizeof(cli); 
+	// Now server is ready to listen and verification 
+	if ((listen(sockfd, 5)) != 0) { 
+		printf("Listen failed...\n"); 
+		exit(0); 
+	} 
+	else
+		printf("Server listening..\n"); 
+	len = sizeof(cli); 
   
-//     // Accept the data packet from client and verification 
-//     connfd = accept(sockfd, (SA*)&cli, &len); 
-//     if (connfd < 0) { 
-//         printf("server acccept failed...\n"); 
-//         exit(0); 
-//     } 
-//     else
-//         printf("server acccept the client...\n"); 
+	// Accept the data packet from client and verification 
+	connfd = accept(sockfd, (SA*)&cli, (socklen_t *)&len); 
+	if (connfd < 0) { 
+		printf("server acccept failed...\n"); 
+		exit(0); 
+	} 
+	else
+		printf("server acccept the client...\n"); 
   
-//     // Function for chatting between client and server 
-//     func(connfd); 
+	// Function for chatting between client and server 
+	// func(connfd); 
   
-//     // After chatting close the socket 
-//     close(sockfd); 
-// }
+	// After chatting close the socket 
+	// close(sockfd); 
+}
 
 void	Game::closeLib() {
 	std::cout << "closeLib" << std::endl;
@@ -165,6 +217,8 @@ bool	Game::newGame() {
 }
 
 void	Game::keyHandle(eKeyType key) {
+	keyToNetwork = key;
+	// key = keyToNetwork;
 	if (!menu)
 		soundLib->set_menu(false);
 	
@@ -185,12 +239,12 @@ void	Game::keyHandle(eKeyType key) {
 	else if (menu) {
 		switch (key) {
 			case (up):		{
-				((buttonNum == 2 && !start) || (buttonNum == 1 && start)) ? buttonNum = 4 : buttonNum--;
+				((buttonNum == 2 && !start) || (buttonNum == 1 && start)) ? buttonNum = 5 : buttonNum--;
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (down):	{
-				(buttonNum == 4) ? buttonNum = (start ? 1 : 2) : buttonNum++; 
+				(buttonNum == 5) ? buttonNum = (start ? 1 : 2) : buttonNum++; 
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
@@ -236,7 +290,7 @@ void	Game::keyHandle(eKeyType key) {
 						break; 
 					}
 					case 4 : dynLib->close("EXIT"); break ;
-					// case 5 : createServer(); break;
+					case 5 : createServer(); break;
 				}
 			}
 			default : break ;
@@ -351,6 +405,39 @@ void	Game::gameOver() {
 	gameOverCount = 200;
 }
 
+void	Game::networkFunc() {
+
+	 // bzero(buff, MAX); 
+  if (network == 2) {
+	// read the message from client and copy it in buffer 
+	read(sockfd, &keyToNetwork, sizeof(eKeyType)); 
+	// print buffer which contains the client contents 
+	printf("From client: %u\t To client : %u\n", keyToNetwork, keyToNetwork); 
+	// bzero(buff, MAX); 
+	// n = 0; 
+	// // copy server message in the buffer 
+	// while ((buff[n++] = getchar()) != '\n') 
+	// 	; 
+
+	// and send that buffer to client 
+	write(sockfd, &keyToNetwork, sizeof(eKeyType));
+	}
+	else {
+		read(connfd, &keyToNetwork, sizeof(eKeyType)); 
+	// print buffer which contains the client contents 
+	printf("From client: %u\t To client : %u\n", keyToNetwork, keyToNetwork); 
+	// bzero(buff, MAX); 
+	// n = 0; 
+	// // copy server message in the buffer 
+	// while ((buff[n++] = getchar()) != '\n') 
+	// 	; 
+
+	// and send that buffer to client 
+	write(connfd, &keyToNetwork, sizeof(eKeyType));
+	}
+
+}
+
 void	Game::mainCycle() {
 	size_t i = 0;
 
@@ -392,10 +479,17 @@ void	Game::mainCycle() {
 
 		soundLib->Sound();
 
+
+		if (network)
+			networkFunc();
+
+
+
 		if ( i == 2000000000 )
 			i = 0;
 		if (!menu)
 			i++;
+
 	}
 }
 
