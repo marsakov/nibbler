@@ -37,9 +37,9 @@ void	Snake::choseDirection(eKeyType key) {
 		case (left):		(direction != 'R') ? direction = 'L' : 0; break ;
 		case (right):		(direction != 'L') ? direction = 'R' : 0; break ;
 		case (w):			(direction != 'D') ? direction = 'U' : 0; break ;
-		case (s):		(direction != 'U') ? direction = 'D' : 0; break ;
-		case (a):		(direction != 'R') ? direction = 'L' : 0; break ;
-		case (d):		(direction != 'L') ? direction = 'R' : 0; break ;
+		case (s):			(direction != 'U') ? direction = 'D' : 0; break ;
+		case (a):			(direction != 'R') ? direction = 'L' : 0; break ;
+		case (d):			(direction != 'L') ? direction = 'R' : 0; break ;
 		default : break ; 
 	}
 }

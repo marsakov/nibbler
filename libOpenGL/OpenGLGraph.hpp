@@ -40,7 +40,7 @@ public:
 	void 					drawApple3DSphera(rect appleRect);
 	void 					drawApple3DCube(rect appleRect);
 	void					drawCubeFrame(rect snakeRect);
-	void					drawCube(rect snakeRect, rect snakeColor);
+	void					drawCube(rect snakeRect, rect snakeColor, int i);
 
 	virtual void			drawMenu(int buttonNum, bool start, int speed);
 	virtual bool			windIsOpen();

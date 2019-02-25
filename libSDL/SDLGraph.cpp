@@ -65,7 +65,7 @@ void		SDLGraph::init() {
 
 	snake1Texture = IMG_LoadTexture(gRenderer, "resources/square.png");
 	snake2Texture = IMG_LoadTexture(gRenderer, "resources/square1.png");
-	head1Texture = IMG_LoadTexture(gRenderer, "resources/square1.png");
+	head1Texture = IMG_LoadTexture(gRenderer, "resources/head5.png");
 	head2Texture = IMG_LoadTexture(gRenderer, "resources/square.png");
 	appleTexture = IMG_LoadTexture(gRenderer, "resources/apple1.png");
 	if (!snake1Texture || !appleTexture || !snake2Texture)

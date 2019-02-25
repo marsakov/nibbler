@@ -47,10 +47,10 @@ void		SFMLGraph::init() {
 	window = new sf::RenderWindow(sf::VideoMode(snake1->screenWidth*2, snake1->screenHeiht*2), "Nibbler", sf::Style::Titlebar | sf::Style::Close);
 	window->setFramerateLimit(60);
 
-    texture1.loadFromFile("resources/cubeApple.png"); // apple
+    texture1.loadFromFile("resources/sphere.png"); // apple
     texture2.loadFromFile("resources/snake1.png"); // snake
     texture3.loadFromFile("resources/bckgrnd.jpg");
-    texture4.loadFromFile("resources/snake1.png");
+    texture4.loadFromFile("resources/cube (1).png");
     texture5.loadFromFile("resources/snake2.png");
     texture6.loadFromFile("resources/snake2.png");
 	font.loadFromFile("resources/SEASRN.ttf");
@@ -77,8 +77,8 @@ void		SFMLGraph::init() {
     background.setTexture(texture3);
 
 
-	appleSprite.setScale(0.1, 0.1);
-	headSprite.setScale(0.16, 0.16);
+	appleSprite.setScale(0.18, 0.18);
+	headSprite.setScale(0.11, 0.11);
 	headSprite2.setScale(0.16, 0.16);
 	squareSprite.setScale(0.16, 0.16);
 	squareSprite2.setScale(0.16, 0.16);

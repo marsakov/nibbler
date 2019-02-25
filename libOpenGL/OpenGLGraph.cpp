@@ -84,17 +84,17 @@ int         SDLGraph::close(std::string msg) {
 	return (0);
 }
 
-void        SDLGraph::setKeyDownRotate() {
-	switch( event.key.keysym.sym )
-	{
-		case SDLK_i:        { xrf += 0.3; break; }
-		case SDLK_j:        { xrf -= 0.3; break; }
-		case SDLK_o:        { yrf += 0.3; break; }
-		case SDLK_k:        { yrf -= 0.3; break; }
-		case SDLK_p:        { zrf += 0.3; break; }
-		case SDLK_l:        { zrf -= 0.3; break; }
-	}
-}
+// void        SDLGraph::setKeyDownRotate() {
+// 	switch( event.key.keysym.sym )
+// 	{
+// 		case SDLK_i:        { xrf += 0.3; break; }
+// 		case SDLK_j:        { xrf -= 0.3; break; }
+// 		case SDLK_o:        { yrf += 0.3; break; }
+// 		case SDLK_k:        { yrf -= 0.3; break; }
+// 		case SDLK_p:        { zrf += 0.3; break; }
+// 		case SDLK_l:        { zrf -= 0.3; break; }
+// 	}
+// }
 
 void        SDLGraph::setKeyDown() {
 	switch( event.key.keysym.sym )
@@ -177,31 +177,31 @@ void		SDLGraph::drawGameOver(int winner) {
 	SDL_GL_SwapWindow(window);
 }
 
-void	SDLGraph::drawCube(rect snakeRect, rect snakeColor) {
+void	SDLGraph::drawCube(rect snakeRect, rect snakeColor, int i) {
 	x = (snakeRect.x - snake1->screenWidth/2)/50;
 	y = (snake1->screenHeiht - snakeRect.y - 50 - snake1->screenHeiht/2)/50; 
    
 	glBegin(GL_QUADS); 
-	glColor3f(snakeColor.r*0.6, snakeColor.g*0.6, snakeColor.b*0.6);              // Синяя сторона (Верхняя)
+	glColor3f((snakeColor.r + i*0.03)*0.6, (snakeColor.g + i*0.03)*0.6, (snakeColor.b + i*0.03)*0.6);              // Синяя сторона (Верхняя)
 	glVertex3f( x - 0.08 + 1,  y + 0.08,   -26.0f);         // Верхний правый угол квадрата
 	glVertex3f( x + 0.08,      y + 0.08,   -26.0f);         // Верхний левый
 	glVertex3f( x + 0.08,      y + 0.08,   -25.0f);         // Нижний левый
 	glVertex3f( x - 0.08 + 1,  y + 0.08,   -25.0f);         // Нижний правый
 
-	glColor3f(snakeColor.r*0.6, snakeColor.g*0.6, snakeColor.b*0.6);              // Оранжевая сторона (Нижняя)
+	glColor3f((snakeColor.r + i*0.03)*0.6, (snakeColor.g + i*0.03)*0.6, (snakeColor.b + i*0.03)*0.6);              // Оранжевая сторона (Нижняя)
 	glVertex3f( x - 0.08 + 1,  y - 0.08 + 1,   -25.0f);     // Верхний правый угол квадрата
 	glVertex3f( x + 0.08,      y - 0.08 + 1,   -25.0f);     // Верхний левый
 	glVertex3f( x + 0.08,      y - 0.08 + 1,   -26.0f);     // Нижний левый
 	glVertex3f( x - 0.08 + 1,  y - 0.08 + 1,   -26.0f);     // Нижний правый
 
-	// snakeColor.r, snakeColor.g, snakeColor.b
-	glColor3f(snakeColor.r, snakeColor.g, snakeColor.b);              // Красная сторона (Передняя) ///////////////////////////
+	// (snakeColor.r + i*0.03), (snakeColor.g + i*0.03), (snakeColor.b + i*0.03)
+	glColor3f((snakeColor.r + i*0.03), (snakeColor.g + i*0.03), (snakeColor.b + i*0.03));              // Красная сторона (Передняя) ///////////////////////////
 	glVertex3f( x - 0.08 + 1,  y + 0.08,       -25.0f);     // Верхний правый угол квадрата
 	glVertex3f( x + 0.08,      y + 0.08,       -25.0f);     // Верхний левый
 	glVertex3f( x + 0.08,      y - 0.08 + 1,   -25.0f);     // Нижний левый
 	glVertex3f( x - 0.08 + 1,  y - 0.08 + 1,   -25.0f);     // Нижний правый
 
-	glColor3f(snakeColor.r*0.4, snakeColor.g*0.4, snakeColor.b*0.4);              // Желтая сторона (Задняя)
+	glColor3f((snakeColor.r + i*0.03)*0.4, (snakeColor.g + i*0.03)*0.4, (snakeColor.b + i*0.03)*0.4);              // Желтая сторона (Задняя)
 	glVertex3f( x - 0.08 + 1,  y - 0.08 + 1,   -26.0f);     // Верхний правый угол квадрата
 	glVertex3f( x + 0.08,      y - 0.08 + 1,   -26.0f);     // Верхний левый
 	glVertex3f( x + 0.08,      y + 0.08,       -26.0f);     // Нижний левый
@@ -213,13 +213,13 @@ void	SDLGraph::drawCube(rect snakeRect, rect snakeColor) {
 	glVertex3f( x + 0.08,      y + 0.08,       -27.0f);     // Нижний левый
 	glVertex3f( x - 0.08 + 1,  y + 0.08,       -27.0f);     // Нижний правый
 
-	glColor3f(snakeColor.r*0.5, snakeColor.g*0.5, snakeColor.b*0.5);              // Синяя сторона (Левая)
+	glColor3f((snakeColor.r + i*0.03)*0.5, (snakeColor.g + i*0.03)*0.5, (snakeColor.b + i*0.03)*0.5);              // Синяя сторона (Левая)
 	glVertex3f( x + 0.08,      y + 0.08,       -25.0f);     // Верхний правый угол квадрата
 	glVertex3f( x + 0.08,      y + 0.08,       -26.0f);     // Верхний левый
 	glVertex3f( x + 0.08,      y - 0.08 + 1,   -26.0f);     // Нижний левый
 	glVertex3f( x + 0.08,      y - 0.08 + 1,   -25.0f);     // Нижний правый
 
-	glColor3f(snakeColor.r*0.5, snakeColor.g*0.5, snakeColor.b*0.5);               // Фиолетовая сторона (Правая)
+	glColor3f((snakeColor.r + i*0.03)*0.5, (snakeColor.g + i*0.03)*0.5, (snakeColor.b + i*0.03)*0.5);               // Фиолетовая сторона (Правая)
 	glVertex3f( x - 0.08 + 1,  y + 0.08,       -26.0f);     // Верхний правый угол квадрата
 	glVertex3f( x - 0.08 + 1,  y + 0.08,       -25.0f);     // Верхний левый
 	glVertex3f( x - 0.08 + 1,  y - 0.08 + 1,   -25.0f);     // Нижний левый
@@ -371,7 +371,7 @@ void  SDLGraph::drawSnake3D() {
 	
 		for (int i = 0; i < snake1->snakeRect.size(); i++) {
 
-		drawCube(snake1->snakeRect[i], snake1->snakeRect[0]);
+		drawCube(snake1->snakeRect[i], snake1->snakeRect[0], i);
 		drawCubeFrame(snake1->snakeRect[i]);
 		// // golova romb 
 		// if (i == 0) {
@@ -387,7 +387,7 @@ void  SDLGraph::drawSnake3D() {
 
 	if (multiplayer) {
 		for (int i = 0; i < snake2->snakeRect.size(); i++) {
-			drawCube(snake2->snakeRect[i], snake2->snakeRect[0]);
+			drawCube(snake2->snakeRect[i], snake2->snakeRect[0], i);
 			drawCubeFrame(snake2->snakeRect[i]);
 		}
 	}
@@ -524,7 +524,7 @@ void        SDLGraph::drawFrame() {
 
 void        SDLGraph::draw(rect appleRect) {
 
-	setKeyDownRotate();
+	// setKeyDownRotate();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
