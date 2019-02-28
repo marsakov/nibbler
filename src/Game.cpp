@@ -39,12 +39,14 @@ Game::Game(int w, int h, std::string id) {
 	snake1 = new Snake(w, h);
 	snake2 = new Snake(w, h);
 	libNum = num1;
-	buttonNum = 2;
+	buttonNum = 5;
 	menu = true;
 	start = false;
 	multiplayer = false;
 	speed = 15;
 	winner = 1;
+	server = false;
+	client = true;
 	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
 	creatS = (create_s*)dlsym(ext_library2,"createSound");
 	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
@@ -57,91 +59,23 @@ Game::Game(int w, int h, std::string id) {
 	snake2->snakeRect[0].g = 0.58f;
 	snake2->snakeRect[0].b = 0.12f;
 
-
-	struct sockaddr_in servaddr, cli; 
-	network = 2;
-  
-    // socket create and varification 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0); 
-    if (sockfd == -1) { 
-        printf("socket creation failed...\n"); 
-        exit(0); 
-    } 
-    else
-        printf("Socket successfully created..\n"); 
-    bzero(&servaddr, sizeof(servaddr)); 
-  
-    // assign IP, PORT 
-    servaddr.sin_family = AF_INET; 
-    servaddr.sin_addr.s_addr = inet_addr(id.c_str()); 
-    servaddr.sin_port = htons(PORT); 
-  
-    // connect the client socket to server socket 
-    if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) != 0) { 
-        printf("connection with the server failed...\n"); 
-        exit(0); 
-    } 
-    else
-        printf("connected to the server..\n"); 
+	idClient = id;
+	createClient();
 }
 
 Game::~Game() {
 	dlclose(ext_library);
-	close(sockfd); 
+	// close(sockfd); 
+}
+
+void	Game::createClient() {
+
 }
 
 void	Game::createServer() {
-	network = 1;
-	int len; 
-	struct sockaddr_in servaddr, cli; 
-  
-	// socket create and verification 
-	sockfd = socket(AF_INET, SOCK_STREAM, 0); 
-	if (sockfd == -1) { 
-		printf("socket creation failed...\n"); 
-		exit(0); 
-	} 
-	else
-		printf("Socket successfully created..\n"); 
-	bzero(&servaddr, sizeof(servaddr)); 
-  
-	// assign IP, PORT 
-	servaddr.sin_family = AF_INET; 
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
-	servaddr.sin_port = htons(PORT); 
-  
-	// Binding newly created socket to given IP and verification 
-	if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) { 
-		printf("socket bind failed...\n"); 
-		exit(0); 
-	} 
-	else
-		printf("Socket successfully binded..\n"); 
-  
-	// Now server is ready to listen and verification 
-	if ((listen(sockfd, 5)) != 0) { 
-		printf("Listen failed...\n"); 
-		exit(0); 
-	} 
-	else
-		printf("Server listening..\n"); 
-	len = sizeof(cli); 
-  
-	// Accept the data packet from client and verification 
-	connfd = accept(sockfd, (SA*)&cli, (socklen_t *)&len); 
-	if (connfd < 0) { 
-		printf("server acccept failed...\n"); 
-		exit(0); 
-	} 
-	else
-		printf("server acccept the client...\n"); 
-  
-	// Function for chatting between client and server 
-	// func(connfd); 
-  
-	// After chatting close the socket 
-	// close(sockfd); 
+
 }
+
 
 void	Game::closeLib() {
 	std::cout << "closeLib" << std::endl;
@@ -217,7 +151,6 @@ bool	Game::newGame() {
 }
 
 void	Game::keyHandle(eKeyType key) {
-	keyToNetwork = key;
 	// key = keyToNetwork;
 	if (!menu)
 		soundLib->set_menu(false);
@@ -290,7 +223,11 @@ void	Game::keyHandle(eKeyType key) {
 						break; 
 					}
 					case 4 : dynLib->close("EXIT"); break ;
-					case 5 : createServer(); break;
+					case 5 :  {
+						if (!client)
+							createServer();
+						break;
+					}
 				}
 			}
 			default : break ;
@@ -367,7 +304,9 @@ bool	Game::checkCollision() {
 
 	for (int i = 1; i < snake1->snakeRect.size(); i++) {
 		if (snake1->snakeRect[0].x == snake1->snakeRect[i].x && snake1->snakeRect[0].y == snake1->snakeRect[i].y) {
-			winner = 1;
+			boomRect.x = snake1->snakeRect[0].x;
+			boomRect.y = snake1->snakeRect[0].y;
+			winner = 2;
 			return (false);
 		}
 		else if (multiplayer && snake2->snakeRect[0].x == snake1->snakeRect[i].x && snake2->snakeRect[0].y == snake1->snakeRect[i].y) {
@@ -378,11 +317,17 @@ bool	Game::checkCollision() {
 	}
 
 	if (multiplayer) {
-		if (snake1->snakeRect[0].x == snake2->snakeRect[0].x && snake1->snakeRect[0].y == snake2->snakeRect[0].y) 
+		if (snake1->snakeRect[0].x == snake2->snakeRect[0].x && snake1->snakeRect[0].y == snake2->snakeRect[0].y) {
+			winner = (snake1->size > snake2->size) ? 1 : 2;
+			boomRect.x = snake1->snakeRect[0].x;
+			boomRect.y = snake1->snakeRect[0].y;
 			return (false);
+		}
 		for (int i = 1; i < snake2->snakeRect.size(); i++) {
 			if (snake2->snakeRect[0].x == snake2->snakeRect[i].x && snake2->snakeRect[0].y == snake2->snakeRect[i].y) {
-				winner = 2;
+				boomRect.x = snake2->snakeRect[0].x;
+				boomRect.y = snake2->snakeRect[0].y;
+				winner = 1;
 				return (false);
 			}
 			else if (snake1->snakeRect[0].x == snake2->snakeRect[i].x && snake1->snakeRect[0].y == snake2->snakeRect[i].y) {
@@ -407,35 +352,6 @@ void	Game::gameOver() {
 
 void	Game::networkFunc() {
 
-	 // bzero(buff, MAX); 
-  if (network == 2) {
-	// read the message from client and copy it in buffer 
-	read(sockfd, &keyToNetwork, sizeof(eKeyType)); 
-	// print buffer which contains the client contents 
-	printf("From client: %u\t To client : %u\n", keyToNetwork, keyToNetwork); 
-	// bzero(buff, MAX); 
-	// n = 0; 
-	// // copy server message in the buffer 
-	// while ((buff[n++] = getchar()) != '\n') 
-	// 	; 
-
-	// and send that buffer to client 
-	write(sockfd, &keyToNetwork, sizeof(eKeyType));
-	}
-	else {
-		read(connfd, &keyToNetwork, sizeof(eKeyType)); 
-	// print buffer which contains the client contents 
-	printf("From client: %u\t To client : %u\n", keyToNetwork, keyToNetwork); 
-	// bzero(buff, MAX); 
-	// n = 0; 
-	// // copy server message in the buffer 
-	// while ((buff[n++] = getchar()) != '\n') 
-	// 	; 
-
-	// and send that buffer to client 
-	write(connfd, &keyToNetwork, sizeof(eKeyType));
-	}
-
 }
 
 void	Game::mainCycle() {
@@ -447,14 +363,17 @@ void	Game::mainCycle() {
 	while (dynLib->windIsOpen()) {
 
 		if (!menu && (i % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){
-			winner = 1;
+			winner = 2;
 			std::cout << "snake outside the box" << std::endl;
+			boomRect.x = snake1->snakeRect[0].x;
+			boomRect.y = snake1->snakeRect[0].y;
 			gameOver();
 		}
 		if (multiplayer && !menu && (i % (15 - (speed - 15)) == 0 && !snake2->moveSnake() )) {
 			std::cout << "snake outside the box" << std::endl;
-
-			winner = 2;
+			winner = 1;
+			boomRect.x = snake2->snakeRect[0].x;
+			boomRect.y = snake2->snakeRect[0].y;
 			gameOver();
 		}
 		if (!menu && (i % 750 == 0 || appleRect.x == -1000))
@@ -469,7 +388,7 @@ void	Game::mainCycle() {
 		}
 
 		if (gameOverCount) {
-			dynLib->drawGameOver(winner);
+			dynLib->drawGameOver(winner, boomRect);
 			gameOverCount--;
 		}
 		else if (menu)
@@ -480,7 +399,7 @@ void	Game::mainCycle() {
 		soundLib->Sound();
 
 
-		if (network)
+		if (server || client)
 			networkFunc();
 
 

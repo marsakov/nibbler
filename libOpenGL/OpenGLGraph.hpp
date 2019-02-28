@@ -52,7 +52,7 @@ public:
 	virtual void			setKey(eKeyType k);
 	void 					drawSphere(double r, int lats, int longs, rect appleRect);
 	void 					drawFrame();
-	virtual void			drawGameOver(int winner);
+	virtual void			drawGameOver(int winner, rect boomRect);
 
 
 

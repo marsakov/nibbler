@@ -50,9 +50,10 @@ void		SFMLGraph::init() {
     texture1.loadFromFile("resources/sphere.png"); // apple
     texture2.loadFromFile("resources/snake1.png"); // snake
     texture3.loadFromFile("resources/bckgrnd.jpg");
-    texture4.loadFromFile("resources/cube (1).png");
+    texture4.loadFromFile("resources/cubeGreen.png");
     texture5.loadFromFile("resources/snake2.png");
-    texture6.loadFromFile("resources/snake2.png");
+    texture6.loadFromFile("resources/cubePink.png");
+    texture7.loadFromFile("resources/boom.png");
 	font.loadFromFile("resources/SEASRN.ttf");
 	text.setStyle(sf::Text::Bold);
 	text.setFont(font);
@@ -72,13 +73,14 @@ void		SFMLGraph::init() {
     appleSprite.setTexture(texture1);
     squareSprite.setTexture(texture2);
     squareSprite2.setTexture(texture5);
-    headSprite.setTexture(texture4);
-    headSprite2.setTexture(texture6);
+    headSprite.setTexture(texture6);
+    headSprite2.setTexture(texture4);
     background.setTexture(texture3);
+    boomSprite.setTexture(texture7);
 
-
-	appleSprite.setScale(0.18, 0.18);
-	headSprite.setScale(0.11, 0.11);
+	boomSprite.setScale(0.8, 0.8);
+	appleSprite.setScale(0.14, 0.14);
+	headSprite.setScale(0.16, 0.16);
 	headSprite2.setScale(0.16, 0.16);
 	squareSprite.setScale(0.16, 0.16);
 	squareSprite2.setScale(0.16, 0.16);
@@ -149,7 +151,12 @@ void		SFMLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	window->display();
 }
 
-void		SFMLGraph::drawGameOver(int winner) {
+void		SFMLGraph::drawGameOver(int winner, rect boomRect) {
+
+	boomRect.h = 50;
+	boomRect.w = 50;
+	boomSprite.setPosition(boomRect.x * 2 - 50, boomRect.y * 2 - 50);
+	window->draw(boomSprite);
 
 	renderText("GAME OVER", snake1->screenWidth - 100, snake1->screenHeiht - 100, false);
 	if (multiplayer) {
@@ -180,14 +187,14 @@ void		SFMLGraph::draw(rect appleRect) {
 
 	appleRect.h = 50;
 	appleRect.w = 50;
-	appleSprite.setPosition(appleRect.x * 2, appleRect.y * 2);
+	appleSprite.setPosition(appleRect.x * 2 - 25, appleRect.y * 2 - 25);
 	window->draw(appleSprite);
 	for (int i = 0; i < snake1->snakeRect.size(); i++) {
 		if (i == 0) {
-			headSprite.setPosition(snake1->snakeRect[i].x * 2, snake1->snakeRect[i].y * 2);
+			headSprite.setPosition(snake1->snakeRect[i].x * 2 - 25, snake1->snakeRect[i].y * 2 - 25);
 			window->draw(headSprite);
 		} else {
-			squareSprite.setPosition(snake1->snakeRect[i].x * 2, snake1->snakeRect[i].y * 2);
+			squareSprite.setPosition(snake1->snakeRect[i].x * 2 - 25, snake1->snakeRect[i].y * 2 - 25);
 			window->draw(squareSprite);
 		}
 	}
@@ -195,10 +202,10 @@ void		SFMLGraph::draw(rect appleRect) {
 	if (multiplayer) {
 		for (int i = 0; i < snake2->snakeRect.size(); i++) {
 			if (i == 0) {
-				headSprite2.setPosition(snake2->snakeRect[i].x * 2, snake2->snakeRect[i].y * 2);
+				headSprite2.setPosition(snake2->snakeRect[i].x * 2 - 25, snake2->snakeRect[i].y * 2 - 25);
 				window->draw(headSprite2);
 			} else {
-				squareSprite2.setPosition(snake2->snakeRect[i].x * 2, snake2->snakeRect[i].y * 2);
+				squareSprite2.setPosition(snake2->snakeRect[i].x * 2 - 25, snake2->snakeRect[i].y * 2 - 25);
 				window->draw(squareSprite2);
 			}
 		}

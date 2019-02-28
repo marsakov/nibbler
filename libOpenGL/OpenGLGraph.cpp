@@ -159,7 +159,7 @@ void        SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	SDL_GL_SwapWindow(window);
 }
 
-void		SDLGraph::drawGameOver(int winner) {
+void		SDLGraph::drawGameOver(int winner, rect boomRect) {
 
 	glPointSize(5);
 

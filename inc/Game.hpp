@@ -20,6 +20,16 @@
 #include "../libSFMLSound/ISound.hpp"
 #include "Snake.hpp"
 
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/select.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <string.h>
+
 class Game
 {
 	eKeyType			libNum;
@@ -43,12 +53,21 @@ class Game
 	bool				start;
 	int					buttonNum;
 	rect				appleRect;
+	rect				boomRect;
 	int					winner;
 	int					gameOverCount;
-	int sockfd, connfd;
-	int					network;
+	bool				client;
+	bool				server;
 	eKeyType			keyToNetwork;
-	// eKeyType			keyFromNetwork;
+	std::string			idClient;
+	
+	// int listenfd, connfd, nready, maxfdp1; 
+ //    char buffer[MAXLINE]; 
+ //    pid_t childpid; 
+ //    fd_set rset; 
+ //    ssize_t n; 
+ //    socklen_t len; 
+	// struct sockaddr_in cliaddr, servaddr; 
 
 public:
 
@@ -67,4 +86,6 @@ public:
 	void	gameOver();
 	void	networkFunc();
 	void	createServer();
+	void	createClient();
+
 };

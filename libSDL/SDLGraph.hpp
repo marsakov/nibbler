@@ -16,6 +16,7 @@ class SDLGraph : public IGraph
 	SDL_Texture 			*head1Texture;
 	SDL_Texture 			*head2Texture;
 	SDL_Texture 			*appleTexture;
+	SDL_Texture 			*boomTexture;
 	SDL_Rect				msgRECT;
 	SDL_Rect				rectForSDL;
 	SDL_Event				event;
@@ -48,7 +49,7 @@ public:
 	virtual void			setKeyDown();
 	virtual eKeyType		getKey();
 	virtual void			setKey(eKeyType k);
-	virtual void			drawGameOver(int winner);
+	virtual void			drawGameOver(int winner, rect boomRect);
 	
 
 	SDL_Rect				toSDLRect(rect r);

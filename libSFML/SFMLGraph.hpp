@@ -13,6 +13,7 @@ class SFMLGraph : public IGraph
 	sf::Texture 			texture4;
 	sf::Texture 			texture5;
 	sf::Texture 			texture6;
+	sf::Texture 			texture7;
 	sf::Font				font;
 	sf::Text				text;
 	sf::RectangleShape		*line1;
@@ -22,6 +23,7 @@ class SFMLGraph : public IGraph
 	sf::Sprite				squareSprite;
 	sf::Sprite				squareSprite2;
 	sf::Sprite				appleSprite;
+	sf::Sprite				boomSprite;
 	sf::Sprite				background;
 	sf::Sprite				headSprite;
 	sf::Sprite				headSprite2;
@@ -54,7 +56,7 @@ public:
 	virtual void			setKeyDown();
 	virtual eKeyType		getKey();
 	virtual void			setKey(eKeyType k);
-	virtual void			drawGameOver(int winner);
+	virtual void			drawGameOver(int winner, rect boomRect);
 	
 
 	void					renderText(std::string text, int x, int y, bool selection);
