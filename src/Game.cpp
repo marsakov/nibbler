@@ -10,6 +10,7 @@ Game::Game() {
 	start = false;
 	multiplayer = false;
 	speed = 15;
+	network = NULL;
 }
 
 Game::Game(int w, int h) {
@@ -26,6 +27,7 @@ Game::Game(int w, int h) {
 	creatS = (create_s*)dlsym(ext_library2,"createSound");
 	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
 	soundLib = creatS();
+	network = NULL;
 
 	snake1->snakeRect[0].r = 0.97f;
 	snake1->snakeRect[0].g = 0.14f;
@@ -46,7 +48,6 @@ Game::Game(int w, int h, std::string id) {
 	speed = 15;
 	winner = 1;
 	server = false;
-	client = true;
 	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
 	creatS = (create_s*)dlsym(ext_library2,"createSound");
 	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
@@ -60,20 +61,16 @@ Game::Game(int w, int h, std::string id) {
 	snake2->snakeRect[0].b = 0.12f;
 
 	idClient = id;
-	createClient();
+	network = new Network(false);
 }
 
 Game::~Game() {
 	dlclose(ext_library);
-	// close(sockfd); 
 }
 
-void	Game::createClient() {
-
-}
 
 void	Game::createServer() {
-
+	network = new Network(true);
 }
 
 
@@ -224,7 +221,8 @@ void	Game::keyHandle(eKeyType key) {
 					}
 					case 4 : dynLib->close("EXIT"); break ;
 					case 5 :  {
-						if (!client)
+						server = true;
+						if (server)
 							createServer();
 						break;
 					}
@@ -399,8 +397,8 @@ void	Game::mainCycle() {
 		soundLib->Sound();
 
 
-		if (server || client)
-			networkFunc();
+		if (network != NULL)
+			network->cycle();
 
 
 

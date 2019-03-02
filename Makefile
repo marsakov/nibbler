@@ -3,8 +3,8 @@ NAME	:= nibbler
 CC		:= clang++
 CFLAGS	:= #-Wall -Werror -Wextra
 
-DEPS	:= inc/IGraph.hpp inc/Game.hpp inc/Rect.hpp inc/Snake.hpp
-SRCS	:= src/Game.cpp src/Snake.cpp src/main.cpp
+DEPS	:= inc/IGraph.hpp inc/Game.hpp inc/Rect.hpp inc/Snake.hpp inc/Network.hpp
+SRCS	:= src/Game.cpp src/Snake.cpp src/Network.cpp src/main.cpp
 OBJS	:= $(SRCS:%.cpp=%.o)
 
 all: $(NAME)

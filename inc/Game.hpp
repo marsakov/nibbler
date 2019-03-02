@@ -19,6 +19,7 @@
 #include "IGraph.hpp"
 #include "../libSFMLSound/ISound.hpp"
 #include "Snake.hpp"
+#include "Network.hpp"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -56,10 +57,12 @@ class Game
 	rect				boomRect;
 	int					winner;
 	int					gameOverCount;
-	bool				client;
+
 	bool				server;
 	eKeyType			keyToNetwork;
 	std::string			idClient;
+	Network				*network;
+
 	
 	// int listenfd, connfd, nready, maxfdp1; 
  //    char buffer[MAXLINE]; 
@@ -70,6 +73,11 @@ class Game
 	// struct sockaddr_in cliaddr, servaddr; 
 
 public:
+	void					netGame(void);
+	void					clientGame(void);
+	void					sendNet(int command);
+	int						recvNet(void);
+
 
 	Game();
 	Game(int w, int h);
@@ -86,6 +94,5 @@ public:
 	void	gameOver();
 	void	networkFunc();
 	void	createServer();
-	void	createClient();
 
 };
