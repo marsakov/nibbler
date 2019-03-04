@@ -39,7 +39,7 @@ SDLGraph::~SDLGraph() {
 	TTF_Quit();
 	SDL_Quit();
 }
-
+void        SDLGraph::setNetwork(bool m) { network = m; }
 void		SDLGraph::setMultiplayer(bool m) { multiplayer = m; }
 eKeyType	SDLGraph::getKey() { return (key); }
 void		SDLGraph::setKey(eKeyType k) { key = k; }
@@ -147,7 +147,7 @@ void		SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	if (start)
 		renderText("CONTINUE", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 100, (buttonNum == 1) ? true : false);
 	renderText("NEW GAME", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 50, (buttonNum == 2) ? true : false);
-	renderText((std::string("MULTIPLAYER ") + (multiplayer ? "ON" : "OFF")).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, (buttonNum == 3) ? true : false);
+	renderText((std::string("MULTIPLAYER ") + (multiplayer ? (network ? "NET" : "LOCAL") : "OFF")).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, (buttonNum == 3) ? true : false);
 	renderText("EXIT", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 + 50, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 300, false);
 

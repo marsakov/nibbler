@@ -9,6 +9,7 @@ Game::Game() {
 	menu = true;
 	start = false;
 	multiplayer = false;
+	startNetwork = false;
 	speed = 15;
 	network = NULL;
 }
@@ -21,6 +22,7 @@ Game::Game(int w, int h) {
 	menu = true;
 	start = false;
 	multiplayer = false;
+	startNetwork = false;	
 	speed = 15;
 	winner = 1;
 	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
@@ -41,13 +43,14 @@ Game::Game(int w, int h, std::string id) {
 	snake1 = new Snake(w, h);
 	snake2 = new Snake(w, h);
 	libNum = num1;
-	buttonNum = 5;
+	buttonNum = 2;
 	menu = true;
 	start = false;
 	multiplayer = false;
 	speed = 15;
 	winner = 1;
 	server = false;
+	startNetwork = true;
 	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
 	creatS = (create_s*)dlsym(ext_library2,"createSound");
 	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
@@ -70,7 +73,8 @@ Game::~Game() {
 
 
 void	Game::createServer() {
-	network = new Network(true);
+	if (!network)
+		network = new Network(true);
 }
 
 
@@ -148,6 +152,7 @@ bool	Game::newGame() {
 }
 
 void	Game::keyHandle(eKeyType key) {
+	// std::cout << key << std::endl;
 	// key = keyToNetwork;
 	if (!menu)
 		soundLib->set_menu(false);
@@ -169,26 +174,31 @@ void	Game::keyHandle(eKeyType key) {
 	else if (menu) {
 		switch (key) {
 			case (up):		{
-				((buttonNum == 2 && !start) || (buttonNum == 1 && start)) ? buttonNum = 5 : buttonNum--;
+				std::cout << "up" << std::endl;
+				((buttonNum == 2 && !start) || (buttonNum == 1 && start)) ? buttonNum = 4 : buttonNum--;
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (down):	{
-				(buttonNum == 5) ? buttonNum = (start ? 1 : 2) : buttonNum++; 
+				std::cout << "down" << std::endl;
+				(buttonNum == 4) ? buttonNum = (start ? 1 : 2) : buttonNum++; 
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (left):	{
+				std::cout << "left" << std::endl;
 				(speed != 10) ? speed-- : 0;
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (right):	{
+				std::cout << "right" << std::endl;
 				soundLib->set_switch_menu_sound(true);
 				(speed != 25) ? speed++ : 0;
 				break;
 			}
 			case (enter): {
+				std::cout << "enter" << std::endl;
 				switch (buttonNum) {
 					case 1 : {
 						soundLib->set_menu(false);
@@ -198,34 +208,45 @@ void	Game::keyHandle(eKeyType key) {
 						break ;
 					}
 					case 2 : {
-						soundLib->set_menu(false);
-						soundLib->set_change_sound(true);
-						newGame();
 						menu = false;
 						start = true;
+						soundLib->set_menu(menu);
+						soundLib->set_change_sound(true);
+						if (startNetwork && server)
+							createServer();
+						else if (network)
+							delete network;
+						newGame();
 						break ;
 					}
 					case 3 : {
-						if (multiplayer) {
-							multiplayer = false;
-							dynLib->setMultiplayer(false);
-							std::cout << "multiplayer OFF" << std::endl;
-						}
+						if (startNetwork && !server)
+							break;
 						else {
-							std::cout << "multiplayer on" << std::endl;
-							multiplayer = true;
-							dynLib->setMultiplayer(true);
+							if (!multiplayer) {
+								std::cout << "multiplayer on" << std::endl;
+								multiplayer = true;
+								dynLib->setMultiplayer(multiplayer);
+							}
+							else if (multiplayer && !startNetwork) {
+								server = true;
+								startNetwork = true;
+								dynLib->setMultiplayer(multiplayer);
+								dynLib->setNetwork(startNetwork);
+								std::cout << "multiplayer NET" << std::endl;
+							}
+							else {
+								multiplayer = false;
+								startNetwork = false;
+								dynLib->setMultiplayer(multiplayer);
+								dynLib->setNetwork(startNetwork);
+								std::cout << "multiplayer OFF" << std::endl;
+							}
+							start = false ;
+							break;
 						}
-						start = false ;
-						break; 
 					}
 					case 4 : dynLib->close("EXIT"); break ;
-					case 5 :  {
-						server = true;
-						if (server)
-							createServer();
-						break;
-					}
 				}
 			}
 			default : break ;
@@ -396,11 +417,8 @@ void	Game::mainCycle() {
 
 		soundLib->Sound();
 
-
 		if (network != NULL)
 			network->cycle();
-
-
 
 		if ( i == 2000000000 )
 			i = 0;

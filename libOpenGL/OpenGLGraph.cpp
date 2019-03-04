@@ -32,6 +32,7 @@ SDLGraph::~SDLGraph() {
 	SDL_Quit();
 }
 
+void        SDLGraph::setNetwork(bool m) { network = m; }
 void        SDLGraph::setMultiplayer(bool m) { multiplayer = m; }
 eKeyType    SDLGraph::getKey() { return (key); }
 void        SDLGraph::setKey(eKeyType k) { key = k; }

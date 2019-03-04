@@ -19,6 +19,7 @@ class SDLGraph : public IGraph
 	double x1, y1;
 
 protected:
+	bool					network;
 	bool					multiplayer;
 	eKeyType				key;
 
@@ -46,6 +47,7 @@ public:
 	virtual bool			windIsOpen();
 	virtual void			handleEvent();
 	virtual	void			setMultiplayer(bool m);
+	virtual	void			setNetwork(bool m);
 	virtual void			setKeyDown();
 	void 					setKeyDownRotate();
 	virtual eKeyType		getKey();

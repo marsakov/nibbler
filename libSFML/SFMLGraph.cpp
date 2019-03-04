@@ -27,6 +27,7 @@ SFMLGraph::~SFMLGraph() {
 	window->close();
 }
 
+void        SFMLGraph::setNetwork(bool m) { network = m; }
 void		SFMLGraph::setMultiplayer(bool m) { multiplayer = m ;}
 eKeyType	SFMLGraph::getKey() { return (key);}
 void		SFMLGraph::setKey(eKeyType k) { key = k; }

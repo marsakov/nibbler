@@ -73,6 +73,7 @@ typedef struct {
 
 class Network
 {
+
 	bool serverBool;
 	int listen_sock;
 
@@ -121,6 +122,7 @@ class Network
 public:
 
 	int cycle();
+	int key;
 
 	Network();
 	Network(bool serv);

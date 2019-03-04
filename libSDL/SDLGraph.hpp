@@ -26,6 +26,7 @@ class SDLGraph : public IGraph
 	Snake					*snake2;
 
 protected:
+	bool					network;
 	bool					multiplayer;
 	eKeyType				key;
 
@@ -46,6 +47,7 @@ public:
 	virtual bool			windIsOpen();
 	virtual void			handleEvent();
 	virtual	void			setMultiplayer(bool m);
+	virtual	void			setNetwork(bool m);
 	virtual void			setKeyDown();
 	virtual eKeyType		getKey();
 	virtual void			setKey(eKeyType k);

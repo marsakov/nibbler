@@ -57,7 +57,7 @@ class Game
 	rect				boomRect;
 	int					winner;
 	int					gameOverCount;
-
+	bool				startNetwork;
 	bool				server;
 	eKeyType			keyToNetwork;
 	std::string			idClient;
