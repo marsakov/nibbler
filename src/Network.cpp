@@ -261,6 +261,13 @@ int Network::cycle(eKeyType *key) {
 			}
 			
 			if (serverBool) {
+
+				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
+					if (*key != none){
+						std::cout << "NE NONE" << std::endl;
+						send(connection.socket, key, sizeof(key), 0);
+					}
+					
 				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds)) {
 					recv(connection.socket, key, sizeof(key), MSG_DONTWAIT);
 					// if (receive_from_peer(&connection) != 0) {
@@ -268,11 +275,11 @@ int Network::cycle(eKeyType *key) {
 					// }
 				}
 	
-				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
-					if (*key != none){
-						std::cout << "NE NONE" << std::endl;
-						send(connection.socket, key, sizeof(key), 0);
-					}
+				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
+				// 	if (*key != none){
+				// 		std::cout << "NE NONE" << std::endl;
+				// 		send(connection.socket, key, sizeof(key), 0);
+				// 	}
 					
 					// if (send_to_peer(&connection) != 0) {
 					// 	close_client_connection(&connection);
@@ -287,15 +294,21 @@ int Network::cycle(eKeyType *key) {
 			}
 			else
 			{
+
+				if (FD_ISSET(server.socket, &write_fds)) {
+					if (*key != none)
+						send(server.socket, key, sizeof(key), 0);
+
+
 				if (FD_ISSET(server.socket, &read_fds))
 					recv(server.socket, key, sizeof(key), MSG_DONTWAIT);
 
 				// if (FD_ISSET(server.socket, &read_fds)) && receive_from_peer(&server))
 				// 	shutdown_properly(EXIT_FAILURE);
 
-				if (FD_ISSET(server.socket, &write_fds)) {
-					if (*key != none)
-						send(server.socket, key, sizeof(key), 0);
+				// if (FD_ISSET(server.socket, &write_fds)) {
+				// 	if (*key != none)
+				// 		send(server.socket, key, sizeof(key), 0);
 
 					// if (send_to_peer(&server) != 0)
 					// 	shutdown_properly(EXIT_FAILURE);

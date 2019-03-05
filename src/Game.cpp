@@ -224,8 +224,8 @@ void	Game::keyHandle(eKeyType key) {
 						soundLib->set_change_sound(true);
 						if (startNetwork && server && !network)
 							createServer();
-						else if (network && server)
-							delete network;
+						// else if (network && server)
+						// 	delete network;
 						newGame();
 						break ;
 					}
