@@ -52,7 +52,7 @@ Game::Game(int w, int h, std::string id) {
 	buttonNum = 2;
 	menu = true;
 	start = false;
-	multiplayer = false;
+	multiplayer = true;
 	speed = 15;
 	winner = 1;
 	server = false;
@@ -223,9 +223,7 @@ void	Game::keyHandle(eKeyType key) {
 						soundLib->set_menu(menu);
 						soundLib->set_change_sound(true);
 						if (startNetwork && server && !network)
-							createServer();
-						// else if (network && server)
-						// 	delete network;
+							createServer();		
 						newGame();
 						break ;
 					}
@@ -386,6 +384,8 @@ void	Game::mainCycle() {
 
 	generateApple();
 	getLib(libNum);
+	dynLib->setMultiplayer(multiplayer);
+	dynLib->setNetwork(startNetwork);
 	
 	while (dynLib->windIsOpen()) {
 
