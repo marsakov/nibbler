@@ -5,6 +5,12 @@ Network::Network(bool serv) {
 	init();
 }
 
+Network::Network(std::string ip) {
+	serverBool = false;
+	server_ipv_str = ip;
+	init();
+}
+
 Network::Network() {
 	serverBool = false;
 	init();
@@ -28,7 +34,7 @@ int Network::connect_server(peer_t *server) {
 	struct sockaddr_in server_addr;
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = inet_addr(SERVER_IPV4_ADDR);
+	server_addr.sin_addr.s_addr = inet_addr(server_ipv_str.c_str());
 	server_addr.sin_port = htons(SERVER_LISTEN_PORT);
 	
 	server->addres = server_addr;
@@ -38,7 +44,7 @@ int Network::connect_server(peer_t *server) {
 		return (-1);
 	}
 	
-	printf("Connected to %s:%d.\n", SERVER_IPV4_ADDR, SERVER_LISTEN_PORT);
+	printf("Connected to %s:%d.\n", server_ipv_str.c_str(), SERVER_LISTEN_PORT);
 	
 	return (0);
 }
@@ -61,7 +67,7 @@ int Network::start_listen_socket(int *listen_sock) {
 	struct sockaddr_in my_addr;
 	memset(&my_addr, 0, sizeof(my_addr));
 	my_addr.sin_family = AF_INET;
-	my_addr.sin_addr.s_addr = inet_addr(SERVER_IPV4_ADDR);
+	my_addr.sin_addr.s_addr =  htonl(INADDR_ANY);//inet_addr(INADDR_ANY);
 	my_addr.sin_port = htons(SERVER_LISTEN_PORT);
  
 	if (bind(*listen_sock, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0) {
@@ -267,7 +273,7 @@ int Network::cycle(eKeyType *key) {
 						std::cout << "NE NONE" << std::endl;
 						send(connection.socket, key, sizeof(key), 0);
 					}
-					
+
 				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds)) {
 					recv(connection.socket, key, sizeof(key), MSG_DONTWAIT);
 					// if (receive_from_peer(&connection) != 0) {

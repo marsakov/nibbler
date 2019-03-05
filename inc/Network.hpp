@@ -88,6 +88,7 @@ class Network
 	fd_set read_fds;
 	fd_set write_fds;
 	fd_set except_fds;
+	std::string server_ipv_str;
 
 	void shutdown_properly(int code);
 
@@ -110,6 +111,7 @@ public:
 	
 	Network();
 	Network(bool serv);
+	Network(std::string ip);
 	~Network();
 	
 };

@@ -72,7 +72,7 @@ Game::Game(int w, int h, std::string id) {
 	snake2->snakeRect[0].b = 0.12f;
 
 	idClient = id;
-	network = new Network(false);
+	network = new Network(idClient);
 }
 
 Game::~Game() {
