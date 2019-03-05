@@ -59,6 +59,7 @@ class Game
 	int					gameOverCount;
 	bool				startNetwork;
 	bool				server;
+	bool 				client;
 	eKeyType			keyToNetwork;
 	std::string			idClient;
 	Network				*network;

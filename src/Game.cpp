@@ -10,6 +10,9 @@ Game::Game() {
 	start = false;
 	multiplayer = false;
 	startNetwork = false;
+	server = false;
+	client = false;
+	keyToNetwork = none;
 	speed = 15;
 	network = NULL;
 }
@@ -22,7 +25,10 @@ Game::Game(int w, int h) {
 	menu = true;
 	start = false;
 	multiplayer = false;
-	startNetwork = false;	
+	startNetwork = false;
+	keyToNetwork = none;
+	server = false;
+	client = false;
 	speed = 15;
 	winner = 1;
 	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
@@ -50,7 +56,9 @@ Game::Game(int w, int h, std::string id) {
 	speed = 15;
 	winner = 1;
 	server = false;
+	client = true;
 	startNetwork = true;
+	keyToNetwork = none;
 	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
 	creatS = (create_s*)dlsym(ext_library2,"createSound");
 	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
@@ -153,7 +161,14 @@ bool	Game::newGame() {
 
 void	Game::keyHandle(eKeyType key) {
 	// std::cout << key << std::endl;
-	// key = keyToNetwork;
+	if (startNetwork && client) {
+		if (client)
+			std::cout << "client key = " << key << std::endl;
+		// key = keyToNetwork;
+		// keyToNetwork = key;
+	}
+	keyToNetwork = key;
+
 	if (!menu)
 		soundLib->set_menu(false);
 	
@@ -174,31 +189,26 @@ void	Game::keyHandle(eKeyType key) {
 	else if (menu) {
 		switch (key) {
 			case (up):		{
-				std::cout << "up" << std::endl;
 				((buttonNum == 2 && !start) || (buttonNum == 1 && start)) ? buttonNum = 4 : buttonNum--;
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (down):	{
-				std::cout << "down" << std::endl;
 				(buttonNum == 4) ? buttonNum = (start ? 1 : 2) : buttonNum++; 
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (left):	{
-				std::cout << "left" << std::endl;
 				(speed != 10) ? speed-- : 0;
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (right):	{
-				std::cout << "right" << std::endl;
 				soundLib->set_switch_menu_sound(true);
 				(speed != 25) ? speed++ : 0;
 				break;
 			}
 			case (enter): {
-				std::cout << "enter" << std::endl;
 				switch (buttonNum) {
 					case 1 : {
 						soundLib->set_menu(false);
@@ -212,15 +222,15 @@ void	Game::keyHandle(eKeyType key) {
 						start = true;
 						soundLib->set_menu(menu);
 						soundLib->set_change_sound(true);
-						if (startNetwork && server)
+						if (startNetwork && server && !network)
 							createServer();
-						else if (network)
+						else if (network && server)
 							delete network;
 						newGame();
 						break ;
 					}
 					case 3 : {
-						if (startNetwork && !server)
+						if (startNetwork && client)
 							break;
 						else {
 							if (!multiplayer) {
@@ -310,14 +320,12 @@ bool	Game::checkCollision() {
 		appleRect.x = -1000;
 		appleRect.y = -1000;
 		snake1->size++;
-		// std::cout << "snake1->size = " << snake1->size << std::endl;
 		soundLib->set_eat_sound(true);
 	}
 	else if (multiplayer && snake2->snakeRect[0].x == appleRect.x && snake2->snakeRect[0].y == appleRect.y) {
 		appleRect.x = -1000;
 		appleRect.y = -1000;
 		snake2->size++;
-		// std::cout << "snake2->size = " << snake2->size << std::endl;
 		soundLib->set_eat_sound(true);
 	}
 
@@ -417,8 +425,21 @@ void	Game::mainCycle() {
 
 		soundLib->Sound();
 
-		if (network != NULL)
-			network->cycle();
+		if (startNetwork && network) {
+			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
+			network->cycle(&keyToNetwork);
+			
+			// if (!server) {
+			// 	std::cout << "if (!server) " << keyToNetwork << std::endl;
+				// if (keyToNetwork != none)
+				// 	keyHandle(keyToNetwork);
+				// keyToNetwork = none;
+			// }
+			if (client && keyToNetwork != none)
+				keyHandle(keyToNetwork);
+			keyToNetwork = none;
+			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
+		}
 
 		if ( i == 2000000000 )
 			i = 0;
