@@ -63,6 +63,7 @@ class Game
 	eKeyType			keyToNetwork;
 	std::string			idClient;
 	Network				*network;
+	bool				firstClient;
 
 	
 	// int listenfd, connfd, nready, maxfdp1; 
@@ -85,6 +86,7 @@ public:
 	Game(int w, int h, std::string ip);
 	~Game();
 	
+	void	init();
 	void	keyHandle(eKeyType key);
 	void	getLib(eKeyType key);
 	void	closeLib();
@@ -93,7 +95,6 @@ public:
 	bool	checkCollision();
 	bool	newGame();
 	void	gameOver();
-	void	networkFunc();
 	void	createServer();
 
 };

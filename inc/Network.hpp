@@ -47,21 +47,6 @@ typedef struct {
 typedef struct {
   int socket;
   struct sockaddr_in addres;
-  
-  /* Messages that waiting for send. */
-  message_queue_t send_buffer;
-  
-  /* Buffered sending message.
-   * 
-   * In case we doesn't send whole message per one call send().
-   * And current_sending_byte is a pointer to the part of data that will be send next call.
-   */
-  message_t sending_buffer;
-  size_t current_sending_byte;
-  
-  /* The same for the receiving message. */
-  message_t receiving_buffer;
-  size_t current_receiving_byte;
 } peer_t;
 
 // message queue --------------------------------------------------------------

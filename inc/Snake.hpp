@@ -39,13 +39,13 @@ class Snake
 {
 
 public:
-	int						screenWidth;
-	int						screenHeiht;
-	std::vector<rect>		snakeRect;
-	char					direction;
-	int						size;
-	int						step;
-	rect					pieceRect;
+	int					screenWidth;
+	int					screenHeiht;
+	std::vector<rect>	snakeRect;
+	char				direction;
+	int					size;
+	int					step;
+	rect				pieceRect;
 
 	Snake(int width, int height);
 	Snake(Snake &obj);

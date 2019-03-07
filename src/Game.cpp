@@ -1,76 +1,54 @@
 #include "../inc/Game.hpp"
 // #include "../libSFMLSound/SoundSFML.hpp"
 
-Game::Game() {
-	snake1 = new Snake(1000, 800);
-	snake2 = new Snake(1000, 800);
+void	Game::init() {
 	libNum = num1;
-	buttonNum = 1;
+	buttonNum = 2;
 	menu = true;
 	start = false;
 	multiplayer = false;
 	startNetwork = false;
+	firstClient = false;
 	server = false;
 	client = false;
 	keyToNetwork = none;
 	speed = 15;
 	network = NULL;
+	winner = 1;
+
+	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
+	creatS = (create_s*)dlsym(ext_library2,"createSound");
+	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
+	soundLib = creatS();
+
+	snake1->snakeRect[0].r = 0.97f;
+	snake1->snakeRect[0].g = 0.14f;
+	snake1->snakeRect[0].b = 0.45f;
+	snake2->snakeRect[0].r = 0.98f;
+	snake2->snakeRect[0].g = 0.58f;
+	snake2->snakeRect[0].b = 0.12f;
+}
+
+Game::Game() {
+	init();
+	snake1 = new Snake(1000, 800);
+	snake2 = new Snake(1000, 800);
 }
 
 Game::Game(int w, int h) {
 	snake1 = new Snake(w, h);
 	snake2 = new Snake(w, h);
-	libNum = num1;
-	buttonNum = 2;
-	menu = true;
-	start = false;
-	multiplayer = false;
-	startNetwork = false;
-	keyToNetwork = none;
-	server = false;
-	client = false;
-	speed = 15;
-	winner = 1;
-	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
-	creatS = (create_s*)dlsym(ext_library2,"createSound");
-	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
-	soundLib = creatS();
-	network = NULL;
-
-	snake1->snakeRect[0].r = 0.97f;
-	snake1->snakeRect[0].g = 0.14f;
-	snake1->snakeRect[0].b = 0.45f;
-	snake2->snakeRect[0].r = 0.98f;
-	snake2->snakeRect[0].g = 0.58f;
-	snake2->snakeRect[0].b = 0.12f;
+	init();
 }
 
 Game::Game(int w, int h, std::string id) {
 	snake1 = new Snake(w, h);
 	snake2 = new Snake(w, h);
-	libNum = num1;
-	buttonNum = 2;
-	menu = true;
-	start = false;
+	init();
 	multiplayer = true;
-	speed = 15;
-	winner = 1;
-	server = false;
 	client = true;
 	startNetwork = true;
-	keyToNetwork = none;
-	ext_library2 = dlopen("libSFMLSound/libSFMLSound.so", RTLD_LAZY);
-	creatS = (create_s*)dlsym(ext_library2,"createSound");
-	destroyS = (destroy_s*)dlsym(ext_library2,"destroySound");
-	soundLib = creatS();
-
-	snake1->snakeRect[0].r = 0.97f;
-	snake1->snakeRect[0].g = 0.14f;
-	snake1->snakeRect[0].b = 0.45f;
-	snake2->snakeRect[0].r = 0.98f;
-	snake2->snakeRect[0].g = 0.58f;
-	snake2->snakeRect[0].b = 0.12f;
-
+	firstClient = true;
 	idClient = id;
 	network = new Network(idClient);
 }
@@ -138,7 +116,6 @@ bool	Game::newGame() {
 	snake1 = newSnake;
 
 	if (multiplayer) {
-		start = false;
 		newSnake = new Snake(snake1->screenWidth, snake1->screenHeiht);
 		newSnake->snakeRect[0].r = snake2->snakeRect[0].r;
 		newSnake->snakeRect[0].g = snake2->snakeRect[0].g;
@@ -218,12 +195,14 @@ void	Game::keyHandle(eKeyType key) {
 						break ;
 					}
 					case 2 : {
+						if (startNetwork && server && !network) {
+							createServer();
+							break;
+						}
 						menu = false;
 						start = true;
 						soundLib->set_menu(menu);
 						soundLib->set_change_sound(true);
-						if (startNetwork && server && !network)
-							createServer();		
 						newGame();
 						break ;
 					}
@@ -372,11 +351,8 @@ void	Game::gameOver() {
 	soundLib->set_change_sound(true);
 	start = false;
 	menu = true;
+	buttonNum = 2;
 	gameOverCount = 200;
-}
-
-void	Game::networkFunc() {
-
 }
 
 void	Game::mainCycle() {
@@ -435,12 +411,21 @@ void	Game::mainCycle() {
 				// 	keyHandle(keyToNetwork);
 				// keyToNetwork = none;
 			// }
-			if (client && keyToNetwork != none)
+			if (client && keyToNetwork != none && !firstClient) {
+				if (keyToNetwork >= up && keyToNetwork <= right && !menu)
+					switch(keyToNetwork) {
+						case up: keyToNetwork = w; break ;
+						case down: keyToNetwork = s; break ;
+						case left: keyToNetwork = a; break ;
+						case right: keyToNetwork = d; break ;
+						default : break;
+					} 
 				keyHandle(keyToNetwork);
+			}
 			keyToNetwork = none;
 			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 		}
-
+		firstClient = false;
 		if ( i == 2000000000 )
 			i = 0;
 		if (!menu)

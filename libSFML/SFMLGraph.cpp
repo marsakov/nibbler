@@ -142,7 +142,7 @@ void		SFMLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	if (start)
 		renderText("CONTINUE", snake1->screenWidth - 100, snake1->screenHeiht - 200, (buttonNum == 1) ? true : false);
 	renderText("NEW GAME", snake1->screenWidth - 100, snake1->screenHeiht - 100, (buttonNum == 2) ? true : false);
-	renderText(std::string("MULTIPLAYER ") + (multiplayer ? "ON" : "OFF"), snake1->screenWidth - 100, snake1->screenHeiht, (buttonNum == 3) ? true : false);
+	renderText(std::string("MULTIPLAYER ") + (multiplayer ? (network ? "NET" : "LOCAL") : "OFF"), snake1->screenWidth - 100, snake1->screenHeiht, (buttonNum == 3) ? true : false);
 	renderText("EXIT", snake1->screenWidth - 100, snake1->screenHeiht + 100, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), snake1->screenWidth - 100, snake1->screenHeiht - 600, false);
 

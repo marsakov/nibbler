@@ -152,7 +152,7 @@ void        SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	if (start)
 		renderText("CONTINUE", -20, 20, (buttonNum == 1) ? true : false);
 	renderText("NEW GAME", -20, 10, (buttonNum == 2) ? true : false);
-	renderText((std::string("MULTIPLAYER ") + (multiplayer ? "ON" : "OFF")).c_str(), -20, 0, (buttonNum == 3) ? true : false);
+	renderText((std::string("MULTIPLAYER ") + (multiplayer ? (network ? "NET" : "LOCAL") : "OFF")).c_str(), -20, 0, (buttonNum == 3) ? true : false);
 	renderText("EXIT", -20, -10, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), -20, 80, false);
 	glutSwapBuffers();

@@ -108,9 +108,7 @@ int Network::build_fd_setsCl(peer_t *server, fd_set *read_fds, fd_set *write_fds
 	FD_SET(server->socket, read_fds);
 	
 	FD_ZERO(write_fds);
-	// there is smth to send, set up write_fd for server socket
-	// if (server->send_buffer.current > 0)
-		FD_SET(server->socket, write_fds);
+	FD_SET(server->socket, write_fds);
 	
 	FD_ZERO(except_fds);
 	FD_SET(STDIN_FILENO, except_fds);
@@ -120,17 +118,17 @@ int Network::build_fd_setsCl(peer_t *server, fd_set *read_fds, fd_set *write_fds
 }
 
 int Network::build_fd_sets(fd_set *read_fds, fd_set *write_fds, fd_set *except_fds) {
-	// std::cout << "5" << std::endl;
+
 	FD_ZERO(read_fds);
 	FD_SET(STDIN_FILENO, read_fds);
 	FD_SET(listen_sock, read_fds);
-	// std::cout << "5" << std::endl;
+
 	if (connection.socket != NO_SOCKET)
 		FD_SET(connection.socket, read_fds);
 
 	FD_ZERO(write_fds);
-	// std::cout << "6x" << std::endl;
-	if (connection.socket != NO_SOCKET)// && connection.send_buffer.current > 0)
+
+	if (connection.socket != NO_SOCKET)
 		FD_SET(connection.socket, write_fds);
 
 	FD_ZERO(except_fds);
@@ -160,8 +158,6 @@ int Network::handle_new_connection() {
 	if (connection.socket == NO_SOCKET) {
 		connection.socket = new_client_sock;
 		connection.addres = client_addr;
-		connection.current_sending_byte   = -1;
-		connection.current_receiving_byte = 0;
 		return (0);
 	}
 	printf("There is too much connections. Close new connection %s:%d.\n", client_ipv4_str, client_addr.sin_port);
@@ -174,9 +170,6 @@ int Network::close_client_connection(peer_t *client) {
 	
 	close(client->socket);
 	client->socket = NO_SOCKET;
-	// dequeue_all(&client->send_buffer);
-	client->current_sending_byte   = -1;
-	client->current_receiving_byte = 0;
 	return ((1));
 }
 
@@ -236,19 +229,13 @@ int Network::cycle(eKeyType *key) {
 
 		case 0:
 			std::cout << "RETURN 0" << std::endl;
-
 			return (0);
-			// you should never get here
-			// printf("select() returns( 0).\n");
-			// shutdown_properly(EXIT_FAILURE);
 		
-		default:
-		// std::cout << "5" << std::endl;
+		default: {
 
 			/* All set fds should be checked. */
 			if (FD_ISSET(STDIN_FILENO, &read_fds)) {
 				printf("HERE\n");
-				// if ((serverBool && handle_read_from_stdin() != 0) || (!serverBool && handle_read_from_stdinCl(&server, "") != 0))
 				shutdown_properly(EXIT_FAILURE);
 			}
 
@@ -268,30 +255,11 @@ int Network::cycle(eKeyType *key) {
 			
 			if (serverBool) {
 
-				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
-					if (*key != none){
-						std::cout << "NE NONE" << std::endl;
-						send(connection.socket, key, sizeof(key), 0);
-					}
+				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds) && *key != none)
+					send(connection.socket, key, sizeof(key), 0);
 
-				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds)) {
+				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds))
 					recv(connection.socket, key, sizeof(key), MSG_DONTWAIT);
-					// if (receive_from_peer(&connection) != 0) {
-					// 	close_client_connection(&connection);
-					// }
-				}
-	
-				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
-				// 	if (*key != none){
-				// 		std::cout << "NE NONE" << std::endl;
-				// 		send(connection.socket, key, sizeof(key), 0);
-				// 	}
-					
-					// if (send_to_peer(&connection) != 0) {
-					// 	close_client_connection(&connection);
-
-					// }
-				}
 
 				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &except_fds)) {
 					printf("Exception client fd.\n");
@@ -301,36 +269,23 @@ int Network::cycle(eKeyType *key) {
 			else
 			{
 
-				if (FD_ISSET(server.socket, &write_fds)) {
-					if (*key != none)
-						send(server.socket, key, sizeof(key), 0);
-
+				if (FD_ISSET(server.socket, &write_fds) && *key != none)
+					send(server.socket, key, sizeof(key), 0);
 
 				if (FD_ISSET(server.socket, &read_fds))
 					recv(server.socket, key, sizeof(key), MSG_DONTWAIT);
-
-				// if (FD_ISSET(server.socket, &read_fds)) && receive_from_peer(&server))
-				// 	shutdown_properly(EXIT_FAILURE);
-
-				// if (FD_ISSET(server.socket, &write_fds)) {
-				// 	if (*key != none)
-				// 		send(server.socket, key, sizeof(key), 0);
-
-					// if (send_to_peer(&server) != 0)
-					// 	shutdown_properly(EXIT_FAILURE);
-				}
 
 				if (FD_ISSET(server.socket, &except_fds)) {
 					printf("except_fds for server.\n");
 					shutdown_properly(EXIT_FAILURE);
 				}
 			}
+		}
 	}
 	
-	// printf("And we are still waiting for clients' or stdin activity. You can type something to send:\n");
 	std::cout << "FINISH key = " << *key << std::endl;
 
-return (0);
+	return (0);
 }
 
 char *Network::peer_get_addres_str(peer_t *peer)
