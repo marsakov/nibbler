@@ -1,5 +1,8 @@
 #include "../inc/Game.hpp"
+#include <time.h>
 // #include "../libSFMLSound/SoundSFML.hpp"
+
+using namespace std::chrono;
 
 void	Game::init() {
 	libNum = num1;
@@ -105,7 +108,6 @@ void	Game::getLib(eKeyType key) {
 }
 
 bool	Game::newGame() {
-
 	Snake *newSnake = new Snake(snake1->screenWidth, snake1->screenHeiht);
 	newSnake->snakeRect[0].r = snake1->snakeRect[0].r;
 	newSnake->snakeRect[0].g = snake1->snakeRect[0].g;
@@ -135,6 +137,8 @@ bool	Game::newGame() {
 	soundLib->set_change_sound(true);
 
 	soundLib->set_new_game(true);
+	iAmReady = false;
+	connectIsReady = false;
 
 	return (true);
 }
@@ -202,10 +206,17 @@ void	Game::keyHandle(eKeyType key) {
 							createServer();
 							break ;
 						}
-						else if (startNetwork && network && connectIsReady)
+						else if (startNetwork && network && connectIsReady) {
+							keyToNetwork = ready;
+							network->cycle(&keyToNetwork);
 							connectIsReady = false;
-						else if (startNetwork && network)
-							iAmReady = true; break ;
+						}
+						else if (startNetwork && network) {
+							iAmReady = true;
+							keyToNetwork = ready;
+							network->cycle(&keyToNetwork);
+							break ;
+						}
 						newGame();
 						break ;
 					}
@@ -360,7 +371,6 @@ void	Game::gameOver() {
 
 void	Game::mainCycle() {
 	size_t i = 0;
-
 	generateApple();
 	getLib(libNum);
 	dynLib->setMultiplayer(multiplayer);
@@ -399,8 +409,13 @@ void	Game::mainCycle() {
 		}
 		else if (menu)
 			dynLib->drawMenu(buttonNum, start, speed);
-		else
+		else {
+			struct timeval tp;
+			gettimeofday(&tp, NULL);
+			long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+			std::cout << "ms " << ms << std::endl;
 			dynLib->draw(appleRect);
+		}
 
 		soundLib->Sound();
 
@@ -408,8 +423,10 @@ void	Game::mainCycle() {
 			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 			network->cycle(&keyToNetwork);
 
-			if (keyToNetwork == ready && iAmReady)
+			if (keyToNetwork == ready && iAmReady) {
+				usleep(725000);
 				newGame();
+			}
 			else if (keyToNetwork == ready)
 				connectIsReady = true;
 			else if (keyToNetwork != none) {
@@ -428,8 +445,10 @@ void	Game::mainCycle() {
 		}
 		if (startNetwork && network) {
 			network->cycle(&keyToNetwork);
-			if (keyToNetwork == ready && iAmReady)
+			if (keyToNetwork == ready && iAmReady) {
+				usleep(725000);
 				newGame();
+			}
 			else if (keyToNetwork == ready)
 				connectIsReady = true;
 			keyToNetwork = none;

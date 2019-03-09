@@ -21,6 +21,8 @@
 #include "Snake.hpp"
 #include "Network.hpp"
 
+#include <sys/time.h>
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
