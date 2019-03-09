@@ -13,10 +13,11 @@ class SDLGraph : public IGraph
 	SDL_Event				event;
 	Snake					*snake1;
 	Snake					*snake2;
-	float xrf, yrf, zrf;
-	double x,y,z;
-	double k;
-	double x1, y1;
+	float 					xrf, yrf, zrf;
+	double 					x,y,z;
+	double 					k;
+	double 					x1, y1, y2, y3, z1;
+	bool					D3;
 
 protected:
 	bool					network;
@@ -53,7 +54,9 @@ public:
 	virtual eKeyType		getKey();
 	virtual void			setKey(eKeyType k);
 	void 					drawSphere(double r, int lats, int longs, rect appleRect);
-	void 					drawFrame();
+	void 					drawFrame2D();
+	void 					drawFrame3D();
+	void        			drawFrameMenu();
 	virtual void			drawGameOver(int winner, rect boomRect);
 
 

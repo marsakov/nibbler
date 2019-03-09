@@ -16,9 +16,8 @@ SDLGraph::SDLGraph(Snake *s1, Snake *s2) {
 	// std::cout << "w = " << snake1->screenWidth << " h = " << snake1->screenHeiht << std::endl;
 	quit = false;
 	xrf = 0, yrf = 0, zrf = 0; // углы поворота
-	// xrf -= 5;
-	// yrf -= 3;
-	//zrf -= 10;
+	D3 = false;
+	y3 = 0;
 	init();
 }
 
@@ -113,6 +112,7 @@ void        SDLGraph::setKeyDown() {
 		case SDLK_1:        { key = num1; break; }
 		case SDLK_2:        { key = num2; break; }
 		case SDLK_3:        { key = num3; break; }
+		case SDLK_4:        { D3 ? D3 = false : D3 = true; break; }
 		default:            { key = none; break; }
 	}
 }
@@ -156,7 +156,7 @@ void        SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	renderText("EXIT", -20, -10, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), -20, 80, false);
 	glutSwapBuffers();
-	drawFrame();
+	drawFrameMenu();
 	SDL_GL_SwapWindow(window);
 }
 
@@ -180,7 +180,7 @@ void		SDLGraph::drawGameOver(int winner, rect boomRect) {
 
 void	SDLGraph::drawCube(rect snakeRect, rect snakeColor, int i) {
 	x = (snakeRect.x - snake1->screenWidth/2)/50;
-	y = (snake1->screenHeiht - snakeRect.y - 50 - snake1->screenHeiht/2)/50; 
+	y = (snake1->screenHeiht - snakeRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
    
 	glBegin(GL_QUADS); 
 	glColor3f((snakeColor.r + i*0.03)*0.6, (snakeColor.g + i*0.03)*0.6, (snakeColor.b + i*0.03)*0.6);              // Синяя сторона (Верхняя)
@@ -231,7 +231,7 @@ void	SDLGraph::drawCube(rect snakeRect, rect snakeColor, int i) {
 
 void	SDLGraph::drawCubeFrame(rect snakeRect) {
 	x = (snakeRect.x - snake1->screenWidth/2)/50;
-	y = (snake1->screenHeiht - snakeRect.y - 50 - snake1->screenHeiht/2)/50; 
+	y = (snake1->screenHeiht - snakeRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
    
 	glBegin(GL_LINES);
 	glColor3f(0.0f, 0.0f, 0.0f);
@@ -359,16 +359,7 @@ void  SDLGraph::drawSnake3D() {
 		glTranslatef(0.0f, 0.0f, 2.86 - k);
 	}
 
-	// xrf = 0;
-	// yrf = 0;
-	// zrf = 0;
-	// xrf -= 0.05;
-	// yrf -= 0.05;
-	// zrf -= 0.05;
-
-	// glRotatef(xrf, 1.0f, 0.0f, 0.0f);    // Вращение куба по X, Y, Z
-	// glRotatef(yrf, 0.0f, 1.0f, 0.0f);    // Вращение куба по X, Y, Z
-	// glRotatef(zrf, 0.0f, 0.0f, 1.0f);    // Вращение куба по X, Y, Z
+	glRotatef(xrf, 1.0f, 0.0f, 0.0f);    // Вращение куба по X
 	
 		for (int i = 0; i < snake1->snakeRect.size(); i++) {
 
@@ -396,7 +387,7 @@ void  SDLGraph::drawSnake3D() {
 
 void SDLGraph::drawSphere(double r, int lats, int longs, rect appleRect) {
 	x = (appleRect.x - snake1->screenWidth/2)/50;
-	y = (snake1->screenHeiht - appleRect.y - 50 - snake1->screenHeiht/2)/50; 
+	y = (snake1->screenHeiht - appleRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
 	x += 0.5;
 	y += 0.5;
 	// std::cout << "APPLE x = " << x << " y = " << y << std::endl;
@@ -442,7 +433,7 @@ void 		SDLGraph::drawApple3DSphera(rect appleRect) {
 void        SDLGraph::drawApple3DCube(rect appleRect) {
 
 	x = (appleRect.x - snake1->screenWidth/2)/50;
-	y = (snake1->screenHeiht - appleRect.y - 50 - snake1->screenHeiht/2)/50; 
+	y = (snake1->screenHeiht - appleRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
 
  	glBegin(GL_QUADS); 
 	glColor3f(appleRect.r/1.4, appleRect.g/1.4, appleRect.b/1.4);              // Синяя сторона (Верхняя)
@@ -492,12 +483,42 @@ void        SDLGraph::drawApple3DCube(rect appleRect) {
 
 }
 
-
-
-void        SDLGraph::drawFrame() {
+void        SDLGraph::drawFrameMenu() {
 	
 	x1 = (snake1->screenWidth/2 - 25)/50;
 	y1 = (snake1->screenHeiht/2 - 25)/50;
+	z1 = -19.35; //1000 800
+	//z1 = -31.4; // 2500 1300 
+	glTranslatef(0.0f, 0.0f, 0.0f);
+	glColor3f(0.0f, 0.0f, 0.0f);
+
+	glBegin(GL_LINES);
+	glVertex3f(  x1,  y1,  z1);     // Верхний правый угол квадрата  *----*
+	glVertex3f( -x1,  y1,  z1);     // Верхний левый                 |    |
+	glEnd();
+	
+	glBegin(GL_LINES);
+	glVertex3f( -x1,  y1,  z1);     // Верхний левый                 *-
+	glVertex3f( -x1, -y1,  z1);     // Нижний левый                | 
+	glEnd();                          //                               *-
+
+	glBegin(GL_LINES);
+	glVertex3f( -x1, -y1,  z1);     // Нижний левый                  |    |
+	glVertex3f(  x1, -y1,  z1);     // Нижний правый                 *----*
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(  x1, -y1,  z1);   // Верхний правый угол квадрата  -*
+	glVertex3f(  x1,  y1,  z1);     // Нижний правый                  |
+	glEnd();                          //                               -*
+}
+
+void        SDLGraph::drawFrame2D() {
+	
+	x1 = (snake1->screenWidth/2 - 25)/50;
+	y1 = (snake1->screenHeiht/2 - 50 + y3)/50;
+
+	// y = (snake1->screenHeiht - snakeRect.y - 50 - snake1->screenHeiht/2 + y3)/50;
 
 	glTranslatef(0.0f, 0.0f, 0.0f);
 	glColor3f(0.0f, 0.0f, 0.0f);
@@ -510,7 +531,7 @@ void        SDLGraph::drawFrame() {
 	glBegin(GL_LINES);
 	glVertex3f( -x1,  y1,  -0.5);     // Верхний левый                 *-
 	glVertex3f( -x1, -y1,  -0.5);     // Нижний левый                  | 
-	glEnd();                               //                               *-
+	glEnd();                          //                               *-
 
 	glBegin(GL_LINES);
 	glVertex3f( -x1, -y1,  -0.5);     // Нижний левый                  |    |
@@ -520,7 +541,38 @@ void        SDLGraph::drawFrame() {
 	glBegin(GL_LINES);
 	glVertex3f(  x1, -y1,  -0.5);     // Верхний правый угол квадрата  -*
 	glVertex3f(  x1,  y1,  -0.5);     // Нижний правый                  |
-	glEnd();                               //                               -*
+	glEnd();                          //                               -*
+}
+
+void        SDLGraph::drawFrame3D() {
+
+	x1 = (snake1->screenWidth/2 - 25)/50; // 2500 
+	y1 = (snake1->screenHeiht/2 - 25 + 1300)/50; // 1300 || 800
+
+	y2 = (snake1->screenHeiht/2 + 550 - (snake1->screenHeiht - 800))/50;  // 1300
+
+	glTranslatef(0.0f, 0.0f, 0.0f);
+	glColor3f(0.0f, 0.0f, 0.0f);
+
+	glBegin(GL_LINES);
+	glVertex3f(  x1,  y1,  -0.5);     // Верхний правый угол квадрата  *----*
+	glVertex3f( -x1,  y1,  -0.5);     // Верхний левый                 |    |
+	glEnd();
+	
+	glBegin(GL_LINES);
+	glVertex3f( -x1,  y1,  -0.5);     // Верхний левый                 *-
+	glVertex3f( -x1, y2,  -0.5);        // Нижний левый                | 
+	glEnd();                          //                               *-
+
+	glBegin(GL_LINES);
+	glVertex3f( -x1, y2,  -0.5);     // Нижний левый                  |    |
+	glVertex3f(  x1, y2,  -0.5);     // Нижний правый                 *----*
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(  x1, y2,  -0.5);   // Верхний правый угол квадрата  -*
+	glVertex3f(  x1,  y1,  -0.5);     // Нижний правый                  |
+	glEnd();                          //                               -*
 }
 
 void        SDLGraph::draw(rect appleRect) {
@@ -539,7 +591,16 @@ void        SDLGraph::draw(rect appleRect) {
 	else {
 		drawApple3DCube(appleRect);
 	}
-	drawFrame();
+	if (!D3) {
+		y3 = 0;
+		xrf = 0;
+		drawFrame2D();
+	}
+	else if (D3) {
+		y3 = 1300;
+		xrf = -50;
+		drawFrame3D();
+	}
 
 	renderText(("SCORE " + std::to_string(snake1->size)).c_str(), -80, 90, false);
 	if (multiplayer)
