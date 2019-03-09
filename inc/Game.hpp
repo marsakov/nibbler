@@ -63,8 +63,8 @@ class Game
 	eKeyType			keyToNetwork;
 	std::string			idClient;
 	Network				*network;
-	bool				firstClient;
 	bool				iAmReady;
+	bool				connectIsReady;
 
 
 public:

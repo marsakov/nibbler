@@ -8,7 +8,6 @@ void	Game::init() {
 	start = false;
 	multiplayer = false;
 	startNetwork = false;
-	firstClient = false;
 	server = false;
 	client = false;
 	keyToNetwork = none;
@@ -48,7 +47,6 @@ Game::Game(int w, int h, std::string id) {
 	multiplayer = true;
 	client = true;
 	startNetwork = true;
-	firstClient = true;
 	idClient = id;
 	network = new Network(idClient);
 }
@@ -131,6 +129,11 @@ bool	Game::newGame() {
 	closeLib();
 	getLib(libNum);
 
+	menu = false;
+	start = true;
+	soundLib->set_menu(menu);
+	soundLib->set_change_sound(true);
+
 	soundLib->set_new_game(true);
 
 	return (true);
@@ -199,12 +202,10 @@ void	Game::keyHandle(eKeyType key) {
 							createServer();
 							break ;
 						}
-						else if (startNetwork && server && network)
-							firstClient = true; break ;
-						menu = false;
-						start = true;
-						soundLib->set_menu(menu);
-						soundLib->set_change_sound(true);
+						else if (startNetwork && network && connectIsReady)
+							connectIsReady = false;
+						else if (startNetwork && network)
+							iAmReady = true; break ;
 						newGame();
 						break ;
 					}
@@ -407,14 +408,11 @@ void	Game::mainCycle() {
 			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 			network->cycle(&keyToNetwork);
 
-			if (keyToNetwork == ready) {
-				menu = false;
-				start = true;
-				soundLib->set_menu(menu);
-				soundLib->set_change_sound(true);
+			if (keyToNetwork == ready && iAmReady)
 				newGame();
-			}
-			else if (keyToNetwork != none && !firstClient) {
+			else if (keyToNetwork == ready)
+				connectIsReady = true;
+			else if (keyToNetwork != none) {
 				if (keyToNetwork >= up && keyToNetwork <= right && !menu)
 					switch(keyToNetwork) {
 						case up: keyToNetwork = w; break ;
@@ -428,19 +426,14 @@ void	Game::mainCycle() {
 			keyToNetwork = none;
 			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 		}
-		if (iAmReady && startNetwork && network) {
-			keyToNetwork = ready;
+		if (startNetwork && network) {
 			network->cycle(&keyToNetwork);
-			if (keyToNetwork == ready) {
-				menu = false;
-				start = true;
-				soundLib->set_menu(menu);
-				soundLib->set_change_sound(true);
+			if (keyToNetwork == ready && iAmReady)
 				newGame();
-			}
+			else if (keyToNetwork == ready)
+				connectIsReady = true;
 			keyToNetwork = none;
 		}
-		firstClient = false;
 		if ( i == 2000000000 )
 			i = 0;
 		if (!menu)
