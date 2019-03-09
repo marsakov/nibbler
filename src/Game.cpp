@@ -144,7 +144,8 @@ void	Game::keyHandle(eKeyType key) {
 		// key = keyToNetwork;
 		// keyToNetwork = key;
 	}
-	keyToNetwork = key;
+	if (!(!menu && key >= up && key <= right))
+		keyToNetwork = key;
 
 	if (!menu)
 		soundLib->set_menu(false);

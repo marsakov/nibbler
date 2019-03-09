@@ -205,8 +205,7 @@ void  Network::init() {
 
 int Network::cycle(eKeyType *key) {
 
-	//if (*key != none)
-		std::cout << "START key = " << *key << std::endl;
+	std::cout << "START key = " << *key << std::endl;
 	struct timeval tv;
 	tv.tv_usec = 0;
 	tv.tv_sec = 0;
@@ -221,6 +220,7 @@ int Network::cycle(eKeyType *key) {
 
 	if (serverBool && connection.socket > high_sock)
 		high_sock = connection.socket;
+	
 	int activity = select(high_sock + 1, &read_fds, &write_fds, &except_fds, &tv);
 	switch (activity) {
 		case -1:

@@ -33,16 +33,16 @@
 #define SERVER_LISTEN_PORT 33235
 
 // peer -----------------------------------------------------------------------
-typedef struct {
-  char sender[SENDER_MAXSIZE];
-  char data[DATA_MAXSIZE];
-}  message_t;
+// typedef struct {
+//   char sender[SENDER_MAXSIZE];
+//   char data[DATA_MAXSIZE];
+// }  message_t;
 
-typedef struct {
-  int size;
-  message_t *data;
-  int current;
-} message_queue_t;
+// typedef struct {
+//   int size;
+//   message_t *data;
+//   int current;
+// } message_queue_t;
 
 typedef struct {
   int socket;
