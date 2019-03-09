@@ -64,15 +64,8 @@ class Game
 	std::string			idClient;
 	Network				*network;
 	bool				firstClient;
+	bool				iAmReady;
 
-	
-	// int listenfd, connfd, nready, maxfdp1; 
- //    char buffer[MAXLINE]; 
- //    pid_t childpid; 
- //    fd_set rset; 
- //    ssize_t n; 
- //    socklen_t len; 
-	// struct sockaddr_in cliaddr, servaddr; 
 
 public:
 	void					netGame(void);

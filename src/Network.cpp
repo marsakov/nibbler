@@ -207,7 +207,7 @@ int Network::cycle(eKeyType *key) {
 
 	std::cout << "START key = " << *key << std::endl;
 	struct timeval tv;
-	tv.tv_usec = 0;
+	tv.tv_usec = 1;
 	tv.tv_sec = 0;
 	// //int key;
 	// std::cout << "24546546" << std::endl;
@@ -255,10 +255,12 @@ int Network::cycle(eKeyType *key) {
 			
 			if (serverBool) {
 
-				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds) && *key != none)
-					send(connection.socket, key, sizeof(key), 0);
+				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
+					send(connection.socket, key, sizeof(key), MSG_DONTWAIT);
+					*key = none;
+				}
 
-				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds))
+				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds)) 
 					recv(connection.socket, key, sizeof(key), MSG_DONTWAIT);
 
 				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &except_fds)) {
@@ -269,8 +271,10 @@ int Network::cycle(eKeyType *key) {
 			else
 			{
 
-				if (FD_ISSET(server.socket, &write_fds) && *key != none)
-					send(server.socket, key, sizeof(key), 0);
+				if (FD_ISSET(server.socket, &write_fds)) {
+					send(server.socket, key, sizeof(key), MSG_DONTWAIT);
+					*key = none;
+				}
 
 				if (FD_ISSET(server.socket, &read_fds))
 					recv(server.socket, key, sizeof(key), MSG_DONTWAIT);

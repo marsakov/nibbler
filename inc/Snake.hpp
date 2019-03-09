@@ -32,6 +32,7 @@ enum eKeyType
 	num1,
 	num2,
 	num3,
+	ready,
 	none
 };
 

@@ -9,8 +9,6 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
-// #include "common.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,38 +16,17 @@
 
 #include "../inc/Snake.hpp"
 
-/* Maximum bytes that can be send() or recv() via net by one call.
- * It's a good idea to test sending one byte by one.
- */
-#define MAX_SEND_SIZE 100
-
-/* Size of send queue (messages). */
-#define MAX_MESSAGES_BUFFER_SIZE 10
-
-#define SENDER_MAXSIZE 128
-#define DATA_MAXSIZE 512
-
 #define SERVER_IPV4_ADDR "127.0.0.1"
 #define SERVER_LISTEN_PORT 33235
 
 // peer -----------------------------------------------------------------------
-// typedef struct {
-//   char sender[SENDER_MAXSIZE];
-//   char data[DATA_MAXSIZE];
-// }  message_t;
-
-// typedef struct {
-//   int size;
-//   message_t *data;
-//   int current;
-// } message_queue_t;
 
 typedef struct {
   int socket;
   struct sockaddr_in addres;
 } peer_t;
 
-// message queue --------------------------------------------------------------
+
 
 
 #define MAX_CLIENTS 10
@@ -67,7 +44,6 @@ class Network
 	peer_t connection;
 	peer_t server;
 
-	// char read_buffer[1024];
 	int high_sock;
 
 	fd_set read_fds;

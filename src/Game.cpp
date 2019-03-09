@@ -144,8 +144,7 @@ void	Game::keyHandle(eKeyType key) {
 		// key = keyToNetwork;
 		// keyToNetwork = key;
 	}
-	if (!(!menu && key >= up && key <= right))
-		keyToNetwork = key;
+	keyToNetwork = key;
 
 	if (!menu)
 		soundLib->set_menu(false);
@@ -198,8 +197,10 @@ void	Game::keyHandle(eKeyType key) {
 					case 2 : {
 						if (startNetwork && server && !network) {
 							createServer();
-							break;
+							break ;
 						}
+						else if (startNetwork && server && network)
+							firstClient = true; break ;
 						menu = false;
 						start = true;
 						soundLib->set_menu(menu);
@@ -402,17 +403,18 @@ void	Game::mainCycle() {
 
 		soundLib->Sound();
 
-		if (startNetwork && network) {
+		if (!menu && startNetwork && network) {
 			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 			network->cycle(&keyToNetwork);
-			
-			// if (!server) {
-			// 	std::cout << "if (!server) " << keyToNetwork << std::endl;
-				// if (keyToNetwork != none)
-				// 	keyHandle(keyToNetwork);
-				// keyToNetwork = none;
-			// }
-			if (client && keyToNetwork != none && !firstClient) {
+
+			if (keyToNetwork == ready) {
+				menu = false;
+				start = true;
+				soundLib->set_menu(menu);
+				soundLib->set_change_sound(true);
+				newGame();
+			}
+			else if (keyToNetwork != none && !firstClient) {
 				if (keyToNetwork >= up && keyToNetwork <= right && !menu)
 					switch(keyToNetwork) {
 						case up: keyToNetwork = w; break ;
@@ -425,6 +427,18 @@ void	Game::mainCycle() {
 			}
 			keyToNetwork = none;
 			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
+		}
+		if (iAmReady && startNetwork && network) {
+			keyToNetwork = ready;
+			network->cycle(&keyToNetwork);
+			if (keyToNetwork == ready) {
+				menu = false;
+				start = true;
+				soundLib->set_menu(menu);
+				soundLib->set_change_sound(true);
+				newGame();
+			}
+			keyToNetwork = none;
 		}
 		firstClient = false;
 		if ( i == 2000000000 )
