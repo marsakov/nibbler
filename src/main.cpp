@@ -42,5 +42,7 @@ int main(int argc, char *argv[])
 	// // s.init();
 	// std::cout << "main.cpp SoundSFML s.init()" << std::endl;
 	// game.mainCycle();
+
+	system("leaks nibbler");
 	return (0);
 }

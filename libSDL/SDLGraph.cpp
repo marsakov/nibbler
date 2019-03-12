@@ -83,6 +83,7 @@ void		SDLGraph::init() {
 int			SDLGraph::close(std::string msg) {
 	// std::cout << msg << std::endl;
 	this->~SDLGraph();
+	system("leaks nibbler");
 	exit(1);
 	return (0);
 }

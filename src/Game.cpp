@@ -56,6 +56,7 @@ Game::Game(int w, int h, std::string id) {
 
 Game::~Game() {
 	dlclose(ext_library);
+	system("leaks nibbler");
 }
 
 
@@ -98,17 +99,6 @@ void	Game::getLib(eKeyType key) {
 
 	dynLib->setMultiplayer(multiplayer);
 	dynLib->setNetwork(startNetwork);
-
-	// if (multiplayer)
-	// {
-	// 	dynLib->setMultiplayer(true);
-	// 	std::cout << "multiplayer on" << std::endl;
-	// }
-	// else
-	// {
-	// 	dynLib->setMultiplayer(false);
-	// 	std::cout << "multiplayer OFF" << std::endl;
-	// }
 }
 
 bool	Game::newGame() {
@@ -224,7 +214,6 @@ void	Game::keyHandle(eKeyType key) {
 							keyToNetwork = ready;
 							network->cycle(&keyToNetwork);
 							std::cout << "iAmReady" << std::endl;
-							// usleep(257000);
 							break ;
 						}
 						newGame();
@@ -311,7 +300,6 @@ void	Game::generateApple() {
 					noCollision = false;
 		}
 	}
-	// std::cout << "APPLE x = " << appleRect.x << " y = " << appleRect.y << std::endl;
 }
 
 bool	Game::checkCollision() {

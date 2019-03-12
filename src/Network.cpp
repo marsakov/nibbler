@@ -122,44 +122,6 @@ void Network::shutdown_properly(int code) {
 	}
 }
 
-int Network::build_fd_setsCl(peer_t *server, fd_set *read_fds, fd_set *write_fds, fd_set *except_fds) {
-	FD_ZERO(read_fds);
-	FD_SET(STDIN_FILENO, read_fds);
-	FD_SET(server->socket, read_fds);
-	
-	FD_ZERO(write_fds);
-	FD_SET(server->socket, write_fds);
-	
-	FD_ZERO(except_fds);
-	FD_SET(STDIN_FILENO, except_fds);
-	FD_SET(server->socket, except_fds);
-	
-	return (0);
-}
-
-int Network::build_fd_sets(fd_set *read_fds, fd_set *write_fds, fd_set *except_fds) {
-
-	FD_ZERO(read_fds);
-	FD_SET(STDIN_FILENO, read_fds);
-	FD_SET(listen_sock, read_fds);
-
-	if (connection.socket != NO_SOCKET)
-		FD_SET(connection.socket, read_fds);
-
-	FD_ZERO(write_fds);
-
-	if (connection.socket != NO_SOCKET)
-		FD_SET(connection.socket, write_fds);
-
-	FD_ZERO(except_fds);
-	FD_SET(STDIN_FILENO, except_fds);
-	FD_SET(listen_sock, except_fds);
-
-	if (connection.socket != NO_SOCKET)
-		FD_SET(connection.socket, except_fds);
-	return (0);
-}  
-
 int Network::handle_new_connection() {
 	struct sockaddr_in client_addr;
 	memset(&client_addr, 0, sizeof(client_addr));
@@ -202,22 +164,17 @@ void  Network::init() {
 	if (serverBool && start_listen_socket(&listen_sock) != 0)
 		exit(EXIT_FAILURE);
 	
-	if (!serverBool) {
-		// create_peer(&server);
-		if (connect_server(&server) != 0)
-			shutdown_properly(EXIT_FAILURE);
-	}
+	if (!serverBool && connect_server(&server) != 0)
+		shutdown_properly(EXIT_FAILURE);
 
 	/* Set nonblock for stdin. */
-	int flag = fcntl(STDIN_FILENO, F_GETFL, 0);
-	flag |= O_NONBLOCK;
-	fcntl(STDIN_FILENO, F_SETFL, flag);
+	// int flag = fcntl(STDIN_FILENO, F_GETFL, 0);
+	// flag |= O_NONBLOCK;
+	// fcntl(STDIN_FILENO, F_SETFL, flag);
 	
-	if (serverBool) {
+	if (serverBool) 
 		connection.socket = NO_SOCKET;
-		// create_peer(&connection);
-	}
-	
+
 	high_sock = (serverBool) ? listen_sock : server.socket;
 	
 	if (serverBool) {
@@ -229,98 +186,9 @@ void  Network::init() {
 
 int Network::cycle(eKeyType *key) {
 
-	// std::cout << "START key = " << *key << std::endl;
-	// struct timeval tv;
-	// tv.tv_usec = 1;
-	// tv.tv_sec = 0;
-	// //int key;
-	// std::cout << "24546546" << std::endl;
-	// std::cout << "serverBool = " << serverBool << std::endl;
-	// if (serverBool)
-	// 	build_fd_sets(&read_fds, &write_fds, &except_fds);
-	// else
-	// 	build_fd_setsCl(&server, &read_fds, &write_fds, &except_fds);
-	// // std::cout << serverBool << std::endl;
-
-	// if (serverBool && connection.socket > high_sock)
-	// 	high_sock = connection.socket;
-	
-	// int activity = select(high_sock + 1, &read_fds, &write_fds, &except_fds, &tv);
-	// switch (activity) {
-	// 	case -1:
-	// 		perror("select()");
-	// 		shutdown_properly(EXIT_FAILURE);
-
-	// 	case 0:
-	// 		// std::cout << "RETURN 0" << std::endl;
-	// 		return (0);
-		
-	// 	default: {
-
-			/* All set fds should be checked. */
-			// if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-			// 	printf("HERE\n");
-			// 	shutdown_properly(EXIT_FAILURE);
-			// }
-
-			// if (serverBool && FD_ISSET(listen_sock, &read_fds)) {
-			// 	handle_new_connection();
-			// }
-			
-			// if (FD_ISSET(STDIN_FILENO, &except_fds)) {
-			// 	printf("except_fds for stdin.\n");
-			// 	shutdown_properly(EXIT_FAILURE);
-			// }
-
-			// if (serverBool && FD_ISSET(listen_sock, &except_fds)) {
-			// 	printf("Exception listen socket fd.\n");
-			// 	shutdown_properly(EXIT_FAILURE);
-			// }
-			
-			if (serverBool) {
-
-				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
-					// std::cout << "before send" << std::endl;
-					send(connection.socket, key, sizeof(key), 0);
-					*key = none;
-					// std::cout << "after send" << std::endl;
-					// std::cout << "before recv" << std::endl;
-				// }
-
-				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds)) 
-					recv(connection.socket, key, sizeof(key), 0);
-					// std::cout << "after recv" << std::endl;
-
-				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &except_fds)) {
-				// 	printf("Exception client fd.\n");
-				// 	close_client_connection(&connection);
-				// }
-			}
-			else
-			{
-
-				// if (FD_ISSET(server.socket, &write_fds)) {
-					// std::cout << "before send" << std::endl;
-					send(server.socket, key, sizeof(key), 0);
-					*key = none;
-				// }
-					// std::cout << "after send" << std::endl;
-					// std::cout << "before recv" << std::endl;
-				// if (FD_ISSET(server.socket, &read_fds))
-					recv(server.socket, key, sizeof(key), 0);
-					// std::cout << "after recv" << std::endl;
-
-					// std::cout << "after recv" << std::endl;
-
-				// if (FD_ISSET(server.socket, &except_fds)) {
-				// 	printf("except_fds for server.\n");
-				// 	shutdown_properly(EXIT_FAILURE);
-				// }
-			}
-		// }
-	// }
-	
-	// std::cout << "FINISH key = " << *key << std::endl;
+	send( (serverBool) ? connection.socket : server.socket, key, sizeof(key), 0);
+	*key = none;
+	recv((serverBool) ? connection.socket : server.socket, key, sizeof(key), 0);
 
 	return (0);
 }

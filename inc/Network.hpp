@@ -16,7 +16,6 @@
 
 #include "../inc/Snake.hpp"
 
-#define SERVER_IPV4_ADDR "127.0.0.1"
 #define SERVER_LISTEN_PORT 33235
 
 // peer -----------------------------------------------------------------------
@@ -26,14 +25,7 @@ typedef struct {
   struct sockaddr_in addres;
 } peer_t;
 
-
-
-
-#define MAX_CLIENTS 10
-
 #define NO_SOCKET -1
-
-#define SERVER_NAME "server"
 
 class Network
 {
@@ -55,8 +47,6 @@ class Network
 
 	int connect_server(peer_t *server);
 	int start_listen_socket(int *listen_sock);
-	int build_fd_setsCl(peer_t *server, fd_set *read_fds, fd_set *write_fds, fd_set *except_fds);
-	int build_fd_sets(fd_set *read_fds, fd_set *write_fds, fd_set *except_fds);
 	int handle_new_connection();
 	int close_client_connection(peer_t *client);
 	
