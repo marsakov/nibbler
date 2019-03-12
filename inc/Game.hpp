@@ -74,7 +74,7 @@ public:
 	void					clientGame(void);
 	void					sendNet(int command);
 	int						recvNet(void);
-
+	bool 					muteVar;
 
 	Game();
 	Game(int w, int h);

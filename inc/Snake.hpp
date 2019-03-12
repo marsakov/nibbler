@@ -33,6 +33,7 @@ enum eKeyType
 	num2,
 	num3,
 	ready,
+	mute,
 	none
 };
 

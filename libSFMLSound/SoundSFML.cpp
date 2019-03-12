@@ -6,6 +6,7 @@ SoundSFML::SoundSFML() {
 	change_sound = true;
 	game_over = false;
 	new_game = true;
+	muteVar = false;
 	init();
 }
 
@@ -22,6 +23,20 @@ void 	SoundSFML::Sound() {
 		menu_sound.play();
 		switch_menu_sound = false;
 		// std::cout << "switch_menu_sound" << std::endl;
+	}
+	std::cout << "SoundSFML muteVar = " << muteVar << std::endl;
+	if (muteVar) {
+		music_menu.setVolume(0.f);
+		music_game.setVolume(0.f);
+		music_end.setVolume(0.f);
+		// menuBuffer.setVolume(0.f);
+		// eatBuffer.setVolume(0.f);
+	} else {
+		music_menu.setVolume(50.f);
+		music_game.setVolume(50.f);
+		music_end.setVolume(50.f);
+		// menuBuffer.setVolume(100.f);
+		// eatBuffer.setVolume(100.f);
 	}
 
 	if (change_sound) {
@@ -67,7 +82,10 @@ void	SoundSFML::init() {
 		music_menu.openFromFile("resources/menu.ogg");
 		music_game.openFromFile("resources/game.ogg");
 		music_end.openFromFile("resources/end.ogg");
-
+		//setVolume(50.f)
+		music_menu.setVolume(50.f);
+		music_game.setVolume(50.f);
+		music_end.setVolume(50.f);
 		// sound
 		menuBuffer.loadFromFile("resources/++.ogg");
 		eatBuffer.loadFromFile("resources/eat.ogg");
@@ -105,6 +123,14 @@ void 	SoundSFML::set_game_over(bool b) {
 
 void 	SoundSFML::set_new_game(bool b) {
 	new_game = b;
+}
+
+void 	SoundSFML::set_mute(bool b) {
+	muteVar = b;
+}
+
+bool 	SoundSFML::get_mute() {
+	return muteVar;
 }
 
 extern "C" ISound *createSound() {

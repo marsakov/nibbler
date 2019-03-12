@@ -7,7 +7,7 @@
 #include <OpenGL/glext.h>
 #include <iostream> 
 
-class SDLGraph : public IGraph
+class OpenGLGraph : public IGraph
 {
 	SDL_Window				*window;
 	SDL_Event				event;
@@ -18,6 +18,7 @@ class SDLGraph : public IGraph
 	double 					k;
 	double 					x1, y1, y2, y3, z1;
 	bool					D3;
+	
 
 protected:
 	bool					network;
@@ -28,10 +29,10 @@ public:
 
 	bool					quit;
 
-	SDLGraph();
-	SDLGraph(SDLGraph &obj);
-	SDLGraph(Snake *s1, Snake *s2);
-	virtual ~SDLGraph();
+	OpenGLGraph();
+	OpenGLGraph(OpenGLGraph &obj);
+	OpenGLGraph(Snake *s1, Snake *s2);
+	virtual ~OpenGLGraph();
 
 
 	virtual int				close(std::string msg);

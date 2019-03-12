@@ -252,6 +252,9 @@ void	Game::keyHandle(eKeyType key) {
 			default : break ;
 		}
 	}
+
+	if (key == mute)
+		soundLib->get_mute() ? soundLib->set_mute(false) : soundLib->set_mute(true);
 	dynLib->setKey(none);
 }
 
@@ -456,7 +459,7 @@ void	Game::mainCycle() {
 			i = 0;
 		if (!menu)
 			i++;
-		// std::cout << "mainCycle" << std::endl;
+		 std::cout << "muteVar = " << muteVar << std::endl;
 
 	}
 }

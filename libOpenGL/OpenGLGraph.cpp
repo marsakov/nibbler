@@ -1,6 +1,6 @@
 #include "OpenGLGraph.hpp"
 
-SDLGraph::SDLGraph() {
+OpenGLGraph::OpenGLGraph() {
 	key = none;
 	quit = false;
 	snake1->direction = 'R';
@@ -8,8 +8,8 @@ SDLGraph::SDLGraph() {
 	init();
 }
 
-SDLGraph::SDLGraph(Snake *s1, Snake *s2) {
-	std::cout << "SDLGraph" << std::endl;
+OpenGLGraph::OpenGLGraph(Snake *s1, Snake *s2) {
+	std::cout << "OpenGLGraph" << std::endl;
 	snake1 = s1;
 	snake2 = s2;
 	key = none;
@@ -21,23 +21,23 @@ SDLGraph::SDLGraph(Snake *s1, Snake *s2) {
 	init();
 }
 
-SDLGraph::SDLGraph(SDLGraph &obj) {
+OpenGLGraph::OpenGLGraph(OpenGLGraph &obj) {
 	*this = obj;
 }
 
-SDLGraph::~SDLGraph() {
+OpenGLGraph::~OpenGLGraph() {
 
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
 
-void        SDLGraph::setNetwork(bool m) { network = m; }
-void        SDLGraph::setMultiplayer(bool m) { multiplayer = m; }
-eKeyType    SDLGraph::getKey() { return (key); }
-void        SDLGraph::setKey(eKeyType k) { key = k; }
+void        OpenGLGraph::setNetwork(bool m) { network = m; }
+void        OpenGLGraph::setMultiplayer(bool m) { multiplayer = m; }
+eKeyType    OpenGLGraph::getKey() { return (key); }
+void        OpenGLGraph::setKey(eKeyType k) { key = k; }
 
 
-void        SDLGraph::init() {
+void        OpenGLGraph::init() {
 
 	// Инициализация SDL
 
@@ -77,14 +77,14 @@ void        SDLGraph::init() {
 
 }
 
-int         SDLGraph::close(std::string msg) {
+int         OpenGLGraph::close(std::string msg) {
 	std::cout << msg << std::endl;
-	this->~SDLGraph();
+	this->~OpenGLGraph();
 	exit(1);
 	return (0);
 }
 
-// void        SDLGraph::setKeyDownRotate() {
+// void        OpenGLGraph::setKeyDownRotate() {
 // 	switch( event.key.keysym.sym )
 // 	{
 // 		case SDLK_i:        { xrf += 0.3; break; }
@@ -96,7 +96,7 @@ int         SDLGraph::close(std::string msg) {
 // 	}
 // }
 
-void        SDLGraph::setKeyDown() {
+void        OpenGLGraph::setKeyDown() {
 	switch( event.key.keysym.sym )
 	{
 		case SDLK_w:        { key = w; break; }
@@ -113,11 +113,12 @@ void        SDLGraph::setKeyDown() {
 		case SDLK_2:        { key = num2; break; }
 		case SDLK_3:        { key = num3; break; }
 		case SDLK_4:        { D3 ? D3 = false : D3 = true; break; }
+		case SDLK_m:		{ key = mute; break; } // mute ? mute = false : mute = true; break; 
 		default:            { key = none; break; }
 	}
 }
 
-void        SDLGraph::renderText(const char *text, int x, int y, bool selection) {
+void        OpenGLGraph::renderText(const char *text, int x, int y, bool selection) {
 	if (selection)
 		glColor3f(0.97f, 0.14f, 0.45f);
 	else 
@@ -142,7 +143,7 @@ void        SDLGraph::renderText(const char *text, int x, int y, bool selection)
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void        SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
+void        OpenGLGraph::drawMenu(int buttonNum, bool start, int speed) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPointSize(5);
@@ -160,7 +161,7 @@ void        SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	SDL_GL_SwapWindow(window);
 }
 
-void		SDLGraph::drawGameOver(int winner, rect boomRect) {
+void		OpenGLGraph::drawGameOver(int winner, rect boomRect) {
 
 	glPointSize(5);
 
@@ -178,7 +179,7 @@ void		SDLGraph::drawGameOver(int winner, rect boomRect) {
 	SDL_GL_SwapWindow(window);
 }
 
-void	SDLGraph::drawCube(rect snakeRect, rect snakeColor, int i) {
+void	OpenGLGraph::drawCube(rect snakeRect, rect snakeColor, int i) {
 	x = (snakeRect.x - snake1->screenWidth/2)/50;
 	y = (snake1->screenHeiht - snakeRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
    
@@ -229,7 +230,7 @@ void	SDLGraph::drawCube(rect snakeRect, rect snakeColor, int i) {
 	glEnd();
 }
 
-void	SDLGraph::drawCubeFrame(rect snakeRect) {
+void	OpenGLGraph::drawCubeFrame(rect snakeRect) {
 	x = (snakeRect.x - snake1->screenWidth/2)/50;
 	y = (snake1->screenHeiht - snakeRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
    
@@ -344,7 +345,7 @@ void	SDLGraph::drawCubeFrame(rect snakeRect) {
 }
 
 
-void  SDLGraph::drawSnake3D() {
+void  OpenGLGraph::drawSnake3D() {
    
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
@@ -385,7 +386,7 @@ void  SDLGraph::drawSnake3D() {
 	}
 }
 
-void SDLGraph::drawSphere(double r, int lats, int longs, rect appleRect) {
+void OpenGLGraph::drawSphere(double r, int lats, int longs, rect appleRect) {
 	x = (appleRect.x - snake1->screenWidth/2)/50;
 	y = (snake1->screenHeiht - appleRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
 	x += 0.5;
@@ -416,7 +417,7 @@ void SDLGraph::drawSphere(double r, int lats, int longs, rect appleRect) {
 	}
 }
 
-void 		SDLGraph::drawApple3DSphera(rect appleRect) {
+void 		OpenGLGraph::drawApple3DSphera(rect appleRect) {
 	
 	//sphera
 	glShadeModel(GL_LINES);
@@ -430,7 +431,7 @@ void 		SDLGraph::drawApple3DSphera(rect appleRect) {
 
 }
 
-void        SDLGraph::drawApple3DCube(rect appleRect) {
+void        OpenGLGraph::drawApple3DCube(rect appleRect) {
 
 	x = (appleRect.x - snake1->screenWidth/2)/50;
 	y = (snake1->screenHeiht - appleRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
@@ -483,7 +484,7 @@ void        SDLGraph::drawApple3DCube(rect appleRect) {
 
 }
 
-void        SDLGraph::drawFrameMenu() {
+void        OpenGLGraph::drawFrameMenu() {
 	
 	x1 = (snake1->screenWidth/2 - 25)/50;
 	y1 = (snake1->screenHeiht/2 - 25)/50;
@@ -513,7 +514,7 @@ void        SDLGraph::drawFrameMenu() {
 	glEnd();                          //                               -*
 }
 
-void        SDLGraph::drawFrame2D() {
+void        OpenGLGraph::drawFrame2D() {
 	
 	x1 = (snake1->screenWidth/2 - 25)/50;
 	y1 = (snake1->screenHeiht/2 - 50 + y3)/50;
@@ -544,7 +545,7 @@ void        SDLGraph::drawFrame2D() {
 	glEnd();                          //                               -*
 }
 
-void        SDLGraph::drawFrame3D() {
+void        OpenGLGraph::drawFrame3D() {
 
 	x1 = (snake1->screenWidth/2 - 25)/50; // 2500 
 	y1 = (snake1->screenHeiht/2 - 25 + 1300)/50; // 1300 || 800
@@ -575,7 +576,7 @@ void        SDLGraph::drawFrame3D() {
 	glEnd();                          //                               -*
 }
 
-void        SDLGraph::draw(rect appleRect) {
+void        OpenGLGraph::draw(rect appleRect) {
 
 	// setKeyDownRotate();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -608,7 +609,7 @@ void        SDLGraph::draw(rect appleRect) {
 	SDL_GL_SwapWindow(window);
 }
 
-void    SDLGraph::handleEvent() {
+void    OpenGLGraph::handleEvent() {
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 			case SDL_KEYDOWN:
@@ -619,12 +620,12 @@ void    SDLGraph::handleEvent() {
 	}
 }
 
-bool        SDLGraph::windIsOpen() {
+bool        OpenGLGraph::windIsOpen() {
 	return (!quit);
 }
 
 extern "C" IGraph *createGraph(Snake *s1, Snake *s2) {
-	return (new SDLGraph(s1, s2));
+	return (new OpenGLGraph(s1, s2));
 }
 
 extern "C"  void destroyGraph(IGraph *graph) {
