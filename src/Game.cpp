@@ -217,7 +217,7 @@ void	Game::keyHandle(eKeyType key) {
 							network->cycle(&keyToNetwork);
 							connectIsReady = false;
 							std::cout << "connectIsReady" << std::endl;
-							// usleep(257000);
+							usleep(34000);
 						}
 						else if (startNetwork && network) {
 							iAmReady = true;
@@ -422,10 +422,10 @@ void	Game::mainCycle() {
 		else if (menu)
 			dynLib->drawMenu(buttonNum, start, speed);
 		else {
-			// struct timeval tp;
-			// gettimeofday(&tp, NULL);
-			// long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
-			// std::cout << "ms " << ms << std::endl;
+			struct timeval tp;
+			gettimeofday(&tp, NULL);
+			long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+			std::cout << "ms " << ms << std::endl;
 			dynLib->draw(appleRect);
 		}
 
@@ -434,6 +434,7 @@ void	Game::mainCycle() {
 		if (!menu && startNetwork && network) {
 			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 			network->cycle(&keyToNetwork);
+			// std::cout << i << " keyToNetwork = " << keyToNetwork << std::endl;
 
 			if (keyToNetwork == ready && iAmReady) {
 				newGame();
@@ -454,7 +455,7 @@ void	Game::mainCycle() {
 			keyToNetwork = none;
 			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 		}
-		if (startNetwork && network) {
+		else if (startNetwork && network) {
 			network->cycle(&keyToNetwork);
 			if (keyToNetwork == ready && iAmReady) {
 				newGame();
@@ -467,7 +468,7 @@ void	Game::mainCycle() {
 			i = 0;
 		if (!menu)
 			i++;
-		// std::cout << "multiplayer = " << multiplayer << " network = " << startNetwork << std::endl;
+		// std::cout << "mainCycle" << std::endl;
 
 	}
 }

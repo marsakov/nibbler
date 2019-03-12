@@ -280,12 +280,16 @@ int Network::cycle(eKeyType *key) {
 			if (serverBool) {
 
 				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
-					send(connection.socket, key, sizeof(key), MSG_DONTWAIT);
+					// std::cout << "before send" << std::endl;
+					send(connection.socket, key, sizeof(key), 0);
 					*key = none;
+					// std::cout << "after send" << std::endl;
+					// std::cout << "before recv" << std::endl;
 				// }
 
 				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds)) 
-					recv(connection.socket, key, sizeof(key), MSG_DONTWAIT);
+					recv(connection.socket, key, sizeof(key), 0);
+					// std::cout << "after recv" << std::endl;
 
 				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &except_fds)) {
 				// 	printf("Exception client fd.\n");
@@ -296,12 +300,17 @@ int Network::cycle(eKeyType *key) {
 			{
 
 				// if (FD_ISSET(server.socket, &write_fds)) {
-					send(server.socket, key, sizeof(key), MSG_DONTWAIT);
+					// std::cout << "before send" << std::endl;
+					send(server.socket, key, sizeof(key), 0);
 					*key = none;
 				// }
-
+					// std::cout << "after send" << std::endl;
+					// std::cout << "before recv" << std::endl;
 				// if (FD_ISSET(server.socket, &read_fds))
-					recv(server.socket, key, sizeof(key), MSG_DONTWAIT);
+					recv(server.socket, key, sizeof(key), 0);
+					// std::cout << "after recv" << std::endl;
+
+					// std::cout << "after recv" << std::endl;
 
 				// if (FD_ISSET(server.socket, &except_fds)) {
 				// 	printf("except_fds for server.\n");
