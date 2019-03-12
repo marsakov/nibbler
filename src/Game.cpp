@@ -66,7 +66,7 @@ void	Game::createServer() {
 
 
 void	Game::closeLib() {
-	std::cout << "closeLib" << std::endl;
+	// std::cout << "closeLib" << std::endl;
 	destroy(dynLib);
 }
 
@@ -95,16 +95,20 @@ void	Game::getLib(eKeyType key) {
 	destroy = (destroy_t*)dlsym(ext_library,"destroyGraph");
 
 	dynLib = creat(snake1, snake2);
-	if (multiplayer)
-	{
-		dynLib->setMultiplayer(true);
-		std::cout << "multiplayer on" << std::endl;
-	}
-	else
-	{
-		dynLib->setMultiplayer(false);
-		std::cout << "multiplayer OFF" << std::endl;
-	}
+
+	dynLib->setMultiplayer(multiplayer);
+	dynLib->setNetwork(startNetwork);
+
+	// if (multiplayer)
+	// {
+	// 	dynLib->setMultiplayer(true);
+	// 	std::cout << "multiplayer on" << std::endl;
+	// }
+	// else
+	// {
+	// 	dynLib->setMultiplayer(false);
+	// 	std::cout << "multiplayer OFF" << std::endl;
+	// }
 }
 
 bool	Game::newGame() {
@@ -144,13 +148,7 @@ bool	Game::newGame() {
 }
 
 void	Game::keyHandle(eKeyType key) {
-	// std::cout << key << std::endl;
-	if (startNetwork && client) {
-		if (client)
-			std::cout << "client key = " << key << std::endl;
-		// key = keyToNetwork;
-		// keyToNetwork = key;
-	}
+
 	keyToNetwork = key;
 
 	if (!menu)
@@ -166,10 +164,18 @@ void	Game::keyHandle(eKeyType key) {
 		soundLib->set_menu(true);
 		soundLib->set_change_sound(true);
 	}
-	else if (!menu && key >= up && key <= right)
-		snake1->choseDirection(key);
-	else if (!menu && multiplayer && key >= w && key <= d)
-		snake2->choseDirection(key);
+	else if (!menu && key >= up && key <= right) {
+		if (startNetwork && client)
+			snake2->choseDirection(key);
+		else
+			snake1->choseDirection(key);
+	}
+	else if (!menu && multiplayer && key >= w && key <= d) {
+		if (startNetwork && client)
+			snake1->choseDirection(key);
+		else
+			snake2->choseDirection(key);
+	}
 	else if (menu) {
 		switch (key) {
 			case (up):		{
@@ -210,11 +216,15 @@ void	Game::keyHandle(eKeyType key) {
 							keyToNetwork = ready;
 							network->cycle(&keyToNetwork);
 							connectIsReady = false;
+							std::cout << "connectIsReady" << std::endl;
+							// usleep(257000);
 						}
 						else if (startNetwork && network) {
 							iAmReady = true;
 							keyToNetwork = ready;
 							network->cycle(&keyToNetwork);
+							std::cout << "iAmReady" << std::endl;
+							// usleep(257000);
 							break ;
 						}
 						newGame();
@@ -360,13 +370,15 @@ bool	Game::checkCollision() {
 
 void	Game::gameOver() {
 	soundLib->set_game_over(true);
-	usleep(1000000);
+	// usleep(1000000);
 	soundLib->set_menu(true);
 	soundLib->set_change_sound(true);
 	start = false;
 	menu = true;
 	buttonNum = 2;
 	gameOverCount = 200;
+	// iAmReady = false;
+	// connectIsReady = false;
 }
 
 void	Game::mainCycle() {
@@ -380,13 +392,13 @@ void	Game::mainCycle() {
 
 		if (!menu && (i % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){
 			winner = 2;
-			std::cout << "snake outside the box" << std::endl;
+			// std::cout << "snake outside the box" << std::endl;
 			boomRect.x = snake1->snakeRect[0].x;
 			boomRect.y = snake1->snakeRect[0].y;
 			gameOver();
 		}
 		if (multiplayer && !menu && (i % (15 - (speed - 15)) == 0 && !snake2->moveSnake() )) {
-			std::cout << "snake outside the box" << std::endl;
+			// std::cout << "snake outside the box" << std::endl;
 			winner = 1;
 			boomRect.x = snake2->snakeRect[0].x;
 			boomRect.y = snake2->snakeRect[0].y;
@@ -399,7 +411,7 @@ void	Game::mainCycle() {
 		keyHandle(dynLib->getKey());
 
 		if (!menu && !checkCollision()) {
-			std::cout << "boom" << std::endl;
+			// std::cout << "boom" << std::endl;
 			gameOver();
 		}
 
@@ -410,21 +422,20 @@ void	Game::mainCycle() {
 		else if (menu)
 			dynLib->drawMenu(buttonNum, start, speed);
 		else {
-			struct timeval tp;
-			gettimeofday(&tp, NULL);
-			long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
-			std::cout << "ms " << ms << std::endl;
+			// struct timeval tp;
+			// gettimeofday(&tp, NULL);
+			// long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+			// std::cout << "ms " << ms << std::endl;
 			dynLib->draw(appleRect);
 		}
 
 		soundLib->Sound();
 
 		if (!menu && startNetwork && network) {
-			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
+			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 			network->cycle(&keyToNetwork);
 
 			if (keyToNetwork == ready && iAmReady) {
-				usleep(725000);
 				newGame();
 			}
 			else if (keyToNetwork == ready)
@@ -441,12 +452,11 @@ void	Game::mainCycle() {
 				keyHandle(keyToNetwork);
 			}
 			keyToNetwork = none;
-			std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
+			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 		}
 		if (startNetwork && network) {
 			network->cycle(&keyToNetwork);
 			if (keyToNetwork == ready && iAmReady) {
-				usleep(725000);
 				newGame();
 			}
 			else if (keyToNetwork == ready)
@@ -457,6 +467,7 @@ void	Game::mainCycle() {
 			i = 0;
 		if (!menu)
 			i++;
+		// std::cout << "multiplayer = " << multiplayer << " network = " << startNetwork << std::endl;
 
 	}
 }

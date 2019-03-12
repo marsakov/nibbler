@@ -17,7 +17,7 @@ Network::Network() {
 }
 
 Network::~Network() {
-	printf("descriptor\n");
+	printf("destructor\n");
 	shutdown_properly(EXIT_FAILURE);
 }
 
@@ -38,6 +38,16 @@ int Network::connect_server(peer_t *server) {
 	server_addr.sin_port = htons(SERVER_LISTEN_PORT);
 	
 	server->addres = server_addr;
+
+	struct timeval timeout;
+	timeout.tv_sec = 3;
+	timeout.tv_usec = 0;
+
+	if (setsockopt (server->socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+		perror("setsockopt failed\n");
+
+	if (setsockopt (server->socket, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+		perror("setsockopt failed\n");
 	
 	if (connect(server->socket, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) != 0) {
 		perror("connect()");
@@ -63,11 +73,21 @@ int Network::start_listen_socket(int *listen_sock) {
 		perror("setsockopt");
 		return (-1);
 	}
+
+	struct timeval timeout;
+	timeout.tv_sec = 3;
+	timeout.tv_usec = 0;
+
+	if (setsockopt (*listen_sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+		perror("setsockopt failed\n");
+
+	if (setsockopt (*listen_sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+		perror("setsockopt failed\n");
 	
 	struct sockaddr_in my_addr;
 	memset(&my_addr, 0, sizeof(my_addr));
 	my_addr.sin_family = AF_INET;
-	my_addr.sin_addr.s_addr =  htonl(INADDR_ANY);//inet_addr(INADDR_ANY);
+	my_addr.sin_addr.s_addr =  htonl(INADDR_ANY);
 	my_addr.sin_port = htons(SERVER_LISTEN_PORT);
  
 	if (bind(*listen_sock, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0) {
@@ -144,7 +164,11 @@ int Network::handle_new_connection() {
 	struct sockaddr_in client_addr;
 	memset(&client_addr, 0, sizeof(client_addr));
 	socklen_t client_len = sizeof(client_addr);
+
+	std::cout << "1" << std::endl;
 	int new_client_sock = accept(listen_sock, (struct sockaddr *)&client_addr, &client_len);
+	std::cout << "2" << std::endl;
+
 	if (new_client_sock < 0) {
 		perror("accept()");
 		return (-1);
@@ -205,89 +229,89 @@ void  Network::init() {
 
 int Network::cycle(eKeyType *key) {
 
-	std::cout << "START key = " << *key << std::endl;
-	struct timeval tv;
-	tv.tv_usec = 1;
-	tv.tv_sec = 0;
+	// std::cout << "START key = " << *key << std::endl;
+	// struct timeval tv;
+	// tv.tv_usec = 1;
+	// tv.tv_sec = 0;
 	// //int key;
 	// std::cout << "24546546" << std::endl;
 	// std::cout << "serverBool = " << serverBool << std::endl;
-	if (serverBool)
-		build_fd_sets(&read_fds, &write_fds, &except_fds);
-	else
-		build_fd_setsCl(&server, &read_fds, &write_fds, &except_fds);
-	// std::cout << serverBool << std::endl;
+	// if (serverBool)
+	// 	build_fd_sets(&read_fds, &write_fds, &except_fds);
+	// else
+	// 	build_fd_setsCl(&server, &read_fds, &write_fds, &except_fds);
+	// // std::cout << serverBool << std::endl;
 
-	if (serverBool && connection.socket > high_sock)
-		high_sock = connection.socket;
+	// if (serverBool && connection.socket > high_sock)
+	// 	high_sock = connection.socket;
 	
-	int activity = select(high_sock + 1, &read_fds, &write_fds, &except_fds, &tv);
-	switch (activity) {
-		case -1:
-			perror("select()");
-			shutdown_properly(EXIT_FAILURE);
+	// int activity = select(high_sock + 1, &read_fds, &write_fds, &except_fds, &tv);
+	// switch (activity) {
+	// 	case -1:
+	// 		perror("select()");
+	// 		shutdown_properly(EXIT_FAILURE);
 
-		case 0:
-			std::cout << "RETURN 0" << std::endl;
-			return (0);
+	// 	case 0:
+	// 		// std::cout << "RETURN 0" << std::endl;
+	// 		return (0);
 		
-		default: {
+	// 	default: {
 
 			/* All set fds should be checked. */
-			if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-				printf("HERE\n");
-				shutdown_properly(EXIT_FAILURE);
-			}
+			// if (FD_ISSET(STDIN_FILENO, &read_fds)) {
+			// 	printf("HERE\n");
+			// 	shutdown_properly(EXIT_FAILURE);
+			// }
 
-			if (serverBool && FD_ISSET(listen_sock, &read_fds)) {
-				handle_new_connection();
-			}
+			// if (serverBool && FD_ISSET(listen_sock, &read_fds)) {
+			// 	handle_new_connection();
+			// }
 			
-			if (FD_ISSET(STDIN_FILENO, &except_fds)) {
-				printf("except_fds for stdin.\n");
-				shutdown_properly(EXIT_FAILURE);
-			}
+			// if (FD_ISSET(STDIN_FILENO, &except_fds)) {
+			// 	printf("except_fds for stdin.\n");
+			// 	shutdown_properly(EXIT_FAILURE);
+			// }
 
-			if (serverBool && FD_ISSET(listen_sock, &except_fds)) {
-				printf("Exception listen socket fd.\n");
-				shutdown_properly(EXIT_FAILURE);
-			}
+			// if (serverBool && FD_ISSET(listen_sock, &except_fds)) {
+			// 	printf("Exception listen socket fd.\n");
+			// 	shutdown_properly(EXIT_FAILURE);
+			// }
 			
 			if (serverBool) {
 
-				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
+				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &write_fds)) {
 					send(connection.socket, key, sizeof(key), MSG_DONTWAIT);
 					*key = none;
-				}
+				// }
 
-				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds)) 
+				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &read_fds)) 
 					recv(connection.socket, key, sizeof(key), MSG_DONTWAIT);
 
-				if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &except_fds)) {
-					printf("Exception client fd.\n");
-					close_client_connection(&connection);
-				}
+				// if (connection.socket != NO_SOCKET && FD_ISSET(connection.socket, &except_fds)) {
+				// 	printf("Exception client fd.\n");
+				// 	close_client_connection(&connection);
+				// }
 			}
 			else
 			{
 
-				if (FD_ISSET(server.socket, &write_fds)) {
+				// if (FD_ISSET(server.socket, &write_fds)) {
 					send(server.socket, key, sizeof(key), MSG_DONTWAIT);
 					*key = none;
-				}
+				// }
 
-				if (FD_ISSET(server.socket, &read_fds))
+				// if (FD_ISSET(server.socket, &read_fds))
 					recv(server.socket, key, sizeof(key), MSG_DONTWAIT);
 
-				if (FD_ISSET(server.socket, &except_fds)) {
-					printf("except_fds for server.\n");
-					shutdown_properly(EXIT_FAILURE);
-				}
+				// if (FD_ISSET(server.socket, &except_fds)) {
+				// 	printf("except_fds for server.\n");
+				// 	shutdown_properly(EXIT_FAILURE);
+				// }
 			}
-		}
-	}
+		// }
+	// }
 	
-	std::cout << "FINISH key = " << *key << std::endl;
+	// std::cout << "FINISH key = " << *key << std::endl;
 
 	return (0);
 }
