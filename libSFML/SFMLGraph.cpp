@@ -140,7 +140,7 @@ void		SFMLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	window->draw(*line3);
 	window->draw(*line4);
 	if (snake1->muteVar)
-		renderText("MUTE", snake1->screenWidth + 700, snake1->screenHeiht - 750, false);
+		renderText("MUTE", snake1->screenWidth - 100, snake1->screenHeiht - 750, false);
 	if (start)
 		renderText("CONTINUE", snake1->screenWidth - 100, snake1->screenHeiht - 200, (buttonNum == 1) ? true : false);
 	renderText("NEW GAME", snake1->screenWidth - 100, snake1->screenHeiht - 100, (buttonNum == 2) ? true : false);
@@ -185,7 +185,7 @@ void		SFMLGraph::draw(rect appleRect) {
 
 	text.setStyle(sf::Text::Bold);
 	if (snake1->muteVar)
-		renderText("MUTE", snake1->screenWidth + 700, snake1->screenHeiht - 750, false);
+		renderText("MUTE", snake1->screenWidth - 100, snake1->screenHeiht - 750, false);
 	text.setString("SCORE " + std::to_string(snake1->size));
 	
 	text.setPosition(100, 20);

@@ -147,7 +147,7 @@ void		SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 
 	SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	if (snake1->muteVar)
-		renderText(("MUTE"), 850, 10, false);
+		renderText(("MUTE"), 450, 10, false);
 	if (start)
 		renderText("CONTINUE", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 100, (buttonNum == 1) ? true : false);
 	renderText("NEW GAME", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 50, (buttonNum == 2) ? true : false);
@@ -204,7 +204,7 @@ void		SDLGraph::draw(rect appleRect) {
 
 	renderText(("SCORE = " + std::to_string(snake1->size)).c_str(), 50, 10, false);
 	if (snake1->muteVar)
-		renderText(("MUTE"), 850, 10, false);
+		renderText(("MUTE"), 450, 10, false);
 	for (int i = 0; i < snake1->snakeRect.size(); i++) { 
 		if (i == 0) {
 			rectForSDL = toSDLRect(snake1->snakeRect[i]);
