@@ -48,6 +48,7 @@ public:
 	int					size;
 	int					step;
 	rect				pieceRect;
+	bool				muteVar;
 
 	Snake(int width, int height);
 	Snake(Snake &obj);

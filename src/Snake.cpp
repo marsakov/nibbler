@@ -18,6 +18,7 @@ Snake::Snake(int width, int height) {
 		pieceRect.x -= 50;
 		snakeRect.push_back(pieceRect);
 	}
+	//muteVar = false;
 
 }
 

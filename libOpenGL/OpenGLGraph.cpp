@@ -113,7 +113,7 @@ void        OpenGLGraph::setKeyDown() {
 		case SDLK_2:        { key = num2; break; }
 		case SDLK_3:        { key = num3; break; }
 		case SDLK_4:        { D3 ? D3 = false : D3 = true; break; }
-		case SDLK_m:		{ key = mute; break; } // mute ? mute = false : mute = true; break; 
+		case SDLK_m:		{ key = mute; break; }
 		default:            { key = none; break; }
 	}
 }
@@ -152,6 +152,8 @@ void        OpenGLGraph::drawMenu(int buttonNum, bool start, int speed) {
 
 	if (start)
 		renderText("CONTINUE", -20, 20, (buttonNum == 1) ? true : false);
+	if (snake1->muteVar)
+		renderText(("MUTE"), 67, 90, false);
 	renderText("NEW GAME", -20, 10, (buttonNum == 2) ? true : false);
 	renderText((std::string("MULTIPLAYER ") + (multiplayer ? (network ? "NET" : "LOCAL") : "OFF")).c_str(), -20, 0, (buttonNum == 3) ? true : false);
 	renderText("EXIT", -20, -10, (buttonNum == 4) ? true : false);
@@ -604,6 +606,8 @@ void        OpenGLGraph::draw(rect appleRect) {
 	}
 
 	renderText(("SCORE " + std::to_string(snake1->size)).c_str(), -80, 90, false);
+	if (snake1->muteVar)
+		renderText(("MUTE"), 67, 90, false);
 	if (multiplayer)
 		renderText(("SCORE " + std::to_string(snake2->size)).c_str(), 60, 90, false);
 	SDL_GL_SwapWindow(window);

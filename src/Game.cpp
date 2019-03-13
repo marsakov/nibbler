@@ -29,6 +29,7 @@ void	Game::init() {
 	snake2->snakeRect[0].r = 0.98f;
 	snake2->snakeRect[0].g = 0.58f;
 	snake2->snakeRect[0].b = 0.12f;
+	snake1->muteVar = false;
 }
 
 Game::Game() {
@@ -106,6 +107,7 @@ bool	Game::newGame() {
 	newSnake->snakeRect[0].r = snake1->snakeRect[0].r;
 	newSnake->snakeRect[0].g = snake1->snakeRect[0].g;
 	newSnake->snakeRect[0].b = snake1->snakeRect[0].b;
+	newSnake->muteVar = snake1->muteVar;
 	delete snake1;
 	snake1 = newSnake;
 
@@ -129,7 +131,7 @@ bool	Game::newGame() {
 	start = true;
 	soundLib->set_menu(menu);
 	soundLib->set_change_sound(true);
-
+	// soundLib->set_mute(snake1->muteVar);
 	soundLib->set_new_game(true);
 	iAmReady = false;
 	connectIsReady = false;
@@ -253,8 +255,17 @@ void	Game::keyHandle(eKeyType key) {
 		}
 	}
 
-	if (key == mute)
-		soundLib->get_mute() ? soundLib->set_mute(false) : soundLib->set_mute(true);
+	if (key == mute) {
+		if (snake1->muteVar && soundLib->get_mute()) {
+			snake1->muteVar = false;
+			soundLib->set_mute(false);
+		} else  {
+			snake1->muteVar = true;
+			soundLib->set_mute(true);
+		}
+	}
+	std::cout << "snake1->muteVar = " << snake1->muteVar << std::endl;
+	std::cout << "soundLib->get_mute() = " << soundLib->get_mute() << std::endl;
 	dynLib->setKey(none);
 }
 
@@ -459,8 +470,6 @@ void	Game::mainCycle() {
 			i = 0;
 		if (!menu)
 			i++;
-		 std::cout << "muteVar = " << muteVar << std::endl;
-
 	}
 }
 

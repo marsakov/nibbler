@@ -24,19 +24,18 @@ void 	SoundSFML::Sound() {
 		switch_menu_sound = false;
 		// std::cout << "switch_menu_sound" << std::endl;
 	}
-	std::cout << "SoundSFML muteVar = " << muteVar << std::endl;
 	if (muteVar) {
 		music_menu.setVolume(0.f);
 		music_game.setVolume(0.f);
 		music_end.setVolume(0.f);
-		// menuBuffer.setVolume(0.f);
-		// eatBuffer.setVolume(0.f);
+		menu_sound.setVolume(0);
+		eat.setVolume(0);
 	} else {
 		music_menu.setVolume(50.f);
 		music_game.setVolume(50.f);
 		music_end.setVolume(50.f);
-		// menuBuffer.setVolume(100.f);
-		// eatBuffer.setVolume(100.f);
+		menu_sound.setVolume(100.f);
+		eat.setVolume(100.f);
 	}
 
 	if (change_sound) {
