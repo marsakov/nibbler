@@ -65,7 +65,7 @@ class Game
 	Network				*network;
 	bool				iAmReady;
 	bool				connectIsReady;
-
+	rect                appleFromServer;
 
 
 public:

@@ -28,6 +28,9 @@ void	Game::init() {
 	snake2->snakeRect[0].r = 0.98f;
 	snake2->snakeRect[0].g = 0.58f;
 	snake2->snakeRect[0].b = 0.12f;
+
+	appleFromServer.x = 150;
+	appleFromServer.y = 150;
 }
 
 Game::Game() {
@@ -204,7 +207,11 @@ void	Game::keyHandle(eKeyType key) {
 						}
 						else if (snake1->network && network && connectIsReady) {
 							keyToNetwork = ready;
-							network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
+							if (client)
+								network->cycle(&keyToNetwork, &(appleFromServer.x), &(appleFromServer.y));
+							else
+								network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
+
 							connectIsReady = false;
 							std::cout << "connectIsReady" << std::endl;
 							usleep(34000);
@@ -212,7 +219,11 @@ void	Game::keyHandle(eKeyType key) {
 						else if (snake1->network && network) {
 							iAmReady = true;
 							keyToNetwork = ready;
-							network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
+							if (client)
+								network->cycle(&keyToNetwork, &(appleFromServer.x), &(appleFromServer.y));
+							else
+								network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
+
 							snake1->waiting = true;
 							std::cout << "iAmReady" << std::endl;
 							break ;
@@ -262,6 +273,13 @@ void	Game::keyHandle(eKeyType key) {
 
 void	Game::generateApple() {
 	bool noCollision = false;
+
+
+	if (client) {
+		appleRect.x = appleFromServer.x;
+		appleRect.y = appleFromServer.y;
+		return ;
+	}
 
 	while (!noCollision) 
 	{
@@ -426,7 +444,11 @@ void	Game::mainCycle() {
 
 		if (!menu && snake1->network && network) {
 			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
-			network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
+			if (client)
+				network->cycle(&keyToNetwork, &(appleFromServer.x), &(appleFromServer.y));
+			else
+				network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
+
 			// std::cout << i << " keyToNetwork = " << keyToNetwork << std::endl;
 
 			if (keyToNetwork == ready && iAmReady) {
@@ -450,7 +472,11 @@ void	Game::mainCycle() {
 			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 		}
 		else if (snake1->network && network) {
-			network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
+			if (client)
+				network->cycle(&keyToNetwork, &(appleFromServer.x), &(appleFromServer.y));
+			else
+				network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
+
 			if (keyToNetwork == ready && iAmReady) {
 				snake1->waiting = false;
 				newGame();
