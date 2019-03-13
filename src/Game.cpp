@@ -274,6 +274,33 @@ void	Game::keyHandle(eKeyType key) {
 void	Game::generateApple() {
 	bool noCollision = false;
 
+	appleRect.s = rand() % 2;
+	switch (rand() % 4) {
+		case 0: {
+			appleRect.r = 0.67f;
+			appleRect.g = 0.49f;
+			appleRect.b = 1;
+			break ;
+		}
+		case 1: {
+			appleRect.r = 0.41f;
+			appleRect.g = 0.85f;
+			appleRect.b = 0.94f;
+			break ;
+		}
+		case 2: {
+			appleRect.r = 0.65f;
+			appleRect.g = 0.89f;
+			appleRect.b = 0.17f;
+			break ;
+		}
+		case 3: {
+			appleRect.r = 1.0f;
+			appleRect.g = 0.97f;
+			appleRect.b = 0.3f;
+			break ;
+		}
+	}
 
 	if (client) {
 		appleRect.x = appleFromServer.x;
@@ -285,33 +312,6 @@ void	Game::generateApple() {
 	{
 		appleRect.x = (rand() % (snake1->screenWidth / 100 - 1) + 1) * 100;
 		appleRect.y = (rand() % (snake1->screenHeiht / 100 - 1) + 1) * 100;
-		appleRect.s = rand() % 2;
-		switch (rand() % 4) {
-			case 0: {
-				appleRect.r = 0.67f;
-				appleRect.g = 0.49f;
-				appleRect.b = 1;
-				break ;
-			}
-			case 1: {
-				appleRect.r = 0.41f;
-				appleRect.g = 0.85f;
-				appleRect.b = 0.94f;
-				break ;
-			}
-			case 2: {
-				appleRect.r = 0.65f;
-				appleRect.g = 0.89f;
-				appleRect.b = 0.17f;
-				break ;
-			}
-			case 3: {
-				appleRect.r = 1.0f;
-				appleRect.g = 0.97f;
-				appleRect.b = 0.3f;
-				break ;
-			}
-		}
 		
 		noCollision = true;
 		for (int i = 0; i < snake1->snakeRect.size(); i++)
@@ -391,20 +391,20 @@ void	Game::gameOver() {
 }
 
 void	Game::mainCycle() {
-	size_t i = 0;
+	iter = 0;
 	generateApple();
 	getLib(libNum);
 	
 	while (dynLib->windIsOpen()) {
 
-		if (!menu && (i % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){
+		if (!menu && (iter % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){
 			winner = 2;
 			// std::cout << "snake outside the box" << std::endl;
 			boomRect.x = snake1->snakeRect[0].x;
 			boomRect.y = snake1->snakeRect[0].y;
 			gameOver();
 		}
-		if (snake1->multiplayer && !menu && (i % (15 - (speed - 15)) == 0 && !snake2->moveSnake() )) {
+		if (snake1->multiplayer && !menu && (iter % (15 - (speed - 15)) == 0 && !snake2->moveSnake() )) {
 			// std::cout << "snake outside the box" << std::endl;
 			winner = 1;
 			boomRect.x = snake2->snakeRect[0].x;
@@ -414,10 +414,11 @@ void	Game::mainCycle() {
 			gameOver();
 		}
 
-		if (!menu && (i % 750 == 0 || appleRect.x == -1000))
+		if (!menu && (iter % 750 == 0 || appleRect.x == -1000))
 			generateApple();
 
-		dynLib->handleEvent();
+		if (!gameOverCount)
+			dynLib->handleEvent();
 		keyHandle(dynLib->getKey());
 
 		if (!menu && !checkCollision()) {
@@ -449,7 +450,7 @@ void	Game::mainCycle() {
 			else
 				network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
 
-			// std::cout << i << " keyToNetwork = " << keyToNetwork << std::endl;
+			// std::cout << iter << " keyToNetwork = " << keyToNetwork << std::endl;
 
 			if (keyToNetwork == ready && iAmReady) {
 				snake1->waiting = false;
@@ -485,10 +486,10 @@ void	Game::mainCycle() {
 				connectIsReady = true;
 			keyToNetwork = none;
 		}
-		if ( i == 2000000000 )
-			i = 0;
+		if ( iter == 2000000000 )
+			iter = 0;
 		if (!menu)
-			i++;
+			iter++;
 		// std::cout << "mainCycle" << std::endl;
 
 	}

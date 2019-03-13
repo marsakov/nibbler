@@ -35,6 +35,7 @@
 
 class Game
 {
+	size_t				iter;
 	eKeyType			libNum;
 	void				*ext_library;
 	void				*ext_library2;
