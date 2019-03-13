@@ -8,6 +8,7 @@ SFMLGraph::SFMLGraph() {
 	snake1->screenWidth = 1000;
 	snake1->screenHeiht = 900;
 	init();
+	iter = 0;
 }
 
 SFMLGraph::SFMLGraph(Snake *s1, Snake *s2) {
@@ -17,6 +18,8 @@ SFMLGraph::SFMLGraph(Snake *s1, Snake *s2) {
 	snake2 = s2;
 	std::cout << "w = " << snake1->screenWidth << " h = " << snake1->screenHeiht << std::endl;
 	init();
+	iter = 0;
+
 }
 
 SFMLGraph::SFMLGraph(SFMLGraph &obj) {
@@ -27,23 +30,11 @@ SFMLGraph::~SFMLGraph() {
 	window->close();
 }
 
-void        SFMLGraph::setNetwork(bool m) { network = m; }
-void		SFMLGraph::setMultiplayer(bool m) { multiplayer = m ;}
 eKeyType	SFMLGraph::getKey() { return (key);}
 void		SFMLGraph::setKey(eKeyType k) { key = k; }
 
 
 void		SFMLGraph::init() {
-		
-	// sf::SoundBuffer shootBuffer; // create buff
-	// shootBuffer.loadFromFile("resources/FamiliarRoads.ogg"); //wav, ogg              load sound
-	// sf::Sound shoot(shootBuffer); // create sound
-	// shoot.play(); //make sound
-
-	// sf::Music music;
-	// music.openFromFile("resources/FamiliarRoads.ogg");
-	// music.play(); 
-
 
 	window = new sf::RenderWindow(sf::VideoMode(snake1->screenWidth*2, snake1->screenHeiht*2), "Nibbler", sf::Style::Titlebar | sf::Style::Close);
 	window->setFramerateLimit(60);
@@ -132,6 +123,9 @@ void		SFMLGraph::renderText(std::string textString, int x, int y, bool selection
 
 void		SFMLGraph::drawMenu(int buttonNum, bool start, int speed) {
 
+	if (snake1->waiting)
+		iter = (iter == 95) ? 1 : iter + 1;
+
 	window->clear();
 	window->draw(background);
 
@@ -141,10 +135,14 @@ void		SFMLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	window->draw(*line4);
 	if (snake1->muteVar)
 		renderText("MUTE", snake1->screenWidth - 100, snake1->screenHeiht - 750, false);
-	if (start)
+	if (start && !snake1->waiting)
 		renderText("CONTINUE", snake1->screenWidth - 100, snake1->screenHeiht - 200, (buttonNum == 1) ? true : false);
+	else if (snake1->waiting) {
+		renderText("*************************", snake1->screenWidth - 100, snake1->screenHeiht - 200, false);
+		renderText("*", snake1->screenWidth - 100 + iter * 4, snake1->screenHeiht - 200, true);
+	}
 	renderText("NEW GAME", snake1->screenWidth - 100, snake1->screenHeiht - 100, (buttonNum == 2) ? true : false);
-	renderText(std::string("MULTIPLAYER ") + (multiplayer ? (network ? "NET" : "LOCAL") : "OFF"), snake1->screenWidth - 100, snake1->screenHeiht, (buttonNum == 3) ? true : false);
+	renderText(std::string("MULTIPLAYER ") + (snake1->multiplayer ? (snake1->network ? "NET" : "LOCAL") : "OFF"), snake1->screenWidth - 100, snake1->screenHeiht, (buttonNum == 3) ? true : false);
 	renderText("EXIT", snake1->screenWidth - 100, snake1->screenHeiht + 100, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), snake1->screenWidth - 100, snake1->screenHeiht - 600, false);
 
@@ -162,7 +160,7 @@ void		SFMLGraph::drawGameOver(int winner, rect boomRect) {
 	window->draw(boomSprite);
 
 	renderText("GAME OVER", snake1->screenWidth - 100, snake1->screenHeiht - 100, false);
-	if (multiplayer) {
+	if (snake1->multiplayer) {
 		renderText(("Snake1 SCORE " + std::to_string(snake1->size)).c_str(), snake1->screenWidth - 100, snake1->screenHeiht, (winner == 1) ? true : false);
 		renderText(("Snake2 SCORE " + std::to_string(snake2->size)).c_str(),snake1->screenWidth - 100, snake1->screenHeiht + 100, (winner == 2) ? true : false);
 	}
@@ -187,7 +185,6 @@ void		SFMLGraph::draw(rect appleRect) {
 	if (snake1->muteVar)
 		renderText("MUTE", snake1->screenWidth - 100, snake1->screenHeiht - 750, false);
 	text.setString("SCORE " + std::to_string(snake1->size));
-	
 	text.setPosition(100, 20);
 	window->draw(text);
 
@@ -205,7 +202,7 @@ void		SFMLGraph::draw(rect appleRect) {
 		}
 	}
 
-	if (multiplayer) {
+	if (snake1->multiplayer) {
 		for (int i = 0; i < snake2->snakeRect.size(); i++) {
 			if (i == 0) {
 				headSprite2.setPosition(snake2->snakeRect[i].x * 2 - 25, snake2->snakeRect[i].y * 2 - 25);

@@ -48,6 +48,10 @@ public:
 	int					size;
 	int					step;
 	rect				pieceRect;
+
+	bool				waiting;
+	bool				multiplayer;
+	bool				network;
 	bool				muteVar;
 
 	Snake(int width, int height);

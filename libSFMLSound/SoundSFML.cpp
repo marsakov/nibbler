@@ -24,6 +24,7 @@ void 	SoundSFML::Sound() {
 		switch_menu_sound = false;
 		// std::cout << "switch_menu_sound" << std::endl;
 	}
+
 	if (muteVar) {
 		music_menu.setVolume(0.f);
 		music_game.setVolume(0.f);
@@ -50,6 +51,7 @@ void 	SoundSFML::Sound() {
 			}
 			music_game.pause();
 
+
 			if (music_end.getStatus() == sf::Music::Stopped) {
 				music_menu.play();
 				change_sound = false;
@@ -66,6 +68,7 @@ void 	SoundSFML::Sound() {
 			music_game.play(); 
 			music_game.setLoop(true);
 			// std::cout << "game" << std::endl;
+
 			change_sound = false;
 
 		}
@@ -88,7 +91,6 @@ void	SoundSFML::init() {
 		// sound
 		menuBuffer.loadFromFile("resources/++.ogg");
 		eatBuffer.loadFromFile("resources/eat.ogg");
-
 	}
 	catch (std::exception &e) {
 			std::cout << e.what() << std::endl;

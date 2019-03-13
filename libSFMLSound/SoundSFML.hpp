@@ -24,8 +24,6 @@ protected:
 
 public:
 
-
-
 	SoundSFML();
 	virtual ~SoundSFML();
 
@@ -39,5 +37,4 @@ public:
 	virtual void 	set_new_game(bool b);
 	virtual void 	set_mute(bool b);
 	virtual bool 	get_mute();
-	
 };

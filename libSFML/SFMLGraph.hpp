@@ -33,10 +33,9 @@ class SFMLGraph : public IGraph
 	Snake					*snake2;
 
 protected:
-	bool					network;
-	bool					multiplayer;
 	eKeyType				key;
 
+	int iter;
 
 public:
 
@@ -53,14 +52,12 @@ public:
 	virtual void			drawMenu(int buttonNum, bool start, int speed);
 	virtual bool			windIsOpen();
 	virtual void			handleEvent();
-	virtual	void			setMultiplayer(bool m);
-	virtual	void			setNetwork(bool m);
 	virtual void			setKeyDown();
 	virtual eKeyType		getKey();
 	virtual void			setKey(eKeyType k);
 	virtual void			drawGameOver(int winner, rect boomRect);
-	
 
+	
 	void					renderText(std::string text, int x, int y, bool selection);
 
 };

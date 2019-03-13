@@ -1,6 +1,5 @@
 #include "../inc/Game.hpp"
 #include <time.h>
-// #include "../libSFMLSound/SoundSFML.hpp"
 
 using namespace std::chrono;
 
@@ -9,8 +8,8 @@ void	Game::init() {
 	buttonNum = 2;
 	menu = true;
 	start = false;
-	multiplayer = false;
-	startNetwork = false;
+	snake1->multiplayer = false;
+	snake1->network = false;
 	server = false;
 	client = false;
 	keyToNetwork = none;
@@ -29,7 +28,6 @@ void	Game::init() {
 	snake2->snakeRect[0].r = 0.98f;
 	snake2->snakeRect[0].g = 0.58f;
 	snake2->snakeRect[0].b = 0.12f;
-	snake1->muteVar = false;
 }
 
 Game::Game() {
@@ -48,9 +46,9 @@ Game::Game(int w, int h, std::string id) {
 	snake1 = new Snake(w, h);
 	snake2 = new Snake(w, h);
 	init();
-	multiplayer = true;
+	snake1->multiplayer = true;
 	client = true;
-	startNetwork = true;
+	snake1->network = true;
 	idClient = id;
 	network = new Network(idClient);
 }
@@ -98,8 +96,6 @@ void	Game::getLib(eKeyType key) {
 
 	dynLib = creat(snake1, snake2);
 
-	dynLib->setMultiplayer(multiplayer);
-	dynLib->setNetwork(startNetwork);
 }
 
 bool	Game::newGame() {
@@ -107,11 +103,13 @@ bool	Game::newGame() {
 	newSnake->snakeRect[0].r = snake1->snakeRect[0].r;
 	newSnake->snakeRect[0].g = snake1->snakeRect[0].g;
 	newSnake->snakeRect[0].b = snake1->snakeRect[0].b;
+	newSnake->multiplayer = snake1->multiplayer;
+	newSnake->network = snake1->network;
 	newSnake->muteVar = snake1->muteVar;
 	delete snake1;
 	snake1 = newSnake;
 
-	if (multiplayer) {
+	if (snake1->multiplayer) {
 		newSnake = new Snake(snake1->screenWidth, snake1->screenHeiht);
 		newSnake->snakeRect[0].r = snake2->snakeRect[0].r;
 		newSnake->snakeRect[0].g = snake2->snakeRect[0].g;
@@ -131,7 +129,7 @@ bool	Game::newGame() {
 	start = true;
 	soundLib->set_menu(menu);
 	soundLib->set_change_sound(true);
-	// soundLib->set_mute(snake1->muteVar);
+
 	soundLib->set_new_game(true);
 	iAmReady = false;
 	connectIsReady = false;
@@ -157,13 +155,13 @@ void	Game::keyHandle(eKeyType key) {
 		soundLib->set_change_sound(true);
 	}
 	else if (!menu && key >= up && key <= right) {
-		if (startNetwork && client)
+		if (snake1->network && client)
 			snake2->choseDirection(key);
 		else
 			snake1->choseDirection(key);
 	}
-	else if (!menu && multiplayer && key >= w && key <= d) {
-		if (startNetwork && client)
+	else if (!menu && snake1->multiplayer && key >= w && key <= d) {
+		if (snake1->network && client)
 			snake1->choseDirection(key);
 		else
 			snake2->choseDirection(key);
@@ -200,21 +198,22 @@ void	Game::keyHandle(eKeyType key) {
 						break ;
 					}
 					case 2 : {
-						if (startNetwork && server && !network) {
+						if (snake1->network && server && !network) {
 							createServer();
 							break ;
 						}
-						else if (startNetwork && network && connectIsReady) {
+						else if (snake1->network && network && connectIsReady) {
 							keyToNetwork = ready;
-							network->cycle(&keyToNetwork);
+							network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
 							connectIsReady = false;
 							std::cout << "connectIsReady" << std::endl;
 							usleep(34000);
 						}
-						else if (startNetwork && network) {
+						else if (snake1->network && network) {
 							iAmReady = true;
 							keyToNetwork = ready;
-							network->cycle(&keyToNetwork);
+							network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
+							snake1->waiting = true;
 							std::cout << "iAmReady" << std::endl;
 							break ;
 						}
@@ -222,26 +221,21 @@ void	Game::keyHandle(eKeyType key) {
 						break ;
 					}
 					case 3 : {
-						if (startNetwork && client)
+						if (snake1->network && client)
 							break;
 						else {
-							if (!multiplayer) {
+							if (!snake1->multiplayer) {
 								std::cout << "multiplayer on" << std::endl;
-								multiplayer = true;
-								dynLib->setMultiplayer(multiplayer);
+								snake1->multiplayer = true;
 							}
-							else if (multiplayer && !startNetwork) {
+							else if (snake1->multiplayer && !snake1->network) {
 								server = true;
-								startNetwork = true;
-								dynLib->setMultiplayer(multiplayer);
-								dynLib->setNetwork(startNetwork);
+								snake1->network = true;
 								std::cout << "multiplayer NET" << std::endl;
 							}
 							else {
-								multiplayer = false;
-								startNetwork = false;
-								dynLib->setMultiplayer(multiplayer);
-								dynLib->setNetwork(startNetwork);
+								snake1->multiplayer = false;
+								snake1->network = false;
 								std::cout << "multiplayer OFF" << std::endl;
 							}
 							start = false ;
@@ -254,7 +248,6 @@ void	Game::keyHandle(eKeyType key) {
 			default : break ;
 		}
 	}
-
 	if (key == mute) {
 		if (snake1->muteVar && soundLib->get_mute()) {
 			snake1->muteVar = false;
@@ -264,8 +257,6 @@ void	Game::keyHandle(eKeyType key) {
 			soundLib->set_mute(true);
 		}
 	}
-	std::cout << "snake1->muteVar = " << snake1->muteVar << std::endl;
-	std::cout << "soundLib->get_mute() = " << soundLib->get_mute() << std::endl;
 	dynLib->setKey(none);
 }
 
@@ -308,7 +299,7 @@ void	Game::generateApple() {
 		for (int i = 0; i < snake1->snakeRect.size(); i++)
 			if (snake1->snakeRect[i].x == appleRect.x && snake1->snakeRect[i].y == appleRect.y)
 				noCollision = false;
-		if (multiplayer) {
+		if (snake1->multiplayer) {
 			for (int i = 0; i < snake2->snakeRect.size(); i++)
 				if (snake2->snakeRect[i].x == appleRect.x && snake2->snakeRect[i].y == appleRect.y)
 					noCollision = false;
@@ -325,7 +316,7 @@ bool	Game::checkCollision() {
 		snake1->size++;
 		soundLib->set_eat_sound(true);
 	}
-	else if (multiplayer && snake2->snakeRect[0].x == appleRect.x && snake2->snakeRect[0].y == appleRect.y) {
+	else if (snake1->multiplayer && snake2->snakeRect[0].x == appleRect.x && snake2->snakeRect[0].y == appleRect.y) {
 		appleRect.x = -1000;
 		appleRect.y = -1000;
 		snake2->size++;
@@ -339,14 +330,14 @@ bool	Game::checkCollision() {
 			winner = 2;
 			return (false);
 		}
-		else if (multiplayer && snake2->snakeRect[0].x == snake1->snakeRect[i].x && snake2->snakeRect[0].y == snake1->snakeRect[i].y) {
+		else if (snake1->multiplayer && snake2->snakeRect[0].x == snake1->snakeRect[i].x && snake2->snakeRect[0].y == snake1->snakeRect[i].y) {
 			snake1->snakeRect.resize(i);
 			snake1->size = i;
 			soundLib->set_eat_sound(true);
 		}
 	}
 
-	if (multiplayer) {
+	if (snake1->multiplayer) {
 		if (snake1->snakeRect[0].x == snake2->snakeRect[0].x && snake1->snakeRect[0].y == snake2->snakeRect[0].y) {
 			winner = (snake1->size > snake2->size) ? 1 : 2;
 			boomRect.x = snake1->snakeRect[0].x;
@@ -372,23 +363,19 @@ bool	Game::checkCollision() {
 
 void	Game::gameOver() {
 	soundLib->set_game_over(true);
-	// usleep(1000000);
+
 	soundLib->set_menu(true);
 	soundLib->set_change_sound(true);
 	start = false;
 	menu = true;
 	buttonNum = 2;
 	gameOverCount = 200;
-	// iAmReady = false;
-	// connectIsReady = false;
 }
 
 void	Game::mainCycle() {
 	size_t i = 0;
 	generateApple();
 	getLib(libNum);
-	dynLib->setMultiplayer(multiplayer);
-	dynLib->setNetwork(startNetwork);
 	
 	while (dynLib->windIsOpen()) {
 
@@ -399,13 +386,16 @@ void	Game::mainCycle() {
 			boomRect.y = snake1->snakeRect[0].y;
 			gameOver();
 		}
-		if (multiplayer && !menu && (i % (15 - (speed - 15)) == 0 && !snake2->moveSnake() )) {
+		if (snake1->multiplayer && !menu && (i % (15 - (speed - 15)) == 0 && !snake2->moveSnake() )) {
 			// std::cout << "snake outside the box" << std::endl;
 			winner = 1;
 			boomRect.x = snake2->snakeRect[0].x;
 			boomRect.y = snake2->snakeRect[0].y;
+			winner = 1;
+			std::cout << "snake outside the box" << std::endl;
 			gameOver();
 		}
+
 		if (!menu && (i % 750 == 0 || appleRect.x == -1000))
 			generateApple();
 
@@ -424,21 +414,23 @@ void	Game::mainCycle() {
 		else if (menu)
 			dynLib->drawMenu(buttonNum, start, speed);
 		else {
-			struct timeval tp;
-			gettimeofday(&tp, NULL);
-			long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
-			std::cout << "ms " << ms << std::endl;
+			// struct timeval tp;
+			// gettimeofday(&tp, NULL);
+			// long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+			// std::cout << "ms " << ms << std::endl;
 			dynLib->draw(appleRect);
+
 		}
 
 		soundLib->Sound();
 
-		if (!menu && startNetwork && network) {
+		if (!menu && snake1->network && network) {
 			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
-			network->cycle(&keyToNetwork);
+			network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
 			// std::cout << i << " keyToNetwork = " << keyToNetwork << std::endl;
 
 			if (keyToNetwork == ready && iAmReady) {
+				snake1->waiting = false;
 				newGame();
 			}
 			else if (keyToNetwork == ready)
@@ -457,9 +449,10 @@ void	Game::mainCycle() {
 			keyToNetwork = none;
 			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 		}
-		else if (startNetwork && network) {
-			network->cycle(&keyToNetwork);
+		else if (snake1->network && network) {
+			network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
 			if (keyToNetwork == ready && iAmReady) {
+				snake1->waiting = false;
 				newGame();
 			}
 			else if (keyToNetwork == ready)
@@ -470,6 +463,8 @@ void	Game::mainCycle() {
 			i = 0;
 		if (!menu)
 			i++;
+		// std::cout << "mainCycle" << std::endl;
+
 	}
 }
 

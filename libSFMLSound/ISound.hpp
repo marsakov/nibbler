@@ -13,10 +13,7 @@ protected:
 	bool new_game;
 	bool muteVar;
 
-
-
 public:
-
 	virtual ~ISound() { };
 
 	virtual void	init() = 0;

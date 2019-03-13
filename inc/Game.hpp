@@ -51,7 +51,6 @@ class Game
 	Snake				*snake1;
 	Snake				*snake2;
 	int					speed;
-	bool				multiplayer;
 	bool				menu;
 	bool				start;
 	int					buttonNum;
@@ -59,7 +58,6 @@ class Game
 	rect				boomRect;
 	int					winner;
 	int					gameOverCount;
-	bool				startNetwork;
 	bool				server;
 	bool 				client;
 	eKeyType			keyToNetwork;
@@ -69,12 +67,13 @@ class Game
 	bool				connectIsReady;
 
 
+
 public:
 	void					netGame(void);
 	void					clientGame(void);
 	void					sendNet(int command);
 	int						recvNet(void);
-	bool 					muteVar;
+
 
 	Game();
 	Game(int w, int h);

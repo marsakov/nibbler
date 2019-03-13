@@ -6,6 +6,7 @@ SDLGraph::SDLGraph() {
 	snake1->direction = 'R';
 	snake1->size = 1;
 	init();
+	iter = 1;
 }
 
 SDLGraph::SDLGraph(Snake *s1, Snake *s2) {
@@ -16,6 +17,7 @@ SDLGraph::SDLGraph(Snake *s1, Snake *s2) {
 	// std::cout << "w = " << snake1->screenWidth << " h = " << snake1->screenHeiht << std::endl;
 	quit = false;
 	init();
+	iter = 1;
 }
 
 SDLGraph::SDLGraph(SDLGraph &obj) {
@@ -39,8 +41,7 @@ SDLGraph::~SDLGraph() {
 	TTF_Quit();
 	SDL_Quit();
 }
-void        SDLGraph::setNetwork(bool m) { network = m; }
-void		SDLGraph::setMultiplayer(bool m) { multiplayer = m; }
+
 eKeyType	SDLGraph::getKey() { return (key); }
 void		SDLGraph::setKey(eKeyType k) { key = k; }
 
@@ -83,7 +84,6 @@ void		SDLGraph::init() {
 int			SDLGraph::close(std::string msg) {
 	// std::cout << msg << std::endl;
 	this->~SDLGraph();
-	system("leaks nibbler");
 	exit(1);
 	return (0);
 }
@@ -142,16 +142,23 @@ SDL_Rect	SDLGraph::toSDLRect(rect r) {
 
 void		SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 
+	if (snake1->waiting)
+		iter = (iter == 70) ? 1 : iter + 1;
+
 	SDL_SetRenderDrawColor( gRenderer, 144, 193, 171, 255 );
 	SDL_RenderClear(gRenderer);
 
 	SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	if (snake1->muteVar)
 		renderText(("MUTE"), 450, 10, false);
-	if (start)
+	if (start && !snake1->waiting)
 		renderText("CONTINUE", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 100, (buttonNum == 1) ? true : false);
+	else if (snake1->waiting) {
+		renderText("*************************", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 100, false);
+		renderText("*", snake1->screenWidth / 2 - 50 + iter * 3, snake1->screenHeiht / 2 - 100, true);
+	}
 	renderText("NEW GAME", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 50, (buttonNum == 2) ? true : false);
-	renderText((std::string("MULTIPLAYER ") + (multiplayer ? (network ? "NET" : "LOCAL") : "OFF")).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, (buttonNum == 3) ? true : false);
+	renderText((std::string("MULTIPLAYER ") + (snake1->multiplayer ? (snake1->network ? "NET" : "LOCAL") : "OFF")).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, (buttonNum == 3) ? true : false);
 	renderText("EXIT", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 + 50, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 300, false);
 
@@ -174,7 +181,7 @@ void		SDLGraph::drawGameOver(int winner, rect boomRect) {
 
 	SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	renderText("GAME OVER", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 50, false);
-	if (multiplayer) {
+	if (snake1->multiplayer) {
 		renderText(("Snake1 SCORE " + std::to_string(snake1->size)).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2, (winner == 1) ? true : false);
 		renderText(("Snake2 SCORE " + std::to_string(snake2->size)).c_str(), snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 + 50, (winner == 2) ? true : false);
 	}
@@ -201,10 +208,9 @@ void		SDLGraph::draw(rect appleRect) {
 	appleRect.w = 50;
 	rectForSDL = toSDLRect(appleRect);
 	SDL_RenderCopy(gRenderer, appleTexture, NULL, &rectForSDL);
-
-	renderText(("SCORE = " + std::to_string(snake1->size)).c_str(), 50, 10, false);
 	if (snake1->muteVar)
 		renderText(("MUTE"), 450, 10, false);
+	renderText(("SCORE = " + std::to_string(snake1->size)).c_str(), 50, 10, false);
 	for (int i = 0; i < snake1->snakeRect.size(); i++) { 
 		if (i == 0) {
 			rectForSDL = toSDLRect(snake1->snakeRect[i]);
@@ -215,7 +221,7 @@ void		SDLGraph::draw(rect appleRect) {
 		}
 		
 	}
-	if (multiplayer) {
+	if (snake1->multiplayer) {
 		for (int i = 0; i < snake2->snakeRect.size(); i++) {
 			if (i == 0) {
 				rectForSDL = toSDLRect(snake2->snakeRect[i]);

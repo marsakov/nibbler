@@ -58,7 +58,7 @@ class Network
 
 public:
 
-	int cycle(eKeyType *key);
+	int cycle(eKeyType *key, int *x, int *y);
 	
 	Network();
 	Network(bool serv);

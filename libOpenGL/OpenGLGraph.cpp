@@ -5,6 +5,7 @@ OpenGLGraph::OpenGLGraph() {
 	quit = false;
 	snake1->direction = 'R';
 	snake1->size = 1;
+	iter = 0;
 	init();
 }
 
@@ -18,6 +19,7 @@ OpenGLGraph::OpenGLGraph(Snake *s1, Snake *s2) {
 	xrf = 0, yrf = 0, zrf = 0; // углы поворота
 	D3 = false;
 	y3 = 0;
+	iter = 0;
 	init();
 }
 
@@ -31,8 +33,6 @@ OpenGLGraph::~OpenGLGraph() {
 	SDL_Quit();
 }
 
-void        OpenGLGraph::setNetwork(bool m) { network = m; }
-void        OpenGLGraph::setMultiplayer(bool m) { multiplayer = m; }
 eKeyType    OpenGLGraph::getKey() { return (key); }
 void        OpenGLGraph::setKey(eKeyType k) { key = k; }
 
@@ -144,18 +144,25 @@ void        OpenGLGraph::renderText(const char *text, int x, int y, bool selecti
 }
 
 void        OpenGLGraph::drawMenu(int buttonNum, bool start, int speed) {
+	
+	if (snake1->waiting)
+		iter = (iter == 45) ? 1 : iter + 1;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPointSize(5);
 
 	glTranslatef(0.0f, 0.0f, -20.0f);
 
-	if (start)
+	if (start && !snake1->waiting)
 		renderText("CONTINUE", -20, 20, (buttonNum == 1) ? true : false);
+	else if (snake1->waiting){
+		renderText("********************", -20, 20, false);
+		renderText("*", -20 + iter, 20, true);
+	}
 	if (snake1->muteVar)
 		renderText(("MUTE"), -20, 90, false);
 	renderText("NEW GAME", -20, 10, (buttonNum == 2) ? true : false);
-	renderText((std::string("MULTIPLAYER ") + (multiplayer ? (network ? "NET" : "LOCAL") : "OFF")).c_str(), -20, 0, (buttonNum == 3) ? true : false);
+	renderText((std::string("MULTIPLAYER ") + (snake1->multiplayer ? (snake1->network ? "NET" : "LOCAL") : "OFF")).c_str(), -20, 0, (buttonNum == 3) ? true : false);
 	renderText("EXIT", -20, -10, (buttonNum == 4) ? true : false);
 	renderText(("SPEED  " + std::to_string(speed)).c_str(), -20, 80, false);
 	glutSwapBuffers();
@@ -170,7 +177,7 @@ void		OpenGLGraph::drawGameOver(int winner, rect boomRect) {
 	glTranslatef(0.0f, 0.0f, -20.0f);
 
 	renderText("GAME OVER", -20, 10, false);
-	if (multiplayer) {
+	if (snake1->multiplayer) {
 		renderText(("Snake1 SCORE " + std::to_string(snake1->size)).c_str(), -20, 0, (winner == 1) ? true : false);
 		renderText(("Snake2 SCORE " + std::to_string(snake2->size)).c_str(), -20, -10, (winner == 2) ? true : false);
 	}
@@ -380,7 +387,7 @@ void  OpenGLGraph::drawSnake3D() {
 
 
 
-	if (multiplayer) {
+	if (snake1->multiplayer) {
 		for (int i = 0; i < snake2->snakeRect.size(); i++) {
 			drawCube(snake2->snakeRect[i], snake2->snakeRect[0], i);
 			drawCubeFrame(snake2->snakeRect[i]);
@@ -606,11 +613,12 @@ void        OpenGLGraph::draw(rect appleRect) {
 	}
 
 	renderText(("SCORE " + std::to_string(snake1->size)).c_str(), -80, 90, false);
+	if (snake1->multiplayer)
+		renderText(("SCORE " + std::to_string(snake2->size)).c_str(), 60, 90, false);
 	if (snake1->muteVar)
 		renderText(("MUTE"), -20, 90, false);
-	if (multiplayer)
-		renderText(("SCORE " + std::to_string(snake2->size)).c_str(), 60, 90, false);
 	SDL_GL_SwapWindow(window);
+
 }
 
 void    OpenGLGraph::handleEvent() {

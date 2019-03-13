@@ -18,13 +18,11 @@ class OpenGLGraph : public IGraph
 	double 					k;
 	double 					x1, y1, y2, y3, z1;
 	bool					D3;
-	
 
 protected:
-	bool					network;
-	bool					multiplayer;
 	eKeyType				key;
 
+	int iter;
 public:
 
 	bool					quit;
@@ -48,8 +46,6 @@ public:
 	virtual void			drawMenu(int buttonNum, bool start, int speed);
 	virtual bool			windIsOpen();
 	virtual void			handleEvent();
-	virtual	void			setMultiplayer(bool m);
-	virtual	void			setNetwork(bool m);
 	virtual void			setKeyDown();
 	void 					setKeyDownRotate();
 	virtual eKeyType		getKey();
@@ -59,7 +55,6 @@ public:
 	void 					drawFrame3D();
 	void        			drawFrameMenu();
 	virtual void			drawGameOver(int winner, rect boomRect);
-
 
 
 	SDL_Rect				toSDLRect(rect r);

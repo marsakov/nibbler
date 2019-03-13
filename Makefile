@@ -14,7 +14,9 @@ $(NAME): $(OBJS)
 	make -C libSDL
 	make -C libSFML
 	make -C libSFMLSound
+
 	$(CC) $(CFLAGS) -o $@ $^ -fsanitize=address -std=c++14
+
 
 %.o: %.cpp $(DEPS)
 	$(CC) $(CFLAGS) -c $< -o $@

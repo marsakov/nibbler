@@ -184,11 +184,24 @@ void  Network::init() {
 	
 }
 
-int Network::cycle(eKeyType *key) {
+int Network::cycle(eKeyType *key, int *x, int *y) {
+	int arr[3];
 
-	send( (serverBool) ? connection.socket : server.socket, key, sizeof(key), 0);
-	*key = none;
-	recv((serverBool) ? connection.socket : server.socket, key, sizeof(key), 0);
+	arr[0] = *key;
+	if (serverBool) {
+		arr[1] = *x;
+		arr[2] = *y;
+	}
+
+	send( (serverBool) ? connection.socket : server.socket, arr, sizeof(arr), 0);
+	arr[0] = none;
+	recv((serverBool) ? connection.socket : server.socket, arr, sizeof(arr), 0);
+	*key = (eKeyType)arr[0];
+
+	if (!serverBool) {
+		*x = arr[1];
+		*y = arr[2];
+	}
 
 	return (0);
 }
