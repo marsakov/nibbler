@@ -37,6 +37,7 @@ class Network
 	peer_t server;
 
 	int high_sock;
+	// static int check_accept;
 
 	fd_set read_fds;
 	fd_set write_fds;
@@ -53,6 +54,9 @@ class Network
 	void init();
 
 	char *peer_get_addres_str(peer_t *peer);
+	void waiting();
+	static void* one(void *args);
+	static void* two(void *args);
 
 
 

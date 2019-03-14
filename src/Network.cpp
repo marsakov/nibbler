@@ -1,4 +1,7 @@
 #include "../inc/Network.hpp"
+#include <pthread.h>
+
+static int check_accept;
 
 Network::Network(bool serv) {
 	serverBool = serv;
@@ -48,7 +51,9 @@ int Network::connect_server(peer_t *server) {
 
 	if (setsockopt (server->socket, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
 		perror("setsockopt failed\n");
-	
+
+	fcntl(server->socket, F_SETFL, O_NONBLOCK);
+
 	if (connect(server->socket, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) != 0) {
 		perror("connect()");
 		return (-1);
@@ -127,9 +132,10 @@ int Network::handle_new_connection() {
 	memset(&client_addr, 0, sizeof(client_addr));
 	socklen_t client_len = sizeof(client_addr);
 
-	std::cout << "1" << std::endl;
+	std::cout << "check_accept1 " << check_accept << std::endl;
 	int new_client_sock = accept(listen_sock, (struct sockaddr *)&client_addr, &client_len);
-	std::cout << "2" << std::endl;
+	check_accept = new_client_sock;
+	std::cout << "check_accept2 " << check_accept << std::endl;
 
 	if (new_client_sock < 0) {
 		perror("accept()");
@@ -160,7 +166,7 @@ int Network::close_client_connection(peer_t *client) {
 }
 
 void  Network::init() { 
-	
+	check_accept = 0;
 	if (serverBool && start_listen_socket(&listen_sock) != 0)
 		exit(EXIT_FAILURE);
 	
@@ -172,16 +178,16 @@ void  Network::init() {
 	// flag |= O_NONBLOCK;
 	// fcntl(STDIN_FILENO, F_SETFL, flag);
 	
-	if (serverBool) 
+	if (serverBool)
 		connection.socket = NO_SOCKET;
 
 	high_sock = (serverBool) ? listen_sock : server.socket;
 	
 	if (serverBool) {
 		printf("Waiting for incoming connections.\n");
-		handle_new_connection();
+		waiting();
+		//handle_new_connection();
 	}
-	
 }
 
 int Network::cycle(eKeyType *key, int *x, int *y) {
@@ -216,3 +222,28 @@ char *Network::peer_get_addres_str(peer_t *peer)
 	return (ret);
 }
 
+void* Network::one(void *args) {
+	char	sec;
+
+	sec = 10;
+	printf("waiting for connection \n");
+	while (sec >= 0)
+	{
+		sleep(1);
+		printf("%d\n", sec);
+		if (check_accept)
+			return 0;
+		sec--;
+	}
+	exit(0);
+    return args;
+}
+
+void	Network::waiting()
+{
+	pthread_t	thread;
+
+	// pthread_create(&thread, NULL, one, &check_accept);
+	pthread_create(&thread, NULL, one, NULL);
+	handle_new_connection();
+}
