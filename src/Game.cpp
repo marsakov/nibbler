@@ -141,6 +141,7 @@ bool	Game::newGame() {
 }
 
 void	Game::keyHandle(eKeyType key) {
+	// std::cout << "key = " << key << std::endl;
 
 	keyToNetwork = key;
 
@@ -159,15 +160,15 @@ void	Game::keyHandle(eKeyType key) {
 	}
 	else if (!menu && key >= up && key <= right) {
 		if (snake1->network && client)
-			snake2->choseDirection(key);
+			snake2->key = key;
 		else
-			snake1->choseDirection(key);
+			snake1->key = key;
 	}
 	else if (!menu && snake1->multiplayer && key >= w && key <= d) {
 		if (snake1->network && client)
-			snake1->choseDirection(key);
+			snake1->key = key;
 		else
-			snake2->choseDirection(key);
+			snake2->key = key;
 	}
 	else if (menu) {
 		switch (key) {
@@ -273,6 +274,7 @@ void	Game::keyHandle(eKeyType key) {
 
 void	Game::generateApple() {
 	bool noCollision = false;
+	std::cout << "Refresh Apple" << std::endl;
 
 	appleRect.s = rand() % 2;
 	switch (rand() % 4) {
@@ -381,7 +383,6 @@ bool	Game::checkCollision() {
 
 void	Game::gameOver() {
 	soundLib->set_game_over(true);
-
 	soundLib->set_menu(true);
 	soundLib->set_change_sound(true);
 	start = false;
@@ -397,34 +398,35 @@ void	Game::mainCycle() {
 	
 	while (dynLib->windIsOpen()) {
 
-		if (!menu && (iter % (15 - (speed - 15)) == 0 && !snake1->moveSnake() )){
-			winner = 2;
-			// std::cout << "snake outside the box" << std::endl;
-			boomRect.x = snake1->snakeRect[0].x;
-			boomRect.y = snake1->snakeRect[0].y;
-			gameOver();
+		if (!menu && (iter % (15 - (speed - 15)) == 0 )){
+
+			if ( !snake1->moveSnake() ) {
+				winner = 2;
+				// std::cout << "snake outside the box" << std::endl;
+				boomRect.x = snake1->snakeRect[0].x;
+				boomRect.y = snake1->snakeRect[0].y;
+				gameOver();
+			}
+			if (snake1->multiplayer && !snake2->moveSnake() ) {
+				boomRect.x = snake2->snakeRect[0].x;
+				boomRect.y = snake2->snakeRect[0].y;
+				winner = 1;
+				gameOver();
+				// std::cout << "snake outside the box" << std::endl;
+			}
 		}
-		if (snake1->multiplayer && !menu && (iter % (15 - (speed - 15)) == 0 && !snake2->moveSnake() )) {
-			// std::cout << "snake outside the box" << std::endl;
-			winner = 1;
-			boomRect.x = snake2->snakeRect[0].x;
-			boomRect.y = snake2->snakeRect[0].y;
-			winner = 1;
-			std::cout << "snake outside the box" << std::endl;
-			gameOver();
-		}
+		
 
 		if (!menu && (iter % 750 == 0 || appleRect.x == -1000))
 			generateApple();
 
+		dynLib->handleEvent();
 		if (!gameOverCount)
-			dynLib->handleEvent();
-		keyHandle(dynLib->getKey());
+			keyHandle(dynLib->getKey());
 
-		if (!menu && !checkCollision()) {
-			// std::cout << "boom" << std::endl;
+		if (!menu && !checkCollision())
 			gameOver();
-		}
+
 
 		if (gameOverCount) {
 			dynLib->drawGameOver(winner, boomRect);
@@ -432,14 +434,8 @@ void	Game::mainCycle() {
 		}
 		else if (menu)
 			dynLib->drawMenu(buttonNum, start, speed);
-		else {
-			// struct timeval tp;
-			// gettimeofday(&tp, NULL);
-			// long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
-			// std::cout << "ms " << ms << std::endl;
+		else 
 			dynLib->draw(appleRect);
-
-		}
 
 		soundLib->Sound();
 
@@ -488,7 +484,7 @@ void	Game::mainCycle() {
 		}
 		if ( iter == 2000000000 )
 			iter = 0;
-		if (!menu)
+		if ( !menu )
 			iter++;
 		// std::cout << "mainCycle" << std::endl;
 

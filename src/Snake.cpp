@@ -7,6 +7,7 @@ Snake::Snake(int width, int height) {
 
 	screenWidth = width;
 	screenHeiht = height;
+	key = right;
 
 	pieceRect.x = width / 100 * 50 + 50;
 	pieceRect.y = height / 100 * 50;
@@ -29,8 +30,8 @@ Snake::~Snake() {
 
 }
 
-void	Snake::choseDirection(eKeyType key) {
-	switch( key )
+void	Snake::choseDirection(eKeyType keyType) {
+	switch( keyType )
 	{
 		case (up):			(direction != 'D') ? direction = 'U' : 0; break ;
 		case (down):		(direction != 'U') ? direction = 'D' : 0; break ;
@@ -45,6 +46,8 @@ void	Snake::choseDirection(eKeyType key) {
 }
 
 bool 	Snake::moveSnake() {
+
+	choseDirection(key);
 
 	bool moveLastPiece = true;
 	

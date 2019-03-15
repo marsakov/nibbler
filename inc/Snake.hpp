@@ -49,6 +49,8 @@ public:
 	int					step;
 	rect				pieceRect;
 
+	eKeyType			key;
+
 	bool				waiting;
 	bool				multiplayer;
 	bool				network;
@@ -58,7 +60,7 @@ public:
 	Snake(Snake &obj);
 	~Snake();
 
-	void	choseDirection(eKeyType key);
+	void	choseDirection(eKeyType keyType);
 	bool	moveSnake();
 
 };

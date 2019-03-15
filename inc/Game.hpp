@@ -69,6 +69,7 @@ class Game
 	rect                appleFromServer;
 
 
+
 public:
 	void					netGame(void);
 	void					clientGame(void);
