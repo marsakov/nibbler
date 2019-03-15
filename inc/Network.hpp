@@ -56,13 +56,13 @@ class Network
 	char *peer_get_addres_str(peer_t *peer);
 	void waiting();
 	static void* one(void *args);
-	static void* two(void *args);
 
 
 
 public:
 
-	int cycle(eKeyType *key, int *x, int *y);
+	// int cycle(eKeyType *key, int *x, int *y);
+	int cycle(std::vector<rect>	*snakeRect1, std::vector<rect>	*snakeRect2, eKeyType *k);
 	
 	Network();
 	Network(bool serv);
