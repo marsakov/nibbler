@@ -190,61 +190,61 @@ void  Network::init() {
 	}
 }
 
-// int Network::cycle(eKeyType *key, int *x, int *y) {
-// 	int arr[3];
+int Network::cycle(eKeyType *key, int *x, int *y) {
+	int arr[3];
 
-// 	arr[0] = *key;
-// 	if (serverBool) {
-// 		arr[1] = *x;
-// 		arr[2] = *y;
-// 	}
-
-// 	send( (serverBool) ? connection.socket : server.socket, arr, sizeof(arr), 0);
-// 	arr[0] = none;
-// 	recv((serverBool) ? connection.socket : server.socket, arr, sizeof(arr), 0);
-// 	*key = (eKeyType)arr[0];
-
-// 	if (!serverBool) {
-// 		*x = arr[1];
-// 		*y = arr[2];
-// 	}
-
-// 	return (0);
-// }
-
-int Network::cycle(std::vector<rect> *snakeRect1, std::vector<rect> *snakeRect2, eKeyType *k) {
-	int siz = (*snakeRect1).size();
-
-	rect snake[siz];
-	for (int i = 0; i < siz; i++)
-	{
-		snake[i].x = (*snakeRect1)[i].x;
-		snake[i].y = (*snakeRect1)[i].y;
+	arr[0] = *key;
+	if (serverBool) {
+		arr[1] = *x;
+		arr[2] = *y;
 	}
 
-	snake[1].s = (int)*k;
+	send( (serverBool) ? connection.socket : server.socket, arr, sizeof(arr), 0);
+	arr[0] = none;
+	recv((serverBool) ? connection.socket : server.socket, arr, sizeof(arr), 0);
+	*key = (eKeyType)arr[0];
 
-	std::cout << "snakeRect1 = " << snake[1].s << std::endl;
-
-	send( (serverBool) ? connection.socket : server.socket, snake, sizeof(snake), 0);
-	printf("1\n");
-	snake[1].s = (int)none;
-	recv((serverBool) ? connection.socket : server.socket, snake, sizeof(snake), 0);
-	printf("2\n");
-
-	for (int i = 0; i < siz; i++)
-	{
-		(*snakeRect2)[i].x = snake[i].x;
-		(*snakeRect2)[i].y = snake[i].y;
+	if (!serverBool) {
+		*x = arr[1];
+		*y = arr[2];
 	}
 
-
-	*k = (eKeyType)snake[1].s;
-	std::cout << "FROM  = " << snake[1].s << std::endl;
-
-
-	return 0;
+	return (0);
 }
+
+// int Network::cycle(std::vector<rect> *snakeRect1, std::vector<rect> *snakeRect2, eKeyType *k) {
+// 	int siz = (*snakeRect1).size();
+
+// 	rect snake[siz];
+// 	for (int i = 0; i < siz; i++)
+// 	{
+// 		snake[i].x = (*snakeRect1)[i].x;
+// 		snake[i].y = (*snakeRect1)[i].y;
+// 	}
+
+// 	snake[1].s = (int)*k;
+
+// 	std::cout << "snakeRect1 = " << snake[1].s << std::endl;
+
+// 	send( (serverBool) ? connection.socket : server.socket, snake, sizeof(snake), 0);
+// 	printf("1\n");
+// 	snake[1].s = (int)none;
+// 	recv((serverBool) ? connection.socket : server.socket, snake, sizeof(snake), 0);
+// 	printf("2\n");
+
+// 	for (int i = 0; i < siz; i++)
+// 	{
+// 		(*snakeRect2)[i].x = snake[i].x;
+// 		(*snakeRect2)[i].y = snake[i].y;
+// 	}
+
+
+// 	*k = (eKeyType)snake[1].s;
+// 	std::cout << "FROM  = " << snake[1].s << std::endl;
+
+
+// 	return 0;
+// }
 
 
 char *Network::peer_get_addres_str(peer_t *peer)
