@@ -455,8 +455,10 @@ void	Game::mainCycle() {
 			}
 			else if (keyToNetwork == ready)
 				connectIsReady = true;
-			else if (client && keyToNetwork == refresh)
+			else if (client && keyToNetwork == refresh) {
+				snake1->size++;
 				generateApple();
+			}
 			else if (keyToNetwork != none) {
 				if (keyToNetwork >= up && keyToNetwork <= right && !menu)
 					switch(keyToNetwork) {
