@@ -61,8 +61,8 @@ class Network
 
 public:
 
-	// int cycle(eKeyType *key, int *x, int *y);
-	int cycle(std::vector<rect>	*snakeRect1, std::vector<rect>	*snakeRect2, eKeyType *k);
+	int cycle(eKeyType *key, int *x, int *y);
+	// int cycle(std::vector<rect>	*snakeRect1, std::vector<rect>	*snakeRect2, eKeyType *k);
 	
 	Network();
 	Network(bool serv);

@@ -34,6 +34,7 @@ enum eKeyType
 	num3,
 	ready,
 	mute,
+	refresh,
 	none
 };
 

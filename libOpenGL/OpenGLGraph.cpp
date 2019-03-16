@@ -497,8 +497,8 @@ void        OpenGLGraph::drawFrameMenu() {
 	
 	x1 = (snake1->screenWidth/2 - 25)/50;
 	y1 = (snake1->screenHeiht/2 - 25)/50;
-	z1 = -19.35; //1000 800
-	//z1 = -31.4; // 2500 1300 
+	z1 = -19.35 - (snake1->screenHeiht - 800) * 0.0241;
+
 	glTranslatef(0.0f, 0.0f, 0.0f);
 	glColor3f(0.0f, 0.0f, 0.0f);
 
