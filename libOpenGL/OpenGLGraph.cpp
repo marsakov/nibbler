@@ -14,7 +14,6 @@ OpenGLGraph::OpenGLGraph(Snake *s1, Snake *s2) {
 	snake1 = s1;
 	snake2 = s2;
 	key = none;
-	// std::cout << "w = " << snake1->screenWidth << " h = " << snake1->screenHeiht << std::endl;
 	quit = false;
 	xrf = 0, yrf = 0, zrf = 0; // углы поворота
 	D3 = false;
@@ -57,7 +56,7 @@ void        OpenGLGraph::init() {
 
 	window = SDL_CreateWindow("Nibbler", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, snake1->screenWidth, snake1->screenHeiht, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
-	SDL_GLContext glcontext = SDL_GL_CreateContext(window); // создаем контекст OpenGL
+	SDL_GL_CreateContext(window); // создаем контекст OpenGL
 
 	if(window == NULL){ // если не получилось создать окно, то выходим
 		exit(1);
@@ -83,18 +82,6 @@ int         OpenGLGraph::close(std::string msg) {
 	exit(1);
 	return (0);
 }
-
-// void        OpenGLGraph::setKeyDownRotate() {
-// 	switch( event.key.keysym.sym )
-// 	{
-// 		case SDLK_i:        { xrf += 0.3; break; }
-// 		case SDLK_j:        { xrf -= 0.3; break; }
-// 		case SDLK_o:        { yrf += 0.3; break; }
-// 		case SDLK_k:        { yrf -= 0.3; break; }
-// 		case SDLK_p:        { zrf += 0.3; break; }
-// 		case SDLK_l:        { zrf -= 0.3; break; }
-// 	}
-// }
 
 void        OpenGLGraph::setKeyDown() {
 	switch( event.key.keysym.sym )
@@ -133,7 +120,7 @@ void        OpenGLGraph::renderText(const char *text, int x, int y, bool selecti
 	glPushMatrix();
 	glLoadIdentity();
 	glRasterPos2i(x,y);
-	for(int i=0; i<strlen(text); i++)
+	for(int i=0; i < (int)strlen(text); i++)
 	{
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,(int)text[i]);
 	}
@@ -172,6 +159,7 @@ void        OpenGLGraph::drawMenu(int buttonNum, bool start, bool network, int s
 
 void		OpenGLGraph::drawGameOver(int winner, rect boomRect) {
 
+	boomRect.x = 0;
 	glPointSize(5);
 
 	glTranslatef(0.0f, 0.0f, -20.0f);
@@ -365,30 +353,20 @@ void  OpenGLGraph::drawSnake3D() {
 		glTranslatef(0.0f, 0.0f, 6 - k);
 	}
 	else {
-		k = (snake1->screenHeiht - 1000) * 0.0245; //////////////////// ? 1000
+		k = (snake1->screenHeiht - 1000) * 0.0245; 
 		glTranslatef(0.0f, 0.0f, 2.86 - k);
 	}
 
-	glRotatef(xrf, 1.0f, 0.0f, 0.0f);    // Вращение куба по X
+	glRotatef(xrf, 1.0f, 0.0f, 0.0f);    // Вращение map по X
 	
-		for (int i = 0; i < snake1->snakeRect.size(); i++) {
+	for (int i = 0; i < (int)snake1->snakeRect.size(); i++) {
 
 		drawCube(snake1->snakeRect[i], snake1->snakeRect[0], i);
 		drawCubeFrame(snake1->snakeRect[i]);
-		// // golova romb 
-		// if (i == 0) {
-		// 	glColor3f(0.33f, 0.11f, 0.27f);              // Красная сторона (Передняя)
-		// 	glVertex3f( x + 0.5,  y,         -24.9f);     // Верхний правый угол квадрата
-		// 	glVertex3f( x,     	  y + 0.5,   -24.9f);     // Верхний левый
-		// 	glVertex3f( x + 0.5,  y + 1,     -24.9f);     // Нижний левый
-		// 	glVertex3f( x + 1,    y + 0.5,   -24.9f);     // Нижний правый
-		// }
 	}
 
-
-
 	if (snake1->multiplayer) {
-		for (int i = 0; i < snake2->snakeRect.size(); i++) {
+		for (int i = 0; i < (int)snake2->snakeRect.size(); i++) {
 			drawCube(snake2->snakeRect[i], snake2->snakeRect[0], i);
 			drawCubeFrame(snake2->snakeRect[i]);
 		}
@@ -400,7 +378,7 @@ void OpenGLGraph::drawSphere(double r, int lats, int longs, rect appleRect) {
 	y = (snake1->screenHeiht - appleRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
 	x += 0.5;
 	y += 0.5;
-	// std::cout << "APPLE x = " << x << " y = " << y << std::endl;
+
 	int i, j;
 	for(i = 0; i <= lats; i++) {
 		double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
@@ -445,7 +423,7 @@ void        OpenGLGraph::drawApple3DCube(rect appleRect) {
 	x = (appleRect.x - snake1->screenWidth/2)/50;
 	y = (snake1->screenHeiht - appleRect.y - 50 - snake1->screenHeiht/2 + y3)/50; 
 
- 	glBegin(GL_QUADS); 
+	glBegin(GL_QUADS); 
 	glColor3f(appleRect.r/1.4, appleRect.g/1.4, appleRect.b/1.4);              // Синяя сторона (Верхняя)
 	glVertex3f( x - 0.08 + 1,  y + 0.08,   -26.0f);         // Верхний правый угол квадрата
 	glVertex3f( x + 0.08,      y + 0.08,   -26.0f);         // Верхний левый
@@ -508,9 +486,9 @@ void        OpenGLGraph::drawFrameMenu() {
 	glEnd();
 	
 	glBegin(GL_LINES);
-	glVertex3f( -x1,  y1,  z1);     // Верхний левый                 *-
+	glVertex3f( -x1,  y1,  z1);     // Верхний левый               *-
 	glVertex3f( -x1, -y1,  z1);     // Нижний левый                | 
-	glEnd();                          //                               *-
+	glEnd();                        //                             *-
 
 	glBegin(GL_LINES);
 	glVertex3f( -x1, -y1,  z1);     // Нижний левый                  |    |
@@ -518,8 +496,8 @@ void        OpenGLGraph::drawFrameMenu() {
 	glEnd();
 
 	glBegin(GL_LINES);
-	glVertex3f(  x1, -y1,  z1);   // Верхний правый угол квадрата  -*
-	glVertex3f(  x1,  y1,  z1);     // Нижний правый                  |
+	glVertex3f(  x1, -y1,  z1);       // Верхний правый угол квадрата  -*
+	glVertex3f(  x1,  y1,  z1);       // Нижний правый                  |
 	glEnd();                          //                               -*
 }
 
@@ -621,7 +599,7 @@ void        OpenGLGraph::draw(rect appleRect) {
 
 }
 
-void    OpenGLGraph::handleEvent() {
+void	OpenGLGraph::handleEvent() {
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 			case SDL_KEYDOWN:

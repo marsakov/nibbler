@@ -10,11 +10,9 @@ SDLGraph::SDLGraph() {
 }
 
 SDLGraph::SDLGraph(Snake *s1, Snake *s2) {
-	// std::cout << "SDLGraph" << std::endl;
 	snake1 = s1;
 	snake2 = s2;
 	key = none;
-	// std::cout << "w = " << snake1->screenWidth << " h = " << snake1->screenHeiht << std::endl;
 	quit = false;
 	init();
 	iter = 1;
@@ -75,14 +73,11 @@ void		SDLGraph::init() {
 
 	textFont = TTF_OpenFont("resources/SEASRN.ttf", 24);
 	if (!textFont)
-	{
-		// std::cout << SDL_GetError() << std::endl;
 		close("Unable to render text surface! SDL_ttf Error");
-	}
 }
 
 int			SDLGraph::close(std::string msg) {
-	// std::cout << msg << std::endl;
+	std::cout << msg << std::endl;
 	this->~SDLGraph();
 	exit(1);
 	return (0);
@@ -211,7 +206,7 @@ void		SDLGraph::draw(rect appleRect) {
 	if (snake1->muteVar)
 		renderText(("MUTE"), 450, 10, false);
 	renderText(("SCORE = " + std::to_string(snake1->size)).c_str(), 50, 10, false);
-	for (int i = 0; i < snake1->snakeRect.size(); i++) { 
+	for (size_t i = 0; i < snake1->snakeRect.size(); i++) { 
 		if (i == 0) {
 			rectForSDL = toSDLRect(snake1->snakeRect[i]);
 			SDL_RenderCopy(gRenderer, head1Texture, NULL, &rectForSDL);
@@ -222,7 +217,7 @@ void		SDLGraph::draw(rect appleRect) {
 		
 	}
 	if (snake1->multiplayer) {
-		for (int i = 0; i < snake2->snakeRect.size(); i++) {
+		for (size_t i = 0; i < snake2->snakeRect.size(); i++) {
 			if (i == 0) {
 				rectForSDL = toSDLRect(snake2->snakeRect[i]);
 				SDL_RenderCopy(gRenderer, head2Texture, NULL, &rectForSDL);

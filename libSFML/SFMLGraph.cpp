@@ -192,7 +192,7 @@ void		SFMLGraph::draw(rect appleRect) {
 	appleRect.w = 50;
 	appleSprite.setPosition(appleRect.x * 2 - 25, appleRect.y * 2 - 25);
 	window->draw(appleSprite);
-	for (int i = 0; i < snake1->snakeRect.size(); i++) {
+	for (size_t i = 0; i < snake1->snakeRect.size(); i++) {
 		if (i == 0) {
 			headSprite.setPosition(snake1->snakeRect[i].x * 2 - 25, snake1->snakeRect[i].y * 2 - 25);
 			window->draw(headSprite);
@@ -203,7 +203,7 @@ void		SFMLGraph::draw(rect appleRect) {
 	}
 
 	if (snake1->multiplayer) {
-		for (int i = 0; i < snake2->snakeRect.size(); i++) {
+		for (size_t i = 0; i < snake2->snakeRect.size(); i++) {
 			if (i == 0) {
 				headSprite2.setPosition(snake2->snakeRect[i].x * 2 - 25, snake2->snakeRect[i].y * 2 - 25);
 				window->draw(headSprite2);

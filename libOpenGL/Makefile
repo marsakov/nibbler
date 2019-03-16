@@ -1,7 +1,7 @@
 NAME	:= libOpenGL.so
 
 CC		:= clang++
-CFLAGS	:= -shared -fPIC -framework GLUT -framework OpenGL -lSDL2 -Wno-deprecated-declarations #-Wall -Werror -Wextra
+CFLAGS	:= -shared -fPIC -framework GLUT -framework OpenGL -lSDL2 -Wno-deprecated-declarations -Wall -Werror -Wextra
 
 DEPS	:= ../inc/IGraph.hpp OpenGLGraph.hpp 
 SRCS	:= OpenGLGraph.cpp

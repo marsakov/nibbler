@@ -1,7 +1,7 @@
 NAME	:= libSFMLSound.so
 
 CC		:= clang++
-CFLAGS	:= -shared -fPIC -I ~/.brew/include -L ~/.brew/lib -lsfml-audio -lsfml-system -rpath ~/.brew/lib -rpath ~/.brew/lib #-Wall -Werror -Wextra
+CFLAGS	:= -shared -fPIC -I ~/.brew/include -L ~/.brew/lib -lsfml-audio -lsfml-system -rpath ~/.brew/lib -rpath ~/.brew/lib -Wall -Werror -Wextra
 
 DEPS	:= ISound.hpp SoundSFML.hpp
 SRCS	:= SoundSFML.cpp

@@ -282,7 +282,6 @@ void	Network::waiting()
 {
 	pthread_t	thread;
 
-	// pthread_create(&thread, NULL, one, &check_accept);
 	pthread_create(&thread, NULL, one, NULL);
 	handle_new_connection();
 }

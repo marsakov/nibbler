@@ -1,7 +1,7 @@
 NAME	:= libSDL.so
 
 CC		:= clang++
-CFLAGS	:= -shared -fPIC -lSDL2 -lSDL2_image -lSDL2_ttf #-Wall -Werror -Wextra
+CFLAGS	:= -shared -fPIC -lSDL2 -lSDL2_image -lSDL2_ttf -Wall -Werror -Wextra
 
 DEPS	:= ../inc/IGraph.hpp SDLGraph.hpp 
 SRCS	:= SDLGraph.cpp
