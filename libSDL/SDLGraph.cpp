@@ -140,7 +140,7 @@ SDL_Rect	SDLGraph::toSDLRect(rect r) {
 	return (sdlR);
 }
 
-void		SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
+void		SDLGraph::drawMenu(int buttonNum, bool start, bool network, int speed) {
 
 	if (snake1->waiting)
 		iter = (iter == 70) ? 1 : iter + 1;
@@ -151,7 +151,7 @@ void		SDLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	if (snake1->muteVar)
 		renderText(("MUTE"), 450, 10, false);
-	if (start && !snake1->waiting)
+	if (start && !network && !snake1->waiting)
 		renderText("CONTINUE", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 100, (buttonNum == 1) ? true : false);
 	else if (snake1->waiting) {
 		renderText("*************************", snake1->screenWidth / 2 - 50, snake1->screenHeiht / 2 - 100, false);

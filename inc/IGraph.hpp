@@ -13,7 +13,7 @@ public:
 	virtual int				close(std::string msg) = 0;
 	virtual void			init() = 0;
 	virtual void			draw(rect appleRect) = 0;
-	virtual void			drawMenu(int buttonNum, bool start, int speed) = 0;
+	virtual void			drawMenu(int buttonNum, bool start, bool network, int speed) = 0;
 	virtual void			drawGameOver(int winner, rect boomRect) = 0;
 	virtual bool			windIsOpen() = 0;
 	virtual void			handleEvent() = 0;

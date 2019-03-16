@@ -43,7 +43,7 @@ public:
 	void					drawCubeFrame(rect snakeRect);
 	void					drawCube(rect snakeRect, rect snakeColor, int i);
 
-	virtual void			drawMenu(int buttonNum, bool start, int speed);
+	virtual void			drawMenu(int buttonNum, bool start, bool network, int speed);
 	virtual bool			windIsOpen();
 	virtual void			handleEvent();
 	virtual void			setKeyDown();

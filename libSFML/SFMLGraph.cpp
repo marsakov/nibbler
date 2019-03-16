@@ -121,7 +121,7 @@ void		SFMLGraph::renderText(std::string textString, int x, int y, bool selection
 	window->draw(text);
 }
 
-void		SFMLGraph::drawMenu(int buttonNum, bool start, int speed) {
+void		SFMLGraph::drawMenu(int buttonNum, bool start, bool network, int speed) {
 
 	if (snake1->waiting)
 		iter = (iter == 95) ? 1 : iter + 1;
@@ -135,7 +135,7 @@ void		SFMLGraph::drawMenu(int buttonNum, bool start, int speed) {
 	window->draw(*line4);
 	if (snake1->muteVar)
 		renderText("MUTE", snake1->screenWidth - 100, snake1->screenHeiht - 750, false);
-	if (start && !snake1->waiting)
+	if (start && !network && !snake1->waiting)
 		renderText("CONTINUE", snake1->screenWidth - 100, snake1->screenHeiht - 200, (buttonNum == 1) ? true : false);
 	else if (snake1->waiting) {
 		renderText("*************************", snake1->screenWidth - 100, snake1->screenHeiht - 200, false);

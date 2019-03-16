@@ -143,7 +143,7 @@ void        OpenGLGraph::renderText(const char *text, int x, int y, bool selecti
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void        OpenGLGraph::drawMenu(int buttonNum, bool start, int speed) {
+void        OpenGLGraph::drawMenu(int buttonNum, bool start, bool network, int speed) {
 	
 	if (snake1->waiting)
 		iter = (iter == 45) ? 1 : iter + 1;
@@ -153,7 +153,7 @@ void        OpenGLGraph::drawMenu(int buttonNum, bool start, int speed) {
 
 	glTranslatef(0.0f, 0.0f, -20.0f);
 
-	if (start && !snake1->waiting)
+	if (start && !network && !snake1->waiting)
 		renderText("CONTINUE", -20, 20, (buttonNum == 1) ? true : false);
 	else if (snake1->waiting){
 		renderText("********************", -20, 20, false);

@@ -43,7 +43,7 @@ public:
 	virtual int				close(std::string msg);
 	virtual void			init();
 	virtual void			draw(rect appleRect);
-	virtual void			drawMenu(int buttonNum, bool start, int speed);
+	virtual void			drawMenu(int buttonNum, bool start, bool network, int speed);
 	virtual bool			windIsOpen();
 	virtual void			handleEvent();
 	virtual void			setKeyDown();

@@ -142,7 +142,6 @@ bool	Game::newGame() {
 }
 
 void	Game::keyHandle(eKeyType key) {
-	// std::cout << "key = " << key << std::endl;
 
 	keyToNetwork = key;
 
@@ -174,23 +173,23 @@ void	Game::keyHandle(eKeyType key) {
 	else if (menu) {
 		switch (key) {
 			case (up):		{
-				((buttonNum == 2 && !start) || (buttonNum == 1 && start)) ? buttonNum = 4 : buttonNum--;
+				((buttonNum == 2 && (!start || network)) || (buttonNum == 1 && start)) ? buttonNum = 4 : buttonNum--;
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (down):	{
-				(buttonNum == 4) ? buttonNum = (start ? 1 : 2) : buttonNum++; 
+				(buttonNum == 4) ? buttonNum = ((!start || network) ? 2 : 1) : buttonNum++; 
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (left):	{
-				(speed != 10) ? speed-- : 0;
+				(speed != 10 && !client) ? speed-- : 0;
 				soundLib->set_switch_menu_sound(true);
 				break;
 			}
 			case (right):	{
 				soundLib->set_switch_menu_sound(true);
-				(speed != 25) ? speed++ : 0;
+				(speed != 25 && !client) ? speed++ : 0;
 				break;
 			}
 			case (enter): {
@@ -407,7 +406,6 @@ void	Game::mainCycle() {
 
 			if ( !snake1->moveSnake() ) {
 				winner = 2;
-				// std::cout << "snake outside the box" << std::endl;
 				boomRect.x = snake1->snakeRect[0].x;
 				boomRect.y = snake1->snakeRect[0].y;
 				gameOver();
@@ -417,7 +415,6 @@ void	Game::mainCycle() {
 				boomRect.y = snake2->snakeRect[0].y;
 				winner = 1;
 				gameOver();
-				// std::cout << "snake outside the box" << std::endl;
 			}
 		}
 		
@@ -438,22 +435,17 @@ void	Game::mainCycle() {
 			gameOverCount--;
 		}
 		else if (menu)
-			dynLib->drawMenu(buttonNum, start, speed);
+			dynLib->drawMenu(buttonNum, start, network, speed);
 		else 
 			dynLib->draw(appleRect);
 
 		soundLib->Sound();
 
 		if (!menu && snake1->network && network) {
-			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 			if (client)
-				// network->cycle(&(snake2->snakeRect), &(snake1->snakeRect), &keyToNetwork);
 				network->cycle(&keyToNetwork, &(appleFromServer.x), &(appleFromServer.y));
 			else
-				// network->cycle(&(snake1->snakeRect), &(snake2->snakeRect), &keyToNetwork);
 				network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
-
-			// std::cout << iter << " keyToNetwork = " << keyToNetwork << std::endl;
 
 			if (keyToNetwork == ready && iAmReady) {
 				snake1->waiting = false;
@@ -473,14 +465,11 @@ void	Game::mainCycle() {
 				keyHandle(keyToNetwork);
 			}
 			keyToNetwork = none;
-			// std::cout << "keyToNetwork = " << keyToNetwork << std::endl;
 		}
 		else if (snake1->network && network) {
 			if (client)
-				// network->cycle(&(snake2->snakeRect), &(snake1->snakeRect), &keyToNetwork);
 				network->cycle(&keyToNetwork, &(appleFromServer.x), &(appleFromServer.y));
 			else
-				// network->cycle(&(snake1->snakeRect), &(snake2->snakeRect), &keyToNetwork);
 				network->cycle(&keyToNetwork, &(appleRect.x), &(appleRect.y));
 
 			if (keyToNetwork == ready && iAmReady) {
@@ -489,13 +478,18 @@ void	Game::mainCycle() {
 			}
 			else if (keyToNetwork == ready)
 				connectIsReady = true;
+			else if (client && (keyToNetwork == right || keyToNetwork == left)) {
+				if (keyToNetwork == left)
+					(speed != 10) ? speed-- : 0;
+				else 
+					(speed != 25) ? speed++ : 0;
+			}
 			keyToNetwork = none;
 		}
 		if ( iter == 2000000000 )
 			iter = 0;
 		if ( !menu )
 			iter++;
-		// std::cout << "mainCycle" << std::endl;
 
 	}
 }
