@@ -338,6 +338,8 @@ bool	Game::checkCollision() {
 		appleRect.x = -1000;
 		appleRect.y = -1000;
 		snake1->size++;
+		if (server)
+			keyToNetwork = refresh;
 		soundLib->set_eat_sound(true);
 	}
 	else if (snake1->multiplayer && snake2->snakeRect[0].x == appleRect.x && snake2->snakeRect[0].y == appleRect.y) {
@@ -453,6 +455,8 @@ void	Game::mainCycle() {
 			}
 			else if (keyToNetwork == ready)
 				connectIsReady = true;
+			else if (client && keyToNetwork == refresh)
+				generateApple();
 			else if (keyToNetwork != none) {
 				if (keyToNetwork >= up && keyToNetwork <= right && !menu)
 					switch(keyToNetwork) {

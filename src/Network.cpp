@@ -197,6 +197,8 @@ int Network::cycle(eKeyType *key, int *x, int *y) {
 	if (serverBool) {
 		arr[1] = *x;
 		arr[2] = *y;
+
+		std::cout << "APPLE x = " << *x << " y = " << *y << std::endl;
 	}
 
 	send( (serverBool) ? connection.socket : server.socket, arr, sizeof(arr), 0);
@@ -207,6 +209,8 @@ int Network::cycle(eKeyType *key, int *x, int *y) {
 	if (!serverBool) {
 		*x = arr[1];
 		*y = arr[2];
+
+		std::cout << "APPLE x = " << *x << " y = " << *y << std::endl;
 	}
 
 	return (0);
