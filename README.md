@@ -42,20 +42,20 @@ any of your libraries.
 ## Mission Control
 
 #### Menu
-	• arrows (up/down):		_choose button_
-	• arrows (left/right):	_change speed_
-	• enter:				_select_
-	• M:					_mute_
-	• 1/2/3:				_change library_
+	• arrows (up/down):		choose button
+	• arrows (left/right):	change speed
+	• enter:				select
+	• M:					mute
+	• 1/2/3:				change library
 ![Image alt](https://github.com/marsakov/nibbler/raw/master/imgForReadMe//menu.png)
 
 #### Game
-	• arrows:				_change snake direction_
-	• escape:				_main menu_
-	• wasd:					_change snake direction MULTIPLAYER_
-	• M:					_mute_
-	• 1/2/3:				_change library_
-	• 4:					_change view in 3 library_
+	• arrows:				change snake direction
+	• escape:				main menu
+	• wasd:					change snake direction MULTIPLAYER
+	• M:					mute
+	• 1/2/3:				change library
+	• 4:					change view in 3 library
 ![Image alt](https://github.com/marsakov/nibbler/raw/master/imgForReadMe//game1.png)
 
 ## Run
