@@ -1,4 +1,4 @@
-# Fdf
+# Nibbler
 
 Snake is a classical game from the 70’s. The simplicity of this addictive game resulted
 on its availability on most of existing game platforms under a form or another. For "old"
