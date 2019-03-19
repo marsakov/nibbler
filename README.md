@@ -47,7 +47,7 @@ any of your libraries.
 	• enter:				_select_
 	• M:					_mute_
 	• 1/2/3:				_change library_
-![Image alt](https://github.com/marsakov/fdf/raw/master/imgForReadMe/menu.png)
+![Image alt](https://github.com/marsakov/nibbler/raw/master/imgForReadMe//menu.png)
 
 #### Game
 	• arrows:				_change snake direction_
@@ -56,7 +56,7 @@ any of your libraries.
 	• M:					_mute_
 	• 1/2/3:				_change library_
 	• 4:					_change view in 3 library_
-![Image alt](https://github.com/marsakov/fdf/raw/master/imgForReadMe/game1.png)
+![Image alt](https://github.com/marsakov/nibbler/raw/master/imgForReadMe//game1.png)
 
 ## Run
 ```
