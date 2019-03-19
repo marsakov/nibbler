@@ -73,5 +73,5 @@ Run for network:
 ./nibbler 1000 800 IP-address
 ```
 ## Some screenshots
-![Image alt](https://github.com/marsakov/fdf/raw/master/imgForReadMe/game2.png)
-![Image alt](https://github.com/marsakov/fdf/raw/master/imgForReadMe/gameOver.png)
+![Image alt](https://github.com/marsakov/nibbler/raw/master/imgForReadMe/game2.png)
+![Image alt](https://github.com/marsakov/nibbler/raw/master/imgForReadMe/gameOver.png)
