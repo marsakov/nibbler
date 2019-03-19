@@ -90,7 +90,7 @@ void	Game::getLib(eKeyType key) {
 	}
 	
 	if (!ext_library) {
-		fprintf(stderr,"dlopen() error: %s\n", dlerror());
+		fprintf(stderr, "dlopen() error: %s\n", dlerror());
 		exit(1);
 	};
 

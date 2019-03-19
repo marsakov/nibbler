@@ -216,6 +216,8 @@ int Network::cycle(eKeyType *key, int *x, int *y) {
 	return (0);
 }
 
+// --------------------------      send/recv snake coord            ------------------------------
+
 // int Network::cycle(std::vector<rect> *snakeRect1, std::vector<rect> *snakeRect2, eKeyType *k) {
 // 	int siz = (*snakeRect1).size();
 
