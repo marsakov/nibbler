@@ -47,7 +47,8 @@ any of your libraries.
 	• enter:				select
 	• M:					mute
 	• 1/2/3:				change library
-![Image alt](https://github.com/marsakov/nibbler/raw/master/imgForReadMe//menu.png)
+![Image alt](https://github.com/marsakov/nibbler/raw/master/imgForReadMe/menu.png)
+![Image alt](https://github.com/marsakov/nibbler/raw/master/imgForReadMe/gameGif.gif)
 
 #### Game
 	• arrows:				change snake direction
